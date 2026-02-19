@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
   if (!isProfileComplete) {
-    return <Navigate to="/profile" replace />;
+    return <Navigate to="/profile-update" replace />;
   }
 
   return <>{children}</>;

@@ -26,7 +26,7 @@ const required: Array<keyof Contact> = [
   'actum_brand',
 ];
 
-export const Profile: React.FC = () => {
+export const ProfileUpdate: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
 
