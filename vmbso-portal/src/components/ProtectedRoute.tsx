@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  if (!isProfileComplete && location.pathname !== '/profile') {
+  if (!isProfileComplete) {
     return <Navigate to="/profile" replace />;
   }
 
