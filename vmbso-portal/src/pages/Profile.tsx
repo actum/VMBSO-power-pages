@@ -19,7 +19,7 @@ export const Profile: React.FC = () => {
   const navigate = useNavigate();
 
   const [values, setValues] = useState<Partial<Contact>>({});
-  const [saving, setSaving] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const Profile: React.FC = () => {
     }
 
     try {
-      setSaving(true);
+      setUpdating(true);
       await authService.updateProfile({
         contactid: "currentUser?.contactid",
         ...values,
@@ -66,9 +66,9 @@ export const Profile: React.FC = () => {
       await refreshUser();
       navigate('/documents');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : 'Updating profile information failed.');
     } finally {
-      setSaving(false);
+      setUpdating(false);
     }
   };
 
@@ -212,8 +212,8 @@ export const Profile: React.FC = () => {
         </Grid>
 
         <Box sx={{ mt: 3 }}>
-          <Button type="submit" variant="contained" disabled={saving}>
-            {saving ? 'Saving…' : 'Save'}
+          <Button type="submit" variant="contained" disabled={updating}>
+            {updating ? 'Updating…' : 'Update'}
           </Button>
         </Box>
       </Box>
