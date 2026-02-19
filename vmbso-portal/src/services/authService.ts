@@ -126,4 +126,48 @@ export const authService = {
       return null;
     }
   },
+
+  /**
+   * Update profile fields on the contact record.
+   * Returns the updated Contact object.
+   */
+  updateProfile: async (fields: Partial<Contact>): Promise<Contact> => {
+    if (IS_DEV_MODE) {
+      console.log('DEV MODE: Mock profile update', fields);
+      const userStr = localStorage.getItem('dev_user');
+      const user = userStr ? JSON.parse(userStr) : {};
+      const updated = { ...user, ...fields };
+      localStorage.setItem('dev_user', JSON.stringify(updated));
+      return updated as Contact;
+    }
+
+    const contactId = fields.contactid;
+    if (!contactId) {
+      throw new Error('Missing contact ID for profile update');
+    }
+
+    const body: any = { ...fields };
+
+    const response = await fetch(`/_api/update-contact`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'OData-MaxVersion': '4.0',
+        'OData-Version': '4.0',
+      },
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error('Profile update failed');
+    }
+
+    // Refresh user info from server
+    const updatedUser = await authService.checkSession();
+    if (!updatedUser) {
+      throw new Error('Unable to fetch updated user');
+    }
+    return updatedUser;
+  },
 };

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 interface AuthContextType {
   currentUser: Contact | null;
   isAuthenticated: boolean;
+  isProfileComplete: boolean;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -20,6 +21,17 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const requiredFields = [
+  'actum_language',
+  'actum_companyname',
+  'actum_vat',
+  'actum_primarycountry',
+  'actum_companyphone',
+  'actum_address',
+  'actum_role',
+  'actum_brand',
+] as const;
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +39,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = currentUser !== null;
 
-  // Check session on mount
+  const isProfileComplete = React.useMemo(() => {
+    if (!currentUser) return false;
+    return requiredFields.every(key => {
+      const value = currentUser[key];
+      return value && value.toString().trim().length > 0;
+    });
+  }, [currentUser]);
+
   useEffect(() => {
     checkSession();
   }, []);
@@ -49,13 +68,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       await authService.login(username, password);
-      
-      // After successful login, fetch user data
+
       const user = await authService.checkSession();
+
       setCurrentUser(user);
-      
+
       toast.success('Login successful!');
-      navigate('/documents');
+
+      const profileDone = (() => {
+        return requiredFields.every(key => {
+          const v = (user as any)[key];
+          return v && v.toString().trim().length > 0;
+        });
+      })();
+
+      if (!profileDone) {
+        navigate('/profile');
+      } else {
+        navigate('/documents');
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       toast.error(message);
@@ -105,6 +136,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     currentUser,
     isAuthenticated,
+    isProfileComplete,
     loading,
     login,
     logout,
