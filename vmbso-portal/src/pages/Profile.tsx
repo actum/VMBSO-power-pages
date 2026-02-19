@@ -14,6 +14,18 @@ import { Contact } from '../types/contact';
 import { authService } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
+// required fields selectors
+const required: Array<keyof Contact> = [
+  'actum_language',
+  'actum_companyname',
+  'actum_vat',
+  'actum_primarycountry',
+  'actum_companyphone',
+  'actum_address',
+  'actum_role',
+  'actum_brand',
+];
+
 export const Profile: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
@@ -37,18 +49,6 @@ export const Profile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    // basic client-side validation for required fields
-    const required: Array<keyof Contact> = [
-      'actum_language',
-      'actum_companyname',
-      'actum_vat',
-      'actum_primarycountry',
-      'actum_companyphone',
-      'actum_address',
-      'actum_role',
-      'actum_brand',
-    ];
 
     for (const key of required) {
       if (!values[key] || values[key]?.toString().trim() === '') {
