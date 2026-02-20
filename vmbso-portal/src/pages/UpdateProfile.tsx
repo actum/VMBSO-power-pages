@@ -14,21 +14,8 @@ import { Layout } from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
 import { Contact } from "../types/contact";
 import { authService } from "../services/authService";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ContactLanguage } from "../types/auth";
-
-// required fields selectors
-const required: Array<keyof Contact> = [
-  "actum_language",
-  "actum_companyname",
-  "actum_vat",
-  "actum_primarycountry",
-  "actum_companyphone",
-  "actum_phone",
-  "actum_address",
-  "actum_role",
-  "actum_brand",
-];
 
 export const UpdateProfile: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();

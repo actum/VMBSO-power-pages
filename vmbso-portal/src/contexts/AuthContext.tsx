@@ -17,16 +17,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const requiredFields = [
-  'actum_language',
-  'actum_companyname',
-  'actum_vat',
-  'actum_primarycountry',
-  'actum_companyphone',
-  'actum_address',
-  'actum_role',
-  'actum_brand',
-] as const;
+// required fields selectors
+const requiredFields: Array<keyof Contact> = [
+  "actum_language",
+  "actum_companyname",
+  "actum_vat",
+  "actum_primarycountry",
+  "actum_companyphone",
+  "actum_phone",
+  "actum_address",
+  "actum_role",
+  "actum_brand",
+];
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -77,18 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       toast.success('Login successful!');
 
-      const profileDone = (() => {
-        return requiredFields.every(key => {
-          const v = (user as any)[key];
-          return v && v.toString().trim().length > 0;
-        });
-      })();
-
-      if (!profileDone) {
-        navigate('/profile');
-      } else {
-        navigate('/documents');
-      }
+      navigate('/documents');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       toast.error(message);
