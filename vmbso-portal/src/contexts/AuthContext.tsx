@@ -17,10 +17,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 const requiredFields = [
   'actum_language',
   'actum_companyname',
@@ -31,6 +27,10 @@ const requiredFields = [
   'actum_role',
   'actum_brand',
 ] as const;
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<Contact | null>(null);
@@ -55,6 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const user = await authService.checkSession();
+
       setCurrentUser(user);
     } catch (error) {
       console.error('Session check failed:', error);
@@ -62,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
+
   };
 
   const login = async (username: string, password: string) => {
@@ -100,15 +102,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       await authService.logout();
-      setCurrentUser(null);
       toast.success('Logged out successfully');
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      // Clear user even if logout fails
-      setCurrentUser(null);
       navigate('/login');
     } finally {
+      // Clear user even if logout fails
+      setCurrentUser(null);
       setLoading(false);
     }
   };

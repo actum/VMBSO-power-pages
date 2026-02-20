@@ -40,10 +40,10 @@ export const authService = {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return;
     }
-    
+
     // Store registration data to pre-fill the form
     sessionStorage.setItem('registration_data', JSON.stringify(data));
-    
+
     // Redirect to Power Pages registration page
     const returnUrl = encodeURIComponent(window.location.pathname);
     window.location.href = `/register?returnUrl=${returnUrl}`;
@@ -93,7 +93,7 @@ export const authService = {
       const user = localStorage.getItem('dev_user');
       return user ? JSON.parse(user) : null;
     }
-    
+
     try {
       // Use the Web API to get current contact
       const response = await fetch('/_api/contacts?$filter=contactid eq @current_user&$select=contactid,firstname,lastname,emailaddress1,fullname,createdon', {
@@ -114,16 +114,16 @@ export const authService = {
       }
 
       const data = await response.json();
-      
+
       // Return the current user's contact
       if (data.value && data.value.length > 0) {
         return data.value[0] as Contact;
       }
 
-      return null;
+      throw new Error('Empty Session data');
     } catch (error) {
       console.error('Session check error:', error);
-      return null;
+      throw error as Error;
     }
   },
 
@@ -148,6 +148,7 @@ export const authService = {
 
     const body: any = { ...fields };
 
+    // TODO: swap this for working api
     const response = await fetch(`/_api/update-contact`, {
       method: 'PATCH',
       headers: {
@@ -155,7 +156,6 @@ export const authService = {
         'OData-MaxVersion': '4.0',
         'OData-Version': '4.0',
       },
-      credentials: 'include',
       body: JSON.stringify(body),
     });
 

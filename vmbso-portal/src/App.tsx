@@ -11,7 +11,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Documents } from './pages/Documents';
-import { ProfileUpdate } from './pages/ProfileUpdate';
+import { UpdateProfile } from './pages/UpdateProfile';
 import { NotFound } from './pages/NotFound';
 
 function App() {
@@ -46,10 +46,10 @@ function App() {
             }
           />
           <Route
-            path="/profile-update"
+            path="/update-profile"
             element={
               <ProtectedRoute>
-                <ProfileUpdate />
+                <UpdateProfile />
               </ProtectedRoute>
             }
           />

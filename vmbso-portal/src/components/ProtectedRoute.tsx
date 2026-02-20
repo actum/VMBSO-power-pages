@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { CircularProgress, Box } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -9,6 +9,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, loading, isProfileComplete } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -28,8 +29,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  if (!isProfileComplete) {
-    return <Navigate to="/profile-update" replace />;
+ 
+  if (!isProfileComplete && location.pathname !== "/update-profile") {
+    return <Navigate to="/update-profile" replace />;
   }
 
   return <>{children}</>;

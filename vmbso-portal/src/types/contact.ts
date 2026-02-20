@@ -1,3 +1,5 @@
+import { ContactLanguage } from "./auth";
+
 export interface Contact {
   contactid: string;
   firstname: string;
@@ -6,7 +8,7 @@ export interface Contact {
   fullname?: string;
   createdon?: string;
   modifiedon?: string;
-  actum_language?: string;
+  actum_language?: ContactLanguage;
   actum_phone?: string;
   actum_companyname?: string;
   actum_vat?: string;
@@ -15,5 +17,5 @@ export interface Contact {
   actum_address?: string;
   actum_companyemail?: string;
   actum_role?: string;
-  actum_brand?: string;
+  actum_brand?: string[];
 }
