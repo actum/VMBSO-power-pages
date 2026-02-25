@@ -13,9 +13,11 @@ VMBSO needs to provide secure, role-based access to customer documents (user man
 ```
 Power Pages SPA (React + TypeScript + MUI)
     ↓
-Local Authentication (Power Pages built-in)
+Microsoft Entra External ID (OAuth 2.0 / OpenID Connect)
+    ↓  (Server-side redirect authentication)
+Power Pages Session Management (Cookie-based)
     ↓
-Dataverse Web API (document metadata)
+Dataverse Web API (document metadata via /_api/*)
     ↓
 Azure Blob Storage (document files)
 ```
@@ -23,9 +25,10 @@ Azure Blob Storage (document files)
 **Key Technologies:**
 - React 18 + TypeScript
 - Material-UI (MUI) for components
-- Power Pages for hosting and authentication
+- Microsoft Entra External ID for authentication
+- Power Pages for hosting and session management
 - Dataverse for data storage
-- react-i18next for multi-language support
+- react-i18next for multi-language support (EN, DA, DE, FR, NL)
 - PAC CLI for deployment
 
 ## User Journey (Happy Path)
@@ -34,34 +37,56 @@ Azure Blob Storage (document files)
 ```
 New user visits portal
     ↓
-Clicks "Register"
+Clicks "Register" button in React app
     ↓
-Fills form:
+React redirects to Power Pages /register
+    ↓
+Power Pages redirects to Entra External ID User Flow
+    ↓
+User fills registration form in Entra External ID:
     - First Name: "Jan"
     - Last Name: "Petersen"
     - Email: "jan.petersen@company.dk"
     - Password: "SecurePass123"
-    - Country: "Denmark"
-    - Role: "Architect"
+    - Country: "Denmark" (custom attribute)
+    - Role: "Architect" (custom attribute)
     ↓
-Submits form
+User submits form
     ↓
-System creates Contact record in Dataverse
+Entra External ID creates user account
     ↓
-User auto-approved (Phase 1)
+Power Pages AUTOMATICALLY:
+    - Creates Contact record in Dataverse
+    - Creates External Identity (adx_externalidentity) record
+    - Links them together
+    - Maps custom attributes to Contact fields
+    - Creates session cookie
     ↓
-Redirected to login page with success message
+User redirected back to React app (/documents)
+    ↓
+User is immediately authenticated and sees documents page
 ```
 
 ### 2. Login
 ```
-User enters email and password
+User visits portal while unauthenticated
     ↓
-Power Pages validates credentials
+React app redirects to /login
     ↓
-Session cookie created
+Power Pages redirects to Entra External ID login
+    (automatic if Entra set as default identity provider)
     ↓
-User redirected to /documents page
+User enters email and password at Entra External ID
+    ↓
+Entra External ID validates credentials
+    ↓
+Redirects back to Power Pages
+    ↓
+Power Pages creates session cookie
+    ↓
+User redirected to /documents page in React app
+    ↓
+Session persists - user can refresh page without re-login
 ```
 
 ### 3. Browse Documents
@@ -137,13 +162,19 @@ Profile page shows:
 
 ### 8. Logout
 ```
-User clicks avatar icon
+User clicks avatar icon in header
     ↓
 Selects "Logout"
     ↓
-Session cleared
+React calls logout service
     ↓
-Redirected to login page
+POST to /Account/Login/LogOff
+    ↓
+Power Pages clears session cookie
+    ↓
+Optionally: Federated logout from Entra External ID
+    ↓
+User redirected to /login page
 ```
 
 ## Core Requirements
@@ -151,11 +182,13 @@ Redirected to login page
 ### Functional Requirements
 
 **Authentication:**
-- ✅ User registration with: First Name, Last Name, Email, Password, Country, Role
-- ✅ User login with email/password
-- ✅ Session management (persist across page refresh)
-- ✅ Auto-approve all registrations (Phase 1)
-- ✅ Logout functionality
+- ✅ User registration via Entra External ID User Flow
+- ✅ Custom attributes: First Name, Last Name, Email, Country, Role
+- ✅ User login via Entra External ID (redirect-based)
+- ✅ Session management via Power Pages cookies (persist across refresh)
+- ✅ Automatic Contact creation in Dataverse (handled by Power Pages)
+- ✅ Entra External ID set as default provider (seamless redirect)
+- ✅ Logout with optional federated sign-out
 
 **Document Management:**
 - ✅ Display documents in data grid (sortable, paginated)
@@ -188,13 +221,20 @@ Redirected to login page
 - ✅ Desktop-focused (no mobile responsive required)
 
 **Backend Integration:**
-- ✅ Power Pages Local Authentication
+- ✅ Microsoft Entra External ID for authentication (OAuth 2.0 / OpenID Connect)
+- ✅ Power Pages server-side authentication (redirect flow with Client Secret)
 - ✅ Dataverse Web API for data access
 - ✅ Proxy API calls through portal (/_api/*)
-- ✅ Session-based authentication (cookie)
+- ✅ Session-based authentication (HTTP-only cookie)
+- ✅ Automatic Contact and External Identity creation
 
 **Data Model:**
 - ✅ `contact` table - Standard D365 contact with custom fields
+  - Custom fields: actum_role, actum_country
+- ✅ `adx_externalidentity` table - Links contacts to Entra External ID
+  - adx_identityprovidername (e.g., "Microsoft Entra External ID")
+  - adx_username (e.g., "sub|a1b2c3d4-...")
+  - adx_contact (lookup to contact)
 - ✅ `actum_clientdocument` table - Custom table for documents
   - actum_name (text)
   - actum_account (lookup to account)
@@ -245,8 +285,12 @@ Redirected to login page
 ❌ Document upload (admin only, separate backoffice)  
 ❌ Advanced filtering (by product, brand, etc.)  
 ❌ User profile editing  
-❌ Password reset  
+❌ Password reset (handled by Entra External ID)  
 ❌ Email notifications  
+❌ Multi-factor authentication (optional in Entra External ID)
+❌ Custom Entra External ID branding (use default Microsoft UI)
+
+**Note:** Entra External ID tenant setup, User Flow configuration, and App Registration are prerequisites handled by infrastructure team before development starts.  
 
 ## Success Criteria
 
@@ -265,7 +309,62 @@ Redirected to login page
 11. ✅ Authentication persists across page refresh
 12. ✅ Loading states and error handling work properly
 
+## Entra External ID Prerequisites
+
+**Infrastructure team must complete BEFORE development starts:**
+
+### 1. Create Entra External ID Tenant
+- Set up external tenant in Microsoft Entra Admin Center
+- Configure tenant settings
+- Note tenant name and domain
+
+### 2. Create App Registration
+- Register application: "vmbso-customer-portal"
+- Platform: Web
+- Redirect URI: `https://site-spa.powerappsportals.com/signin-oidc`
+- Enable: Access tokens and ID tokens
+- Grant admin consent for permissions
+- Note: Application (Client) ID and Client Secret
+
+### 3. Create User Flow
+- Name: "vmbso-customer-signup"
+- Type: Email with password or Email one-time passcode
+- Collect attributes:
+  - First Name (built-in)
+  - Last Name (built-in)
+  - Email Address (built-in)
+  - Country (custom attribute)
+  - Role (custom attribute - Architect/Distributor/Installer)
+  - Company Name (optional custom attribute)
+- Link to app registration
+
+### 4. Configure in Power Pages
+- Add Entra External ID as identity provider
+- Enter configuration values:
+  - Client ID
+  - Client Secret (stored in Site Settings)
+  - Authority URL
+  - Metadata URL
+- Set as default identity provider
+- Configure claims mapping for custom attributes
+- Restart Power Pages site
+
+### 5. Test Configuration
+- Navigate to /signin → should redirect to Entra External ID
+- Complete registration → should create Contact in Dataverse
+- Login → should authenticate and create session
+- Verify Contact fields populated correctly
+
+**Development can begin once these 5 steps are complete.**
+
+---
+
 ## Key Stakeholders
+
+- **End Users:** External customers (architects, distributors, installers) across 5 European countries
+- **VMBSO Team:** Internal team managing document uploads and user accounts via backoffice
+- **Infrastructure Team:** Sets up Entra External ID tenant and configuration
+- **ACTUM (You):** Development team building the SPA
 
 - **End Users:** External customers (architects, distributors, installers) across 5 European countries
 - **VMBSO Team:** Internal team managing document uploads and user accounts via backoffice
@@ -275,14 +374,22 @@ Redirected to login page
 
 **Dataverse Environment:**
 - URL: https://org06e85c00.crm4.dynamics.com
-- Tables: contact, actum_clientdocument, account
+- Tables: contact, actum_clientdocument, account, adx_externalidentity
 - Access: Admin access for development
 
 **Power Pages Portal:**
-- URL: https://site-alfw4.powerappsportals.com
+- URL: https://site-spa.powerappsportals.com
 - Type: SPA (React)
 - Route: `/app/*` for SPA
-- Authentication: Local (built-in Power Pages)
+- Authentication: Microsoft Entra External ID (OpenID Connect)
+- Session: Cookie-based (managed by Power Pages)
+
+**Entra External ID Tenant:**
+- Tenant configured with User Flow for sign-up/sign-in
+- Custom attributes: Role, Country, Company Name
+- App Registration with Power Pages redirect URI
+- Client Secret stored in Power Pages Site Settings (server-side)
+- Authority URL: https://{tenant}.ciamlogin.com/
 
 **Development:**
 - Local dev server: http://localhost:3000
@@ -292,11 +399,13 @@ Redirected to login page
 ## What Makes This Project Unique
 
 1. **Hybrid Architecture:** React SPA hosted on Power Pages (not typical React hosting)
-2. **Power Platform Integration:** Deep integration with Dataverse and Power Pages auth
-3. **Multi-Language from Day 1:** 5 languages supported in MVP
-4. **Clean Separation:** Frontend (React) separate from backend (Dataverse), but deployed together
-5. **PAC CLI Deployment:** Modern deployment method for Power Pages
-6. **Desktop-First:** No mobile complexity in Phase 1
+2. **Entra External ID Integration:** External customer authentication with automatic Contact creation
+3. **Server-Side OAuth:** Power Pages handles OAuth flow server-side (React never sees tokens/secrets)
+4. **Power Platform Integration:** Deep integration with Dataverse and Power Pages session management
+5. **Multi-Language from Day 1:** 5 languages supported in MVP (EN, DA, DE, FR, NL)
+6. **Clean Separation:** Frontend (React) separate from backend (Dataverse), but deployed together
+7. **PAC CLI Deployment:** Modern deployment method for Power Pages
+8. **Desktop-First:** No mobile complexity in Phase 1
 
 ## Developer Experience Goals
 
@@ -312,6 +421,9 @@ Redirected to login page
 
 ## Common Pitfalls to Avoid
 
+❌ **Don't** try to implement custom login forms (use Entra External ID redirect)  
+❌ **Don't** manually create Contact records (Power Pages does this automatically)  
+❌ **Don't** handle OAuth tokens in React (Power Pages manages this server-side)  
 ❌ **Don't** make direct Dataverse calls without proxy (CORS issues)  
 ❌ **Don't** hardcode strings (must use i18n)  
 ❌ **Don't** forget loading/error states  
@@ -320,13 +432,16 @@ Redirected to login page
 ❌ **Don't** skip error boundaries  
 ❌ **Don't** forget to handle session expiration  
 
+✅ **Do** redirect to /signin and /register (Power Pages handles the rest)  
+✅ **Do** trust Power Pages to create Contacts and External Identities  
+✅ **Do** use session cookies (automatic via credentials: 'include')  
 ✅ **Do** use proxy configuration for local dev  
 ✅ **Do** translate every user-facing string  
 ✅ **Do** show loading indicators  
-✅ **Do** use session cookies (automatic)  
 ✅ **Do** fix TypeScript errors immediately  
 ✅ **Do** implement error boundaries  
-✅ **Do** redirect to login on 401  
+✅ **Do** redirect to /login on 401  
+✅ **Do** set Entra External ID as default provider for seamless UX  
 
 ## Expected User Flow in Production
 
@@ -341,38 +456,219 @@ Day 30: User comfortable with portal → Provides positive feedback → Requests
 ## Development Workflow
 
 ```
-Module 1: Setup (2 days)
+Prerequisites: Entra External ID setup (by infrastructure team)
     ↓
-Module 2: Auth (2 days)
+Module 1: Foundation Setup (1 day)
+    - Project structure
+    - TypeScript configuration
+    - MUI theme setup
+    - Routing skeleton
     ↓
-Module 3: Dataverse (2 days)
+Module 2: Entra External ID Authentication (1 day)
+    - Login page (redirect to /signin)
+    - Register page (redirect to /register)
+    - AuthContext for session management
+    - Protected routes
+    - Logout functionality
     ↓
-Module 4: Document List (3 days)
+Module 3: Dataverse Integration (2 days)
+    - API service layer
+    - Session check endpoint
+    - Contact fetching
+    - Error handling
     ↓
-Module 5: i18n (1 day)
+Module 4: Document List with MUI DataGrid (2-3 days)
+    - Documents page
+    - MUI DataGrid implementation
+    - Sorting, filtering, pagination
+    - Search functionality
     ↓
-Module 6: Download & Profile (1 day)
+Module 5: Multi-Language Support (1 day)
+    - i18next setup
+    - Translation files (EN, DA, DE, FR, NL)
+    - Language switcher
+    - Locale-aware formatting
     ↓
-Module 7: Deploy (2 days)
+Module 6: Download & User Profile (1 day)
+    - Download service
+    - Profile page
+    - User menu
+    - Toast notifications
     ↓
-Total: 13 days to production
+Module 7: Deployment & Polish (1-2 days)
+    - Production build
+    - PAC CLI deployment
+    - Error boundaries
+    - Loading states
+    - Final testing
+    ↓
+Total: 9-11 days to production (vs 13 days with local auth)
 ```
+
+**Note:** Using Entra External ID with redirect approach is actually FASTER than custom authentication because Contact creation is automatic!
+
+---
+
+## Authentication Flow Diagram
+
+### How Entra External ID + Power Pages Works
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    REGISTRATION FLOW                             │
+└─────────────────────────────────────────────────────────────────┘
+
+React SPA (/login or /documents while unauthenticated)
+    │
+    │ User clicks "Create Account"
+    ↓
+window.location.href = '/register'
+    │
+    ↓
+Power Pages /register endpoint
+    │
+    │ Configured with Entra External ID
+    ↓
+Redirect to Entra External ID User Flow
+    │
+    │ User fills registration form:
+    │ - Email, Password, Name, Country, Role
+    ↓
+User submits → Entra External ID creates user
+    │
+    ↓
+Redirect to Power Pages /signin-oidc (with auth code)
+    │
+    │ Power Pages exchanges code for tokens (server-side)
+    │ Uses Client Secret (never exposed to browser)
+    ↓
+Power Pages AUTOMATICALLY:
+    │
+    ├─ Creates Contact record in Dataverse
+    ├─ Creates External Identity (adx_externalidentity)
+    ├─ Links External Identity to Contact
+    ├─ Maps claims to Contact fields (firstname, email, etc.)
+    └─ Creates HTTP-only session cookie
+    │
+    ↓
+Power Pages redirects to /documents
+    │
+    ↓
+React SPA (/documents)
+    │
+    │ Session cookie automatically included
+    │ User is authenticated!
+    ↓
+fetch('/_api/contacts', { credentials: 'include' })
+    │
+    ↓
+Returns user's Contact data → Display in app
+
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      LOGIN FLOW                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+React SPA
+    │
+    │ User not authenticated
+    ↓
+window.location.href = '/login'
+    │
+    ↓
+Power Pages /login endpoint
+    │
+    │ Entra External ID set as DEFAULT provider
+    │ (Skip sign-in page, go straight to Entra)
+    ↓
+Automatic redirect to Entra External ID
+    │
+    │ User enters email & password
+    ↓
+Entra External ID validates credentials
+    │
+    ↓
+Redirect to Power Pages /signin-oidc
+    │
+    │ Power Pages:
+    │ - Validates token
+    │ - Finds Contact via External Identity
+    │ - Creates session cookie
+    ↓
+Power Pages redirects to /documents
+    │
+    ↓
+React SPA authenticated!
+
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   API CALL FLOW                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+React SPA
+    │
+fetch('/_api/contacts', { credentials: 'include' })
+    │
+    │ Browser includes session cookie automatically
+    ↓
+Power Pages Web API
+    │
+    │ Validates session cookie
+    │ Identifies Contact from session
+    ↓
+Dataverse
+    │
+    │ Executes query with Contact security context
+    ↓
+Returns data
+    │
+    ↓
+Power Pages → React SPA
+    │
+    │ Response: { value: [ {...contact data} ] }
+    ↓
+React renders user data
+```
+
+**Key Points:**
+- ✅ React NEVER handles OAuth tokens or secrets
+- ✅ Power Pages manages OAuth server-side with Client Secret
+- ✅ Contact creation is AUTOMATIC (zero code needed)
+- ✅ Session managed via HTTP-only cookie (secure)
+- ✅ User barely notices redirect (5 seconds) when Entra set as default
 
 ---
 
 ## Quick Reference for Claude Code
 
 **When starting each module, remember:**
-- Read style guidelines FIRST (Module 1)
+- Entra External ID config is a PREREQUISITE (must be done by infrastructure team first)
+- Read Module 2 (Authentication) FIRST - it explains the redirect approach
+- Authentication is just redirects - NO custom forms, NO MSAL.js, NO token handling
+- Contact creation is AUTOMATIC - never try to create Contacts manually
 - Every component needs TypeScript types
 - Every user-facing string needs t('key')
-- Every API call needs try/catch
+- Every API call needs try/catch and credentials: 'include'
 - Every async operation needs loading state
 - Test in browser after each component
 - Check console for errors constantly
 - Commit working code frequently
 
+**Critical Authentication Rules:**
+- Login: `window.location.href = '/signin'` (that's it!)
+- Register: `window.location.href = '/register'` (that's it!)
+- Logout: `POST /Account/Login/LogOff` then redirect to /login
+- Session check: `fetch('/_api/contacts', { credentials: 'include' })`
+- Protected routes: Check session, redirect to /login if 401
+- NEVER implement custom login forms
+- NEVER try to handle OAuth manually
+- NEVER create Contact records manually
+
 **The happy path should always work:**
-Register → Login → Browse → Filter → Download → Change Language → Profile → Logout
+Register → Redirects to Entra → Auto-creates Contact → Redirects back → 
+Login → Redirects to Entra → Redirects back → 
+Browse → Filter → Download → Change Language → Profile → Logout
 
 If any step breaks, fix it before moving to the next module.
