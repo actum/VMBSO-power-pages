@@ -85,8 +85,10 @@ export const authService = {
   },
 
   /**
-   * Check if user has an active session and get current user
-   * @returns Current user or null if not authenticated
+   * Check if user has an active session and get current user.
+   * Power Pages Web API automatically scopes /_api/contacts to the
+   * authenticated user's own Contact record — no filter needed.
+   * @returns Current user Contact or null if not authenticated
    */
   checkSession: async (): Promise<Contact | null> => {
     if (IS_DEV_MODE) {
@@ -95,8 +97,25 @@ export const authService = {
     }
 
     try {
-      // Use the Web API to get current contact
-      const response = await fetch('/_api/contacts?$filter=contactid eq @current_user&$select=contactid,firstname,lastname,emailaddress1,fullname,createdon', {
+      const select = [
+        'contactid',
+        'firstname',
+        'lastname',
+        'emailaddress1',
+        'fullname',
+        'createdon',
+        'actum_language',
+        'actum_phone',
+        'actum_companyname',
+        'actum_vat',
+        'actum_primarycountry',
+        'actum_companyphone',
+        'actum_address',
+        'actum_role',
+        'actum_brand',
+      ].join(',');
+
+      const response = await fetch(`/_api/contacts?$select=${select}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -106,30 +125,34 @@ export const authService = {
         credentials: 'include',
       });
 
+      // 401/403 means no active session — not an error, just unauthenticated
+      if (response.status === 401 || response.status === 403) {
+        return null;
+      }
+
       if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          return null; // Not authenticated
-        }
-        throw new Error('Session check failed');
+        throw new Error(`Session check failed: ${response.status}`);
       }
 
       const data = await response.json();
 
-      // Return the current user's contact
       if (data.value && data.value.length > 0) {
         return data.value[0] as Contact;
       }
 
-      throw new Error('Empty Session data');
+      // Authenticated but no Contact found (shouldn't happen in normal flow)
+      console.warn('Session active but no Contact record found');
+      return null;
     } catch (error) {
       console.error('Session check error:', error);
-      throw error as Error;
+      return null;
     }
   },
 
   /**
-   * Update profile fields on the contact record.
-   * Returns the updated Contact object.
+   * Update profile fields on the contact record via Dataverse Web API.
+   * Uses PATCH /_api/contacts({id}) — standard OData update.
+   * Returns the refreshed Contact object after a successful save.
    */
   updateProfile: async (fields: Partial<Contact>): Promise<Contact> => {
     if (IS_DEV_MODE) {
@@ -141,32 +164,33 @@ export const authService = {
       return updated as Contact;
     }
 
-    const contactId = fields.contactid;
-    if (!contactId) {
+    const { contactid, ...updateFields } = fields;
+    if (!contactid) {
       throw new Error('Missing contact ID for profile update');
     }
 
-    const body: any = { ...fields };
-
-    // TODO: swap this for working api
-    const response = await fetch(`/_api/update-contact`, {
+    const response = await fetch(`/_api/contacts(${contactid})`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'OData-MaxVersion': '4.0',
         'OData-Version': '4.0',
+        'If-Match': '*', // Required by Dataverse — prevents accidental create
       },
-      body: JSON.stringify(body),
+      credentials: 'include',
+      body: JSON.stringify(updateFields),
     });
 
+    // Dataverse PATCH returns 204 No Content on success
     if (!response.ok) {
-      throw new Error('Profile update failed');
+      const errorText = await response.text().catch(() => '');
+      throw new Error(`Profile update failed (${response.status}): ${errorText}`);
     }
 
-    // Refresh user info from server
+    // Re-fetch session to return the updated Contact with all fields
     const updatedUser = await authService.checkSession();
     if (!updatedUser) {
-      throw new Error('Unable to fetch updated user');
+      throw new Error('Unable to fetch updated user after profile save');
     }
     return updatedUser;
   },

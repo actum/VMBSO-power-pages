@@ -1,0 +1,6 @@
+adx_webpageaccesscontrolrule_webrole:
+- 6d111430-f5a2-4ce1-99b4-cf42cf7d40e9
+id: 22ddc9f5-b286-4ed9-adfa-29eb3ddfeb82
+name: Grant Change to Administrators
+right: 1
+webpageid: de7b1146-376b-45f5-84be-809ef4d3038d
