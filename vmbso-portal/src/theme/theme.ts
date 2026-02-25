@@ -162,6 +162,17 @@ const theme = createTheme({
   },
   
   components: {
+
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          '&.MuiMenuItem-root:hover': {
+            backgroundColor: "rgba(0, 144, 178, 0.14)",
+          }
+        }
+      }
+    },
+
     MuiButton: {
       styleOverrides: {
         root: {

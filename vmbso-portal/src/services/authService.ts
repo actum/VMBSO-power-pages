@@ -40,10 +40,10 @@ export const authService = {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return;
     }
-    
+
     // Store registration data to pre-fill the form
     sessionStorage.setItem('registration_data', JSON.stringify(data));
-    
+
     // Redirect to Power Pages registration page
     const returnUrl = encodeURIComponent(window.location.pathname);
     window.location.href = `/register?returnUrl=${returnUrl}`;
@@ -93,7 +93,7 @@ export const authService = {
       const user = localStorage.getItem('dev_user');
       return user ? JSON.parse(user) : null;
     }
-    
+
     try {
       // Use the Web API to get current contact
       const response = await fetch('/_api/contacts?$filter=contactid eq @current_user&$select=contactid,firstname,lastname,emailaddress1,fullname,createdon', {
@@ -114,16 +114,60 @@ export const authService = {
       }
 
       const data = await response.json();
-      
+
       // Return the current user's contact
       if (data.value && data.value.length > 0) {
         return data.value[0] as Contact;
       }
 
-      return null;
+      throw new Error('Empty Session data');
     } catch (error) {
       console.error('Session check error:', error);
-      return null;
+      throw error as Error;
     }
+  },
+
+  /**
+   * Update profile fields on the contact record.
+   * Returns the updated Contact object.
+   */
+  updateProfile: async (fields: Partial<Contact>): Promise<Contact> => {
+    if (IS_DEV_MODE) {
+      console.log('DEV MODE: Mock profile update', fields);
+      const userStr = localStorage.getItem('dev_user');
+      const user = userStr ? JSON.parse(userStr) : {};
+      const updated = { ...user, ...fields };
+      localStorage.setItem('dev_user', JSON.stringify(updated));
+      return updated as Contact;
+    }
+
+    const contactId = fields.contactid;
+    if (!contactId) {
+      throw new Error('Missing contact ID for profile update');
+    }
+
+    const body: any = { ...fields };
+
+    // TODO: swap this for working api
+    const response = await fetch(`/_api/update-contact`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'OData-MaxVersion': '4.0',
+        'OData-Version': '4.0',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error('Profile update failed');
+    }
+
+    // Refresh user info from server
+    const updatedUser = await authService.checkSession();
+    if (!updatedUser) {
+      throw new Error('Unable to fetch updated user');
+    }
+    return updatedUser;
   },
 };

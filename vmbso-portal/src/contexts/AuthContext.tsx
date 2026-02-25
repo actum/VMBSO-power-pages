@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 interface AuthContextType {
   currentUser: Contact | null;
   isAuthenticated: boolean;
+  isProfileComplete: boolean;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -15,6 +16,19 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// required fields selectors
+const requiredFields: Array<keyof Contact> = [
+  "actum_language",
+  "actum_companyname",
+  "actum_vat",
+  "actum_primarycountry",
+  "actum_companyphone",
+  "actum_phone",
+  "actum_address",
+  "actum_role",
+  "actum_brand",
+];
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -27,7 +41,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = currentUser !== null;
 
-  // Check session on mount
+  const isProfileComplete = React.useMemo(() => {
+    if (!currentUser) return false;
+    return requiredFields.every(key => {
+      const value = currentUser[key];
+      return value && value.toString().trim().length > 0;
+    });
+  }, [currentUser]);
+
   useEffect(() => {
     checkSession();
   }, []);
@@ -36,6 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       const user = await authService.checkSession();
+
       setCurrentUser(user);
     } catch (error) {
       console.error('Session check failed:', error);
@@ -43,18 +65,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
+
   };
 
   const login = async (username: string, password: string) => {
     try {
       setLoading(true);
       await authService.login(username, password);
-      
-      // After successful login, fetch user data
+
       const user = await authService.checkSession();
+
       setCurrentUser(user);
-      
+
       toast.success('Login successful!');
+
       navigate('/documents');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
@@ -69,15 +93,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       await authService.logout();
-      setCurrentUser(null);
       toast.success('Logged out successfully');
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      // Clear user even if logout fails
-      setCurrentUser(null);
       navigate('/login');
     } finally {
+      // Clear user even if logout fails
+      setCurrentUser(null);
       setLoading(false);
     }
   };
@@ -105,6 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     currentUser,
     isAuthenticated,
+    isProfileComplete,
     loading,
     login,
     logout,
