@@ -1,46 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
   Typography,
-  TextField,
   Button,
   Box,
-  Link,
-  Alert,
-  CircularProgress,
   Grid,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
 export const Login: React.FC = () => {
-  const { login, loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const handleSignIn = () => {
+    window.location.href = '/signin';
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    // Validation
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
-
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-
-    try {
-      await login(email, password);
-    } catch (err) {
-      // Error is already handled in AuthContext with toast
-      setError('Login failed. Please check your credentials.');
-    }
+  const handleRegister = () => {
+    window.location.href = '/register';
   };
 
   return (
@@ -53,7 +27,7 @@ export const Login: React.FC = () => {
     >
       <Container maxWidth="lg" sx={{ my: 'auto' }}>
         <Grid container spacing={0} sx={{ minHeight: '600px' }}>
-          {/* Left side - Form */}
+          {/* Left side - Actions */}
           <Grid item xs={12} md={6}>
             <Paper
               sx={{
@@ -81,117 +55,21 @@ export const Login: React.FC = () => {
                 Bienvenue ! Identifiez-vous pour consulter les documents qui vous sont dédiés.
               </Typography>
 
-              {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
-                  {error}
-                </Alert>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      mb: 0.5,
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'text.primary',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    EMAIL *
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                    autoFocus
-                    disabled={loading}
-                    placeholder="email@email.com"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#f5f5f5',
-                        '& fieldset': {
-                          borderColor: '#e0e0e0',
-                        },
-                      },
-                    }}
-                  />
-                </Box>
-
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      mb: 0.5,
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'text.primary',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    MOT DE PASSE *
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                    disabled={loading}
-                    placeholder="******"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#f5f5f5',
-                        '& fieldset': {
-                          borderColor: '#e0e0e0',
-                        },
-                      },
-                    }}
-                  />
-                </Box>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={loading}
-                  sx={{
-                    mt: 3,
-                    mb: 1,
-                    py: 2,
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                    minHeight: '56px',
-                  }}
-                >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Identifiez-vous'}
-                </Button>
-
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Link
-                    href="#"
-                    sx={{
-                      color: 'primary.main',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem',
-                      '&:hover': {
-                        textDecoration: 'underline',
-                      },
-                    }}
-                  >
-                    Mot de passe oublié ?
-                  </Link>
-                </Box>
-              </form>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={handleSignIn}
+                sx={{
+                  py: 2,
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  minHeight: '56px',
+                }}
+              >
+                Identifiez-vous
+              </Button>
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
@@ -201,9 +79,8 @@ export const Login: React.FC = () => {
                   Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
                 </Typography>
                 <Button
-                  component={RouterLink}
-                  to="/register"
                   variant="outlined"
+                  onClick={handleRegister}
                   sx={{
                     textTransform: 'none',
                     fontWeight: 500,
@@ -246,3 +123,4 @@ export const Login: React.FC = () => {
     </Box>
   );
 };
+

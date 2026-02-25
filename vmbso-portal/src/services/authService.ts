@@ -6,21 +6,12 @@ interface RegisterData {
   emailaddress1: string;
   password: string;
   confirmPassword: string;
-  // TODO: Add custom fields when Dataverse schema is confirmed
-  // actum_country?: string;
-  // actum_role?: string;
-}
-
-interface LoginData {
-  username: string;
-  password: string;
 }
 
 const IS_DEV_MODE = process.env.REACT_APP_DEV_MODE === 'true';
-const PORTAL_URL = process.env.REACT_APP_PORTAL_URL || window.location.origin;
 
 // Mock user for development
-const MOCK_USER = {
+const MOCK_USER: Contact = {
   contactid: 'dev-user-123',
   firstname: 'John',
   lastname: 'Doe',
@@ -71,17 +62,20 @@ export const authService = {
   },
 
   /**
-   * Logout current user
+   * Logout current user.
+   * Federated logout clears both the Power Pages session and the Entra External ID session.
+   * Page navigates away — no return value needed.
    */
-  logout: async (): Promise<void> => {
+  logout: (): void => {
     if (IS_DEV_MODE) {
       console.log('DEV MODE: Mock logout');
       localStorage.removeItem('dev_user');
+      window.location.href = '/login';
       return;
     }
-    
-    // Redirect to Power Pages sign-out endpoint
-    window.location.href = '/account/login/logout';
+
+    // Federated logout: clears both Power Pages session and Entra External ID session
+    window.location.href = '/Account/Login/LogOff?federated=true';
   },
 
   /**
