@@ -1,40 +1,7 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { colors } from "./colors"; 
 
-// VMBSO Design Specifications
-// Based on vmbso-design-specs.md
-
-// Color Palette
-const colors = {
-  // Primary Colors - Based on VMBSO Brand
-  primaryTeal: '#0090b2',
-  primaryTealDark: '#007a95',
-  primaryTealLight: '#33a6c5',
-  primaryWhite: '#ffffff',
-  primaryOffWhite: '#f8f9fa',
-  
-  // Secondary Colors
-  zincGray: '#8b95a0',
-  zincLight: '#b8c0c8',
-  copperBronze: '#b87333',
-  epdmBlack: '#2b2b2b',
-  metalSilver: '#c0c0c0',
-  
-  // Text Colors
-  textPrimary: '#333333',
-  textSecondary: '#666666',
-  textLight: '#999999',
-  textOnDark: '#ffffff',
-  
-  // Utility Colors
-  borderColor: '#e0e0e0',
-  shadowColor: 'rgba(0,0,0,0.1)',
-  hoverBlue: '#3a7fa8',
-  successGreen: '#4a7c59',
-};
-
-// Typography - using Inter font family
-const typography: ThemeOptions['typography'] = {
-  fontFamily: [
+const baseFontFamily = [
     'Inter',
     'Roboto',
     'Open Sans',
@@ -44,69 +11,81 @@ const typography: ThemeOptions['typography'] = {
     'Helvetica Neue',
     'Arial',
     'sans-serif',
-  ].join(','),
-  
+  ].join(',');
+  const baseFontFamilyWithGrotesk = `Ulm Grotesk,${baseFontFamily}`;
+
+// Typography - using Inter font family
+const typography: ThemeOptions['typography'] = {
+  fontFamily: baseFontFamily,
+
   // Font sizes based on design specs
-  fontSize: 16, // base font size
-  
+  fontSize: 10, // base font size
+
   h1: {
-    fontSize: '2.25rem', // 36px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '3.6rem', // 36px
     fontWeight: 700,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
   h2: {
-    fontSize: '1.875rem', // 30px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '3rem', // 30px
     fontWeight: 700,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
   h3: {
-    fontSize: '1.5rem', // 24px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '2.4rem', // 24px
     fontWeight: 600,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
   h4: {
-    fontSize: '1.25rem', // 20px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '2rem', // 20px
     fontWeight: 600,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
   h5: {
-    fontSize: '1.125rem', // 18px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '1.8rem', // 18px
     fontWeight: 600,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
   h6: {
-    fontSize: '1rem', // 16px
+    fontFamily: baseFontFamilyWithGrotesk,
+    fontSize: '1.6rem', // 16px
     fontWeight: 600,
     lineHeight: 1.25,
     color: colors.textPrimary,
   },
-  
+
   body1: {
-    fontSize: '1rem', // 16px
+    fontFamily: baseFontFamily,
+    fontSize: '1.6rem', // 16px
     fontWeight: 400,
     lineHeight: 1.5,
     color: colors.textPrimary,
   },
   body2: {
-    fontSize: '0.875rem', // 14px
+    fontSize: '1.4rem', // 14px
     fontWeight: 400,
     lineHeight: 1.5,
     color: colors.textSecondary,
   },
-  
+
   button: {
-    fontSize: '1rem',
+    fontSize: '1.6rem',
     fontWeight: 500,
     textTransform: 'none', // Don't uppercase buttons
   },
-  
+
   caption: {
-    fontSize: '0.75rem', // 12px
+    fontSize: '1.2rem',
     fontWeight: 400,
     lineHeight: 1.5,
     color: colors.textLight,
@@ -130,10 +109,10 @@ const theme = createTheme({
       contrastText: colors.textOnDark,
     },
     error: {
-      main: '#d32f2f',
+      main: colors.error,
     },
     warning: {
-      main: '#ed6c02',
+      main: colors.warning,
     },
     info: {
       main: colors.primaryTeal,
@@ -152,15 +131,15 @@ const theme = createTheme({
     },
     divider: colors.borderColor,
   },
-  
+
   typography,
-  
+
   spacing: 4, // Base spacing unit (4px)
-  
+
   shape: {
     borderRadius: 4,
   },
-  
+
   components: {
 
     MuiButtonBase: {
@@ -174,18 +153,25 @@ const theme = createTheme({
     },
 
     MuiButton: {
+      defaultProps: {
+        disableFocusRipple: true,
+      },
       styleOverrides: {
         root: {
           borderRadius: 4,
           padding: '8px 24px',
           fontWeight: 500,
           transition: 'all 0.3s ease',
+
+          '&.Mui-focusVisible': {
+            boxShadow: `0 0 0 2px white, 0 0px 10px ${colors.teal}`,
+          }
         },
         contained: {
           boxShadow: 'none',
           '&:hover': {
-            boxShadow: `0 2px 4px ${colors.shadowColor}`,
-            backgroundColor: colors.primaryTealDark,
+            boxShadow: `0 1px 4px ${colors.shadowColor}`,
+            backgroundColor: colors.black,
           },
         },
         outlined: {
@@ -197,7 +183,18 @@ const theme = createTheme({
         },
       },
     },
-    
+
+    MuiSvgIcon: {
+      styleOverrides: {
+        fontSizeMedium : {
+          fontSize: "1.8rem",
+        },
+        fontSizeLarge : {
+          fontSize: "2.2rem",
+        }
+      }
+    },
+
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -209,7 +206,7 @@ const theme = createTheme({
         },
       },
     },
-    
+
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -219,7 +216,7 @@ const theme = createTheme({
         },
       },
     },
-    
+
     MuiCard: {
       styleOverrides: {
         root: {
@@ -228,7 +225,7 @@ const theme = createTheme({
         },
       },
     },
-    
+
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -242,13 +239,46 @@ const theme = createTheme({
         },
       },
     },
-    
+
     MuiChip: {
       styleOverrides: {
         root: {
           borderRadius: 4,
         },
       },
+    },
+
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Inter, sans-serif',
+          display: 'block',
+          marginBottom: '1rem',
+          fontSize: '1.2rem',
+          fontWeight: 300,
+          color: colors.textPrimary,
+          letterSpacing: '0.05rem',
+        }
+      }
+    },
+
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          border: `1px solid ${colors.grey1}`,
+          borderRadius: 0,
+          backgroundColor: '#f4f4f4',
+          '& fieldset': {
+            borderColor: '#e0e0e0',
+          },
+          '&.Mui-focused': {
+            boxShadow: '0 0 0 3px rgba(0, 144, 178, .35)'
+          }
+        },
+        notchedOutline: {
+          border: 0,
+        }
+      }
     },
   },
 });

@@ -10,6 +10,7 @@ import {
   Alert,
   CircularProgress,
   Grid,
+  InputLabel,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -52,7 +53,7 @@ export const Login: React.FC = () => {
       }}
     >
       <Container maxWidth="lg" sx={{ my: 'auto' }}>
-        <Grid container spacing={0} sx={{ minHeight: '600px' }}>
+        <Grid container spacing={0} sx={{ minHeight: '60rem' }}>
           {/* Left side - Form */}
           <Grid item xs={12} md={6}>
             <Paper
@@ -62,7 +63,7 @@ export const Login: React.FC = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                borderRadius: { xs: '8px', md: '8px 0 0 8px' },
+                borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
               }}
             >
               {/* Logo */}
@@ -70,7 +71,7 @@ export const Login: React.FC = () => {
                 <img
                   src="/images/logo-vmbso.svg"
                   alt="VMBSO"
-                  style={{ height: 40 }}
+                  style={{ height: "2.6rem" }}
                 />
               </Box>
 
@@ -89,19 +90,7 @@ export const Login: React.FC = () => {
 
               <form onSubmit={handleSubmit}>
                 <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      mb: 0.5,
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'text.primary',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    EMAIL *
-                  </Typography>
+                  <InputLabel>EMAIL *</InputLabel>
                   <TextField
                     fullWidth
                     type="email"
@@ -124,19 +113,7 @@ export const Login: React.FC = () => {
                 </Box>
 
                 <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      mb: 0.5,
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: 'text.primary',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    MOT DE PASSE *
-                  </Typography>
+                  <InputLabel>MOT DE PASSE *</InputLabel>
                   <TextField
                     fullWidth
                     type="password"
@@ -170,7 +147,7 @@ export const Login: React.FC = () => {
                     fontSize: '1rem',
                     fontWeight: 500,
                     textTransform: 'none',
-                    minHeight: '56px',
+                    minHeight: '5.6rem',
                   }}
                 >
                   {loading ? <CircularProgress size={24} color="inherit" /> : 'Identifiez-vous'}
@@ -193,7 +170,7 @@ export const Login: React.FC = () => {
                 </Box>
               </form>
 
-              <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e0e0e0' }}>
+              <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
                   Première visite ?
                 </Typography>
@@ -221,7 +198,7 @@ export const Login: React.FC = () => {
               sx={{
                 height: '100%',
                 background: 'linear-gradient(135deg, #5b9bd5 0%, #4a7fa8 100%)',
-                borderRadius: '0 8px 8px 0',
+                borderRadius: '0 0.8rem 0.8rem 0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -235,7 +212,7 @@ export const Login: React.FC = () => {
                   backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  borderRadius: '4px',
+                  borderRadius: '0.4rem',
                   bgcolor: 'rgba(91, 155, 213, 0.3)',
                 }}
               />
