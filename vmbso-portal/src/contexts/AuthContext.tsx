@@ -2,6 +2,16 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Contact } from '../types/contact';
 import { authService } from '../services/authService';
 
+interface RegisterData {
+  firstname: string;
+  lastname: string;
+  emailaddress1: string;
+  password: string;
+  confirmPassword: string;
+  country?: string;
+  role?: string;
+}
+
 interface AuthContextType {
   currentUser: Contact | null;
   isAuthenticated: boolean;
@@ -9,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,6 +85,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setCurrentUser(user);
   };
 
+  const register = async (data: RegisterData) => {
+    await authService.register(data);
+  };
+
   const value: AuthContextType = {
     currentUser,
     isAuthenticated,
@@ -81,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     logout,
     refreshUser,
+    register,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

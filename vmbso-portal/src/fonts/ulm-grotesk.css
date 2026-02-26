@@ -1,0 +1,46 @@
+/**
+ * @license
+ *
+ * Font Family: Ulm Grotesk
+ * Designed by: 
+ * URL: https://www.indiantypefoundry.com/fonts/ulm-grotesk
+ *
+ * Font Styles:
+ *  Ulm Grotesk Light
+ *  Ulm Grotesk Regular
+ *  Ulm Grotesk Medium
+ *  Ulm Grotesk Bold
+ *  Ulm Grotesk Extrabold
+ *
+ * © 2023 Indian Type Foundry
+*/
+
+@font-face {
+  font-family: 'Ulm Grotesk';
+  src: url('./UlmGrotesk-Light.woff2') format('woff2');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Ulm Grotesk';
+  src: url('./UlmGrotesk-Regular.woff2') format('woff2');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Ulm Grotesk';
+  src: url('./UlmGrotesk-Medium.woff2') format('woff2');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Ulm Grotesk';
+  src: url('./UlmGrotesk-Bold.woff2') format('woff2');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Ulm Grotesk';
+  src: url('./UlmGrotesk-Extrabold.woff2') format('woff2');
+  font-weight: 800;
+}
