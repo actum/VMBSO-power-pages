@@ -8,8 +8,6 @@ import {
   Alert,
   MenuItem,
   IconButton,
-  Input,
-  Select,
   InputLabel,
   useTheme,
   useMediaQuery,
@@ -190,6 +188,7 @@ export const UpdateProfile: React.FC = () => {
             <InputLabel>COMPANY ROLE *</InputLabel>
             <TextField
               select
+              aria-label="Company role selector"
               value={values.actum_role || ""}
               onChange={handleChange("actum_role")}
               fullWidth

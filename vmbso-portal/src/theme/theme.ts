@@ -18,9 +18,6 @@ const baseFontFamily = [
 const typography: ThemeOptions['typography'] = {
   fontFamily: baseFontFamily,
 
-  // Font sizes based on design specs
-  fontSize: 10, // base font size
-
   h1: {
     fontFamily: baseFontFamilyWithGrotesk,
     fontSize: '3.6rem', // 36px
@@ -265,11 +262,12 @@ const theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          border: `1px solid ${colors.grey1}`,
+          fontSize: '1.8rem',
+          border: `1px solid ${colors.grey2}`,
           borderRadius: 0,
-          backgroundColor: '#f4f4f4',
+          backgroundColor: colors.grey1,
           '& fieldset': {
-            borderColor: '#e0e0e0',
+            borderColor: colors.grey2,
           },
           '&.Mui-focused': {
             boxShadow: '0 0 0 3px rgba(0, 144, 178, .35)'

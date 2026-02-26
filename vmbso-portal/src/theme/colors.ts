@@ -4,8 +4,9 @@
 
 const baseColors = {
   white: "#ffffff",
-  grey1: "#dad9d9",
-  grey2: "#343333",
+  grey1: "#f4f4f4",
+  grey2: "#dad9d9",
+  grey3: "#343333",
   black: "#000000",
   offWhite: "#f8f9fa",
   teal: "#0090b2",

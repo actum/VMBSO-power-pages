@@ -89,7 +89,7 @@ export const Login: React.FC = () => {
               )}
 
               <form onSubmit={handleSubmit}>
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 5 }}>
                   <InputLabel>EMAIL *</InputLabel>
                   <TextField
                     fullWidth
@@ -101,18 +101,10 @@ export const Login: React.FC = () => {
                     autoFocus
                     disabled={loading}
                     placeholder="email@email.com"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#f5f5f5',
-                        '& fieldset': {
-                          borderColor: '#e0e0e0',
-                        },
-                      },
-                    }}
                   />
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 8 }}>
                   <InputLabel>MOT DE PASSE *</InputLabel>
                   <TextField
                     fullWidth
@@ -123,14 +115,6 @@ export const Login: React.FC = () => {
                     autoComplete="current-password"
                     disabled={loading}
                     placeholder="******"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#f5f5f5',
-                        '& fieldset': {
-                          borderColor: '#e0e0e0',
-                        },
-                      },
-                    }}
                   />
                 </Box>
 
@@ -138,14 +122,8 @@ export const Login: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  size="large"
                   disabled={loading}
                   sx={{
-                    mt: 3,
-                    mb: 1,
-                    py: 2,
-                    fontSize: '1rem',
-                    fontWeight: 500,
                     textTransform: 'none',
                     minHeight: '5.6rem',
                   }}
@@ -153,13 +131,12 @@ export const Login: React.FC = () => {
                   {loading ? <CircularProgress size={24} color="inherit" /> : 'Identifiez-vous'}
                 </Button>
 
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                <Box sx={{ textAlign: 'center', mt: 5 }}>
                   <Link
                     href="#"
                     sx={{
                       color: 'primary.main',
                       textDecoration: 'none',
-                      fontSize: '0.875rem',
                       '&:hover': {
                         textDecoration: 'underline',
                       },
@@ -181,10 +158,6 @@ export const Login: React.FC = () => {
                   component={RouterLink}
                   to="/register"
                   variant="outlined"
-                  sx={{
-                    textTransform: 'none',
-                    fontWeight: 500,
-                  }}
                 >
                   Créer un compte
                 </Button>
