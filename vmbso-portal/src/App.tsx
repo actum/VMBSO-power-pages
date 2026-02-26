@@ -31,35 +31,35 @@ function App() {
       />
       <Router>
         <AuthProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/documents"
-            element={
-              <ProtectedRoute>
-                <Documents />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/update-profile"
-            element={
-              <ProtectedRoute>
-                <UpdateProfile />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected Routes */}
+            <Route
+              path="/documents"
+              element={
+                <ProtectedRoute>
+                  <Documents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/update-profile"
+              element={
+                <ProtectedRoute>
+                  <UpdateProfile />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/documents" replace />} />
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/documents" replace />} />
 
-          {/* 404 Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* 404 Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </AuthProvider>
       </Router>
     </ThemeProvider>

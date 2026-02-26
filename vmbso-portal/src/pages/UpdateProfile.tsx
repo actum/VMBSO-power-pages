@@ -8,6 +8,9 @@ import {
   Alert,
   MenuItem,
   IconButton,
+  InputLabel,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
@@ -20,9 +23,11 @@ import { ContactLanguage } from "../types/auth";
 export const UpdateProfile: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
-  const [values, setValues] = useState<Partial<Contact>>({});
+  const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const languages = useMemo<Record<ContactLanguage, string>>(() => ({
     fr: "France = French only",
@@ -62,35 +67,34 @@ export const UpdateProfile: React.FC = () => {
     }
   };
 
+
   return (
     <Layout>
       <Typography variant="h4" gutterBottom textAlign={"center"}>
         Complete your profile
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: "876px", margin: "auto" }}>
-        {error && <Alert action={<IconButton size="small" onClick={() => setError(null)}><CloseIcon/></IconButton>} severity="error">{error}</Alert>}
-
+      <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: "87.6rem", margin: "auto" }}>
         <Typography variant="h6" sx={{ mt: 2 }}>
           Contact details
         </Typography>
         <Grid container spacing={4} sx={{ mt: 1 }}>
           <Grid item xs={12} sm={6}>
+            <InputLabel>LANGUAGE *</InputLabel>
             <TextField
               select
-              label="Language"
+              required
               aria-label="Language"
               value={values.actum_language || ""}
               onChange={handleChange("actum_language")}
               fullWidth
-              required
             >
               {Object.entries(languages).map(([key, value]) => <MenuItem aria-label={`Set ${value}`} value={key}>{value}</MenuItem>)}
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6} />
           <Grid item xs={12} sm={6}>
+            <InputLabel disabled>EMAIL</InputLabel>
             <TextField
-              label="Email"
               value={values.emailaddress1 || ""}
               onChange={handleChange("emailaddress1")}
               fullWidth
@@ -98,8 +102,8 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>PHONE NUMBER *</InputLabel>
             <TextField
-              label="Phone Number"
               value={values.actum_phone || ""}
               onChange={handleChange("actum_phone")}
               fullWidth
@@ -108,20 +112,13 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
         </Grid>
-        <Box
-          sx={{
-            mt: 4,
-            borderTop: "1px solid #c0c0c0",
-            pt: 2
-          }}
-          />
-        <Typography variant="h6">
+        <Typography mt={{xs: 5, md: 10 }} variant="h6">
           Company details
         </Typography>
         <Grid container spacing={4} sx={{ mt: 1 }}>
           <Grid item xs={12} sm={6}>
+            <InputLabel>COMPANY NAME *</InputLabel>
             <TextField
-              label="Company Name"
               aria-label="Company Name"
               value={values.actum_companyname || ""}
               onChange={handleChange("actum_companyname")}
@@ -130,8 +127,8 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>VAT</InputLabel>
             <TextField
-              label="VAT"
               aria-label="Company VAT"
               value={values.actum_vat || ""}
               onChange={handleChange("actum_vat")}
@@ -140,8 +137,8 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>PRIMARY COUNTRY *</InputLabel>
             <TextField
-              label="Primary Country"
               aria-label="Company primary Country"
               value={values.actum_primarycountry || ""}
               onChange={handleChange("actum_primarycountry")}
@@ -150,8 +147,8 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>PHONE NUMBER *</InputLabel>
             <TextField
-              label="Phone Number"
               aria-label="Company phone Number"
               value={values.actum_companyphone || ""}
               onChange={handleChange("actum_companyphone")}
@@ -161,8 +158,8 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12}>
+            <InputLabel>ADDRESS *</InputLabel>
             <TextField
-              label="Address"
               aria-label="Company address"
               value={values.actum_address || ""}
               onChange={handleChange("actum_address")}
@@ -171,13 +168,12 @@ export const UpdateProfile: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>COMPANY BRAND *</InputLabel>
             <TextField
               select
               SelectProps={{
                 multiple: true,
               }}
-              label="Brand"
-              aria-label="Company brand"
               value={values.actum_brand || [""]}
               onChange={handleChange("actum_brand")}
               fullWidth
@@ -189,10 +185,10 @@ export const UpdateProfile: React.FC = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>COMPANY ROLE *</InputLabel>
             <TextField
               select
-              label="Role"
-              aria-label="Company role"
+              aria-label="Company role selector"
               value={values.actum_role || ""}
               onChange={handleChange("actum_role")}
               fullWidth
@@ -204,8 +200,8 @@ export const UpdateProfile: React.FC = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6}>
+            <InputLabel>COMPANY EMAIL</InputLabel>
             <TextField
-              label="Company Email"
               aria-label="Company email"
               type="email"
               value={values.actum_companyemail || ""}
@@ -215,11 +211,14 @@ export const UpdateProfile: React.FC = () => {
           </Grid>
         </Grid>
 
-        <Box display="flex" justifyContent={"flex-end"} sx={{ mt: 3 }}>
-          <Button type="submit" variant="contained" disabled={updating}>
+        {error && <Alert sx={{ marginTop: "2rem" }} action={<IconButton size="small" onClick={() => setError(null)}><CloseIcon/></IconButton>} severity="error">{error}</Alert>}
+
+        <Box display="flex" justifyContent="flex-end" mt={3}>
+          <Button fullWidth={isMobile} type="submit" variant="contained" disabled={updating}>
             {updating ? "Updating…" : "Update"}
           </Button>
         </Box>
+
       </Box>
     </Layout>
   );

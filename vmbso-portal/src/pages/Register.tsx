@@ -132,7 +132,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   PRÉNOM *
@@ -165,7 +165,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   NOM *
@@ -197,7 +197,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   EMAIL *
@@ -231,7 +231,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   MOT DE PASSE *
@@ -265,7 +265,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   CONFIRMER MOT DE PASSE *
@@ -298,7 +298,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   PAYS
@@ -336,7 +336,7 @@ export const Register: React.FC = () => {
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     color: 'text.primary',
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.05rem',
                   }}
                 >
                   RÔLE
@@ -379,7 +379,7 @@ export const Register: React.FC = () => {
                 fontSize: '1rem',
                 fontWeight: 500,
                 textTransform: 'none',
-                minHeight: '56px',
+                minHeight: '5.6rem',
               }}
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : "S'inscrire"}
