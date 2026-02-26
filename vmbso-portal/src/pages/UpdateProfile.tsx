@@ -27,7 +27,7 @@ export const UpdateProfile: React.FC = () => {
   const languages = useMemo<Record<ContactLanguage, string>>(() => ({
     fr: "France = French only",
     be: "Belgium = French/Dutch",
-  }), [currentUser]);
+  }), []);
 
   useEffect(() => {
     if (currentUser) {

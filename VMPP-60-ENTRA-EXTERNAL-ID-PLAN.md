@@ -90,40 +90,35 @@ Current OData filter `$filter=contactid eq @current_user` is invalid. Power Page
 
 ### Step 3 — Simplify `AuthContext` for redirect-based auth
 **File:** `src/contexts/AuthContext.tsx`  
-**Status:** 🔲 TODO
+**Status:** ✅ DONE
 
-`login()` and `register()` currently run code after `window.location.href = ...` which never executes (page navigates away).
-
-- Remove `login()` and `register()` methods from context and `AuthContextType` interface
-- Keep: `checkSession()`, `logout()`, `refreshUser()`
-- Keep: `currentUser`, `isAuthenticated`, `isProfileComplete`, `loading`
-- `logout()`: redirect to `/Account/Login/LogOff?federated=true` (clears Entra session too)
+- Removed `login()` and `register()` methods (page redirects away, code after never executes)
+- Removed `useNavigate` and `toast` imports (no longer needed)
+- `logout()` is now synchronous — clears client state then calls `authService.logout()` which redirects
+- Kept: `currentUser`, `isAuthenticated`, `isProfileComplete`, `loading`, `logout`, `refreshUser`
+- Also updated `authService.logout()` to use federated logout: `/Account/Login/LogOff?federated=true`
 
 ---
 
 ### Step 4 — Simplify Login page to redirect button
 **File:** `src/pages/Login.tsx`  
-**Status:** 🔲 TODO
+**Status:** ✅ DONE
 
-Remove email/password form. Replace with redirect button.
-
-- Remove form fields and submit handler
-- Primary button: **"Sign In"** → `window.location.href = '/signin'`
-- Secondary link: "First visit?" → `window.location.href = '/register'`
-- Keep VMBSO branding and two-column layout
+- Removed email/password form, validation, and submit handler
+- "Identifiez-vous" button → `window.location.href = '/signin'`
+- "Créer un compte" button → `window.location.href = '/register'`
+- Kept VMBSO two-column layout and French branding
 
 ---
 
 ### Step 5 — Simplify Register page to redirect button
 **File:** `src/pages/Register.tsx`  
-**Status:** 🔲 TODO
+**Status:** ✅ DONE
 
-Remove registration form. Replace with redirect button.
-
-- Remove all form fields and submit handler
-- Primary button: **"Create Account"** → `window.location.href = '/register'`
-- Secondary link: "Already have an account?" → `window.location.href = '/signin'`
-- Add note: "You'll be redirected to create your account securely"
+- Removed full registration form
+- "Créer un compte" button → `window.location.href = '/register'`
+- "Déjà inscrit?" button → `window.location.href = '/signin'`
+- Added note: "Vous serez redirigé vers notre portail sécurisé"
 
 ---
 
