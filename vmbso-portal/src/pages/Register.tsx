@@ -31,7 +31,7 @@ const roles = [
 ];
 
 export const Register: React.FC = () => {
-  const { register, loading } = useAuth();
+  const { loading } = useAuth();
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -82,7 +82,7 @@ export const Register: React.FC = () => {
     }
 
     try {
-      await register(formData);
+      window.location.href = '/register';
     } catch (err) {
       // Error is already handled in AuthContext with toast
       setError('Registration failed. Please try again.');
