@@ -1,5 +1,17 @@
 adx_webfile:
+- RecordId: 671a90b5-c963-491e-b8c3-d86cbf545e5e
+  DisplayName: main.1bd0c2ba.js
+  CheckSum: 
+  IsDeleted: true
 - RecordId: 6c5d9565-7541-4acf-8bca-ed119b6148f1
   DisplayName: main.871dbd57.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: a3555594-b400-4ae1-8f8c-2e2ed91141bc
+  DisplayName: main.7e7d2b5f.css
+  CheckSum: 
+  IsDeleted: true
+- RecordId: d74ca1eb-52bc-4ffb-87fc-a10a512781d1
+  DisplayName: main.38c51649.js
   CheckSum: 
   IsDeleted: true
