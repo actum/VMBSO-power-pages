@@ -1,0 +1,84 @@
+{
+  "title": {
+    "complete_profile": "Vul uw profiel in",
+    "complete_details": "Contactgegevens",
+    "complete_company_details": "Bedrijfsgegevens"
+  },
+
+  "fields": {
+    "companyBrand": {
+      "label": "BEDRIJFSMERK",
+      "validation": "Selecteer minstens één merk",
+      "aria": "Selecteer het merk van uw bedrijf",
+      "options": {
+        "resitrix": "Resitrix",
+        "vmzinc": "VMZINC",
+        "mastersystems": "Mastersystems"
+      }
+    },
+    "language": {
+      "label": "TAAL",
+      "validation": "Taal is verplicht",
+      "aria": "Taal",
+      "options": {
+        "en": "Engels",
+        "fr": "Frankrijk = Alleen Frans",
+        "be-nl": "België = Frans/Nederlands"
+      }
+    },
+    "email": {
+      "label": "E-MAIL"
+    },
+    "phoneNumber": {
+      "label": "TELEFOONNUMMER",
+      "validation": "Telefoonnummer is verplicht"
+    },
+    "companyName": {
+      "label": "BEDRIJFSNAAM",
+      "validation": "Bedrijfsnaam is verplicht",
+      "aria": "Bedrijfsnaam"
+    },
+    "vat": {
+      "label": "BTW",
+      "validation": "BTW-nummer is verplicht",
+      "aria": "BTW van het bedrijf"
+    },
+    "primaryCountry": {
+      "label": "HOOFDLAND",
+      "validation": "Land is verplicht",
+      "aria": "Hoofdland van het bedrijf"
+    },
+    "companyPhone": {
+      "label": "TELEFOONNUMMER",
+      "validation": "Bedrijfstelefoon is verplicht",
+      "aria": "Telefoonnummer van het bedrijf"
+    },
+    "address": {
+      "label": "ADRES",
+      "validation": "Bedrijfsadres is verplicht",
+      "aria": "Adres van het bedrijf"
+    },
+    "companyRole": {
+      "label": "FUNCTIE IN HET BEDRIJF",
+      "validation": "Functie is verplicht",
+      "aria": "Functieselector van het bedrijf"
+    },
+    "companyEmail": {
+      "label": "BEDRIJFS-E-MAIL",
+      "aria": "E-mail van het bedrijf"
+    }
+  },
+  "section": {
+    "contact_details": "Contactgegevens",
+    "company_details": "Bedrijfsgegevens"
+  },
+  "action": {
+    "update": "Bijwerken",
+    "updating": "Bezig met bijwerken…"
+  },
+  "languages": {
+    "en": "Engels",
+    "fr": "Frans",
+    "be-nl": "Nederlands"
+  }
+}

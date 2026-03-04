@@ -255,6 +255,17 @@ const theme = createTheme({
           fontWeight: 300,
           color: colors.textPrimary,
           letterSpacing: '0.05rem',
+
+        },
+      }
+    },
+
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-error': {
+            border: `1px solid ${colors.red}`,
+          }
         }
       }
     },

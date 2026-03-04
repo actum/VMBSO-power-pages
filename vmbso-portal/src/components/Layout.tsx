@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import LanguagePicker from './common/LanguagePicker';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -94,9 +95,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Right side - Language and User Menu */}
           <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
             {/* Language Switcher Placeholder */}
-            <IconButton color="inherit" sx={{ color: 'text.primary' }}>
-              <LanguageIcon />
-            </IconButton>
+            <LanguagePicker />
 
             {/* User Menu */}
             <IconButton
