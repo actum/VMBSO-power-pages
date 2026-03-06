@@ -1,7 +1,7 @@
 {
   "options": {
-    "en": "Engels",
-    "fr": "Frans",
+    "en-US": "Engels",
+    "fr-FR": "Frans",
     "be-NL": "Nederlands"
   }
 }

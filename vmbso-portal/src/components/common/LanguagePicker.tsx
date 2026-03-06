@@ -1,9 +1,12 @@
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const LanguagePicker: React.FC = () => {
   const { t, i18n } = useTranslation("languages");
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const languages = t("options", { returnObjects: true }) as Record<string, string>;
@@ -16,8 +19,12 @@ const LanguagePicker: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleChange = (key: string) => {
-    i18n.changeLanguage(key);
+  const handleChange = (newLangKey: string) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    newSearchParams.set('lang', newLangKey);
+
+    navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
     handleClose();
   };
 

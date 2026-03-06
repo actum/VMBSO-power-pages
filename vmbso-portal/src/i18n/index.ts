@@ -10,11 +10,11 @@ i18n
 .use(LanguageDetector)
 .init({
   resources: {
-    en: enTranslations,
-    fr: frTranslations,
-    be: benlTranslations,
+    "en-US": enTranslations,
+    "fr-FR": frTranslations,
+    "be-NL": benlTranslations,
   },
-  fallbackLng: "en",
+  fallbackLng: "en-US",
 });
 
 export default i18n;
