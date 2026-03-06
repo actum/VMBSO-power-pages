@@ -1,13 +1,12 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {Language as LanguageIcon } from '@mui/icons-material';
 
 const LanguagePicker: React.FC = () => {
-  const { t, i18n } = useTranslation("updateProfile");
+  const { t, i18n } = useTranslation("languages");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const languages = t("fields.language.options", { returnObjects: true }) as Record<string, string>;
+  const languages = t("options", { returnObjects: true }) as Record<string, string>;
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -21,12 +20,12 @@ const LanguagePicker: React.FC = () => {
     i18n.changeLanguage(key);
     handleClose();
   };
+
   return (
     <>
-      <Typography>{t(`languages.${i18n.language}`)}</Typography>
-      <IconButton onClick={handleOpen} color="inherit" sx={{ color: "text.primary" }}>
-        <LanguageIcon />
-      </IconButton>
+      <Button disableRipple size="small" variant="text" onClick={handleOpen}>
+        <Typography variant="body2">{t(`options.${i18n.language}`)}</Typography>
+      </Button>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         {Object.entries(languages).map(([key, value]) => (

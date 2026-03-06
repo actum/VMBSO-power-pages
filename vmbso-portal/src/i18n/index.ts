@@ -1,16 +1,19 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import updateProfileEn from "./locales/updateProfile_en.json";
-import updateProfileFr from "./locales/updateProfile_fr.json";
-import updateProfilebeNl from "./locales/updateProfile_be-nl.json";
+import LanguageDetector from 'i18next-browser-languagedetector';
+import enTranslations from "./locales/en";
+import frTranslations from "./locales/fr";
+import benlTranslations from "./locales/be-NL";
 
-i18n.use(initReactI18next).init({
+i18n
+.use(initReactI18next)
+.use(LanguageDetector)
+.init({
   resources: {
-    en: { updateProfile: updateProfileEn },
-    fr: { updateProfile: updateProfileFr },
-    be: { updateProfile: updateProfilebeNl },
+    en: enTranslations,
+    fr: frTranslations,
+    be: benlTranslations,
   },
-  lng: "en",
   fallbackLng: "en",
 });
 

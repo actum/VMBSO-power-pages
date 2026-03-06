@@ -11,15 +11,18 @@ import {
   CircularProgress,
   Grid,
   InputLabel,
+  useTheme,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export const Login: React.FC = () => {
   const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { t } = useTranslation("login");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +61,7 @@ export const Login: React.FC = () => {
           <Grid item xs={12} md={6}>
             <Paper
               sx={{
-                p: 6,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                p: "3rem",
                 borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
               }}
             >
@@ -76,10 +75,10 @@ export const Login: React.FC = () => {
               </Box>
 
               <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-                Identifiez-vous
+                {t("title")}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                Bienvenue ! Identifiez-vous pour consulter les documents qui vous sont dédiés.
+                {t("subtitle")}
               </Typography>
 
               {error && (
@@ -90,7 +89,7 @@ export const Login: React.FC = () => {
 
               <form onSubmit={handleSubmit}>
                 <Box sx={{ mb: 5 }}>
-                  <InputLabel>EMAIL *</InputLabel>
+                  <InputLabel>{t("fields.email.label")} *</InputLabel>
                   <TextField
                     fullWidth
                     type="email"
@@ -100,12 +99,12 @@ export const Login: React.FC = () => {
                     autoComplete="email"
                     autoFocus
                     disabled={loading}
-                    placeholder="email@email.com"
+                    placeholder={t("fields.email.placeholder")}
                   />
                 </Box>
 
                 <Box sx={{ mb: 8 }}>
-                  <InputLabel>MOT DE PASSE *</InputLabel>
+                  <InputLabel>{t("fields.password.label")} *</InputLabel>
                   <TextField
                     fullWidth
                     type="password"
@@ -123,43 +122,37 @@ export const Login: React.FC = () => {
                   fullWidth
                   variant="contained"
                   disabled={loading}
+                  size="large"
                   sx={{
                     textTransform: 'none',
-                    minHeight: '5.6rem',
                   }}
                 >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Identifiez-vous'}
+                  {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
                 </Button>
 
                 <Box sx={{ textAlign: 'center', mt: 5 }}>
                   <Link
                     href="#"
-                    sx={{
-                      color: 'primary.main',
-                      textDecoration: 'none',
-                      '&:hover': {
-                        textDecoration: 'underline',
-                      },
-                    }}
+                    color="primary"
                   >
-                    Mot de passe oublié ?
+                    {t("actions.forgotPassword")}
                   </Link>
                 </Box>
               </form>
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-                  Première visite ?
+                  {t("firstVisit.title")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
+                  {t("firstVisit.subtitle")}
                 </Typography>
                 <Button
                   component={RouterLink}
                   to="/register"
                   variant="outlined"
                 >
-                  Créer un compte
+                  {t("actions.createAccount")}
                 </Button>
               </Box>
             </Paper>

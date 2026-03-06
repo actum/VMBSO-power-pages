@@ -1,14 +1,13 @@
 {
   "title": {
-    "complete_profile": "Vul uw profiel in",
-    "complete_details": "Contactgegevens",
-    "complete_company_details": "Bedrijfsgegevens"
+    "completeProfile": "Vul uw profiel in",
+    "completeDetails": "Contactgegevens",
+    "completeCompanyDetails": "Bedrijfsgegevens"
   },
 
   "fields": {
     "companyBrand": {
       "label": "BEDRIJFSMERK",
-      "validation": "Selecteer minstens één merk",
       "aria": "Selecteer het merk van uw bedrijf",
       "options": {
         "resitrix": "Resitrix",
@@ -18,49 +17,41 @@
     },
     "language": {
       "label": "TAAL",
-      "validation": "Taal is verplicht",
       "aria": "Taal",
       "options": {
         "en": "Engels",
         "fr": "Frankrijk = Alleen Frans",
-        "be-nl": "België = Frans/Nederlands"
+        "be-NL": "België = Frans/Nederlands"
       }
     },
     "email": {
       "label": "E-MAIL"
     },
     "phoneNumber": {
-      "label": "TELEFOONNUMMER",
-      "validation": "Telefoonnummer is verplicht"
+      "label": "TELEFOONNUMMER"
     },
     "companyName": {
       "label": "BEDRIJFSNAAM",
-      "validation": "Bedrijfsnaam is verplicht",
       "aria": "Bedrijfsnaam"
     },
     "vat": {
       "label": "BTW",
-      "validation": "BTW-nummer is verplicht",
       "aria": "BTW van het bedrijf"
     },
     "primaryCountry": {
       "label": "HOOFDLAND",
-      "validation": "Land is verplicht",
       "aria": "Hoofdland van het bedrijf"
     },
     "companyPhone": {
       "label": "TELEFOONNUMMER",
-      "validation": "Bedrijfstelefoon is verplicht",
       "aria": "Telefoonnummer van het bedrijf"
     },
     "address": {
       "label": "ADRES",
-      "validation": "Bedrijfsadres is verplicht",
       "aria": "Adres van het bedrijf"
     },
     "companyRole": {
       "label": "FUNCTIE IN HET BEDRIJF",
-      "validation": "Functie is verplicht",
       "aria": "Functieselector van het bedrijf"
     },
     "companyEmail": {
@@ -68,17 +59,26 @@
       "aria": "E-mail van het bedrijf"
     }
   },
+
+  "validation": {
+    "language": "Taal is verplicht",
+    "phoneNumber": "Telefoonnummer is verplicht",
+    "companyName": "Bedrijfsnaam is verplicht",
+    "vat": "BTW-nummer is verplicht",
+    "primaryCountry": "Land is verplicht",
+    "companyPhone": "Bedrijfstelefoon is verplicht",
+    "address": "Bedrijfsadres is verplicht",
+    "companyBrand": "Selecteer minstens één merk",
+    "companyRole": "Functie is verplicht"
+  },
+
   "section": {
     "contact_details": "Contactgegevens",
     "company_details": "Bedrijfsgegevens"
   },
+
   "action": {
     "update": "Bijwerken",
     "updating": "Bezig met bijwerken…"
-  },
-  "languages": {
-    "en": "Engels",
-    "fr": "Frans",
-    "be-nl": "Nederlands"
   }
 }

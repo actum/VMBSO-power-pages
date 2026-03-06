@@ -11,6 +11,7 @@ import {
   InputLabel,
   useTheme,
   useMediaQuery,
+  Paper,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
@@ -20,6 +21,18 @@ import { authService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+const reqiredFields = [
+  "actum_language",
+  "actum_phone",
+  "actum_companyname",
+  "actum_primarycountry",
+  "actum_companyphone",
+  "actum_address",
+  "actum_brand",
+  "actum_vat",
+  "actum_role"
+] satisfies (keyof Contact)[];
+
 export const UpdateProfile: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
@@ -27,11 +40,10 @@ export const UpdateProfile: React.FC = () => {
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const { t } = useTranslation("updateProfile");
+  const { t } = useTranslation(["updateProfile", "languages"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const languages = t("fields.language.options", { returnObjects: true }) as Record<string, string>;
+  const languages = t("languages:options", { returnObjects: true }) as Record<string, string>;
 
   useEffect(() => {
     if (currentUser) {
@@ -74,17 +86,23 @@ export const UpdateProfile: React.FC = () => {
     }
   };
 
+  const invalidFields = !reqiredFields.every(key => values[key]);
+
   return (
     <Layout>
       <Box sx={{ maxWidth: "87.6rem" }} mx={{ xs: "1rem", md: "auto" }}>
-        <Typography variant="h2" gutterBottom my={5}>
-          {t("title.complete_profile")}
+        <Typography
+          variant="h2"
+          gutterBottom
+          margin={{ xs: "2rem 0 3rem 2rem", md: "2rem 0 3rem 3rem"}}
+        >
+          {t("title.completeProfile")}
         </Typography>
-        <Box component="form" mt={{ xs: "2rem", md: "8rem" }} noValidate={true} onSubmit={handleSubmit}>
+        <Paper component="form" sx={{ padding: { xs: "2rem", md: "3rem"} }} noValidate={true} onSubmit={handleSubmit}>
           <Typography variant="h6" sx={{ mt: 2 }}>
-            {t("title.complete_details")}
+            {t("title.completeDetails")}
           </Typography>
-          <Grid container spacing={4} sx={{ mt: 1 }}>
+          <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
               <InputLabel error={hasError("actum_language")}>{t("fields.language.label")} *</InputLabel>
               <TextField
@@ -96,12 +114,12 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_language")}
                 onBlur={() => handleBlur("actum_language")}
                 error={hasError("actum_language")}
-                helperText={hasError("actum_language") ? t("fields.language.validation") : " "}
+                helperText={hasError("actum_language") ? t("validation.language") : " "}
               >
-                {Object.entries(languages).map(([key, value]) => <MenuItem value={key}>{value}</MenuItem>)}
+                {Object.entries(languages).map(([key, value]) => <MenuItem value={key}>{t(`updateProfile:fields.language.options.${key}`)}</MenuItem>)}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6} />
+            <Grid item xs={12} sm={6} display={{ xs: "none", md: "initial" }} />
             <Grid item xs={12} sm={6}>
               <InputLabel disabled>{t("fields.email.label")}</InputLabel>
               <TextField
@@ -109,6 +127,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("emailaddress1")}
                 fullWidth
                 disabled
+                helperText=" "
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -121,16 +140,16 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_phone")}
                 onBlur={() => handleBlur("actum_phone")}
                 error={hasError("actum_phone")}
-                helperText={hasError("actum_phone") ? t("fields.phoneNumber.validation") : " "}
+                helperText={hasError("actum_phone") ? t("validation.phoneNumber") : " "}
               />
             </Grid>
           </Grid>
 
-          <Typography mt={{ xs: "2rem", md: "8rem" }} variant="h6">
+          <Typography margin="2rem 0" variant="h6">
             {t("section.company_details")}
           </Typography>
 
-          <Grid container spacing={4} sx={{ mt: 1 }}>
+          <Grid container spacing={{ xs: 2, md: 4}} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
               <InputLabel>{t("fields.companyName.label")} *</InputLabel>
               <TextField
@@ -141,11 +160,11 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_companyname")}
                 onBlur={() => handleBlur("actum_companyname")}
                 error={hasError("actum_companyname")}
-                helperText={hasError("actum_companyname") ? t("fields.companyName.validation") : " "}
+                helperText={hasError("actum_companyname") ? t("validation.companyName") : " "}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.vat.label")}</InputLabel>
+              <InputLabel>{t("fields.vat.label")} *</InputLabel>
               <TextField
                 aria-label={t("fields.vat.aria")}
                 value={values.actum_vat || ""}
@@ -154,7 +173,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_vat")}
                 onBlur={() => handleBlur("actum_vat")}
                 error={hasError("actum_vat")}
-                helperText={hasError("actum_vat") ? t("fields.vat.validation") : " "}
+                helperText={hasError("actum_vat") ? t("validation.vat") : " "}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -167,7 +186,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_primarycountry")}
                 onBlur={() => handleBlur("actum_primarycountry")}
                 error={hasError("actum_primarycountry")}
-                helperText={hasError("actum_primarycountry") ? t("fields.primaryCountry.validation") : " "}
+                helperText={hasError("actum_primarycountry") ? t("validation.primaryCountry") : " "}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -181,7 +200,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_companyphone")}
                 onBlur={() => handleBlur("actum_companyphone")}
                 error={hasError("actum_companyphone")}
-                helperText={hasError("actum_companyphone") ? t("fields.companyPhone.validation") : " "}
+                helperText={hasError("actum_companyphone") ? t("validation.companyPhone") : " "}
               />
             </Grid>
             <Grid item xs={12}>
@@ -194,7 +213,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_address")}
                 onBlur={() => handleBlur("actum_address")}
                 error={hasError("actum_address")}
-                helperText={hasError("actum_address") ? t("fields.address.validation") : " "}
+                helperText={hasError("actum_address") ? t("validation.address") : " "}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -209,7 +228,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_brand")}
                 onBlur={() => handleBlur("actum_brand")}
                 error={hasError("actum_brand")}
-                helperText={hasError("actum_brand") ? t("fields.companyBrand.validation") : " "}
+                helperText={hasError("actum_brand") ? t("validation.companyBrand") : " "}
               >
                 {Object.entries(t("fields.companyBrand.options", { returnObjects: true }) as Record<string, string>).map(([key, value]) => (
                   <MenuItem key={key} value={key}>{value}</MenuItem>
@@ -227,7 +246,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_role")}
                 onBlur={() => handleBlur("actum_role")}
                 error={hasError("actum_role")}
-                helperText={hasError("actum_role") ? t("fields.companyRole.validation") : " "}
+                helperText={hasError("actum_role") ? t("validation.companyRole") : " "}
               >
                 <MenuItem value="Distributor">Distributor</MenuItem>
                 <MenuItem value="Architect">Architect</MenuItem>
@@ -256,13 +275,13 @@ export const UpdateProfile: React.FC = () => {
             </Alert>
           )}
 
-          <Box display="flex" justifyContent="flex-end" mt={3}>
-            <Button fullWidth={isMobile} type="submit" variant="contained" disabled={updating}>
-              {updating ? t("action.updating") : t("action.update")}
+          <Box display="flex" justifyContent="flex-end" mt="5rem">
+            <Button fullWidth={isMobile} size={isMobile ? "large" : "medium"} type="submit" variant="contained" disabled={updating || invalidFields}>
+              {!invalidFields && updating ? t("action.updating") : t("action.update")}
             </Button>
           </Box>
 
-        </Box>
+        </Paper>
       </Box>
     </Layout>
   );

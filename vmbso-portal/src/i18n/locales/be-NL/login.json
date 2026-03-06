@@ -1,0 +1,25 @@
+{
+  "title": "Inloggen",
+  "subtitle": "Welkom! Meld u aan om uw documenten te raadplegen.",
+
+  "firstVisit": {
+    "title": "Eerste bezoek?",
+    "subtitle": "Deze ruimte is voorbehouden aan VMZINC-verdelers. Dien een aanvraag in om toegang te krijgen tot uw documenten."
+  },
+
+  "fields": {
+    "email": {
+      "label": "E-MAIL",
+      "placeholder": "email@email.be"
+    },
+    "password": {
+      "label": "WACHTWOORD"
+    }
+  },
+
+  "actions": {
+    "login": "Inloggen",
+    "updating": "Bezig met bijwerken…",
+    "createAccount": "Account aanmaken"
+  }
+}

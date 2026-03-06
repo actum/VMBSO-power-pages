@@ -14,24 +14,11 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-
-// Mock data - will be replaced with actual Dataverse data later
-const countries = [
-  { value: 'DK', label: 'Denmark' },
-  { value: 'FR', label: 'France' },
-  { value: 'DE', label: 'Germany' },
-  { value: 'NL', label: 'Netherlands' },
-  { value: 'BE', label: 'Belgium' },
-];
-
-const roles = [
-  { value: 'architect', label: 'Architect' },
-  { value: 'distributor', label: 'Distributor' },
-  { value: 'installer', label: 'Installer' },
-];
+import { useTranslation } from 'react-i18next';
 
 export const Register: React.FC = () => {
   const { register, loading } = useAuth();
+  const { t } = useTranslation("register");
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -42,6 +29,20 @@ export const Register: React.FC = () => {
     role: '',
   });
   const [error, setError] = useState('');
+
+  const countries = [
+    { value: 'DK', label: t("options.countries.DK") },
+    { value: 'FR', label: t("options.countries.FR") },
+    { value: 'DE', label: t("options.countries.DE") },
+    { value: 'NL', label: t("options.countries.NL") },
+    { value: 'BE', label: t("options.countries.BE") },
+  ];
+
+  const roles = [
+    { value: 'architect', label: t("options.roles.architect") },
+    { value: 'distributor', label: t("options.roles.distributor") },
+    { value: 'installer', label: t("options.roles.installer") },
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -62,22 +63,22 @@ export const Register: React.FC = () => {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      setError('Please fill in all required fields');
+      setError(t("validation.allFieldsRequired"));
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.emailaddress1)) {
-      setError('Please enter a valid email address');
+      setError(t("validation.invalidEmail"));
       return;
     }
 
     if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
+      setError(t("validation.passwordTooShort"));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(t("validation.passwordMismatch"));
       return;
     }
 
@@ -85,7 +86,7 @@ export const Register: React.FC = () => {
       await register(formData);
     } catch (err) {
       // Error is already handled in AuthContext with toast
-      setError('Registration failed. Please try again.');
+      setError(t("errors.registrationFailed"));
     }
   };
 
@@ -109,10 +110,10 @@ export const Register: React.FC = () => {
           </Box>
 
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-            Première visite ?
+            {t("title")}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-            Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
+            {t("subtitle")}
           </Typography>
 
           {error && (
@@ -135,7 +136,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  PRÉNOM *
+                  {t("fields.firstName.label")} *
                 </Typography>
                 <TextField
                   fullWidth
@@ -168,7 +169,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  NOM *
+                  {t("fields.lastName.label")} *
                 </Typography>
                 <TextField
                   fullWidth
@@ -200,7 +201,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  EMAIL *
+                  {t("fields.email.label")} *
                 </Typography>
                 <TextField
                   fullWidth
@@ -210,7 +211,7 @@ export const Register: React.FC = () => {
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  placeholder="email@email.com"
+                  placeholder={t("fields.email.placeholder")}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: '#f5f5f5',
@@ -234,7 +235,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  MOT DE PASSE *
+                  {t("fields.password.label")} *
                 </Typography>
                 <TextField
                   fullWidth
@@ -244,7 +245,7 @@ export const Register: React.FC = () => {
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  helperText="Minimum 8 caractères"
+                  helperText={t("fields.password.helper")}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: '#f5f5f5',
@@ -268,7 +269,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  CONFIRMER MOT DE PASSE *
+                  {t("fields.confirmPassword.label")} *
                 </Typography>
                 <TextField
                   fullWidth
@@ -301,7 +302,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  PAYS
+                  {t("fields.country.label")}
                 </Typography>
                 <TextField
                   fullWidth
@@ -339,7 +340,7 @@ export const Register: React.FC = () => {
                     letterSpacing: '0.05rem',
                   }}
                 >
-                  RÔLE
+                  {t("fields.role.label")}
                 </Typography>
                 <TextField
                   fullWidth
@@ -370,35 +371,21 @@ export const Register: React.FC = () => {
               type="submit"
               fullWidth
               variant="contained"
-              size="large"
               disabled={loading}
-              sx={{
-                mt: 4,
-                mb: 2,
-                py: 2,
-                fontSize: '1rem',
-                fontWeight: 500,
-                textTransform: 'none',
-                minHeight: '5.6rem',
-              }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "S'inscrire"}
+              {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.register")}
             </Button>
 
             <Box sx={{ textAlign: 'center', mt: 2 }}>
               <Link
                 component={RouterLink}
                 to="/login"
+                color="primary"
                 sx={{
-                  color: 'primary.main',
-                  textDecoration: 'none',
                   fontSize: '0.875rem',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
                 }}
               >
-                Déjà inscrit ? Identifiez-vous
+                {t("actions.alreadyRegistered")}
               </Link>
             </Box>
           </form>
