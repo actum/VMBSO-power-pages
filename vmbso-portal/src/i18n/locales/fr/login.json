@@ -17,6 +17,11 @@
     }
   },
 
+  "validation": {
+    "email": "Veuillez entrer votre email",
+    "password": "Veuillez entrer votre mot de passe"
+  },
+
   "actions": {
     "login": "Identifiez-vous",
     "updating": "Bezig met bijwerken…",

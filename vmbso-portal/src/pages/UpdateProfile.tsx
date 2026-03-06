@@ -20,6 +20,7 @@ import { Contact } from "../types/contact";
 import { authService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import InputLabelField from "../components/common/ui/InputLabelField";
 
 const reqiredFields = [
   "actum_language",
@@ -39,7 +40,6 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const { t } = useTranslation(["updateProfile", "languages"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -55,14 +55,6 @@ export const UpdateProfile: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setValues(prev => ({ ...prev, [field]: e.target.value }));
-  };
-
-  const handleBlur = (field: string) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-  };
-
-  const hasError = (field: keyof Contact) => {
-    return touched[field] && !values[field];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,25 +96,23 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
           <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
-              <InputLabel error={hasError("actum_language")}>{t("fields.language.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
                 select
+                label={t("fields.language.label")}
                 aria-label={t("fields.language.aria")}
                 value={values.actum_language || ""}
                 fullWidth
                 required
                 onChange={handleChange("actum_language")}
-                onBlur={() => handleBlur("actum_language")}
-                error={hasError("actum_language")}
-                helperText={hasError("actum_language") ? t("validation.language") : " "}
+                error={t("validation.language")}
               >
                 {Object.entries(languages).map(([key, value]) => <MenuItem value={key}>{t(`updateProfile:fields.language.options.${key}`)}</MenuItem>)}
-              </TextField>
+              </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6} display={{ xs: "none", md: "initial" }} />
             <Grid item xs={12} sm={6}>
-              <InputLabel disabled>{t("fields.email.label")}</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.email.label")}
                 value={values.emailaddress1 || ""}
                 onChange={handleChange("emailaddress1")}
                 fullWidth
@@ -131,16 +121,14 @@ export const UpdateProfile: React.FC = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel error={hasError("actum_phone")}>{t("fields.phoneNumber.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.phoneNumber.label")}
                 value={values.actum_phone || ""}
                 fullWidth
                 required
                 inputMode="tel"
                 onChange={handleChange("actum_phone")}
-                onBlur={() => handleBlur("actum_phone")}
-                error={hasError("actum_phone")}
-                helperText={hasError("actum_phone") ? t("validation.phoneNumber") : " "}
+                error={t("validation.phoneNumber")}
               />
             </Grid>
           </Grid>
@@ -151,111 +139,96 @@ export const UpdateProfile: React.FC = () => {
 
           <Grid container spacing={{ xs: 2, md: 4}} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.companyName.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.companyName.label")}
                 aria-label={t("fields.companyName.aria")}
                 value={values.actum_companyname || ""}
                 fullWidth
                 required
                 onChange={handleChange("actum_companyname")}
-                onBlur={() => handleBlur("actum_companyname")}
-                error={hasError("actum_companyname")}
-                helperText={hasError("actum_companyname") ? t("validation.companyName") : " "}
+                error={t("validation.companyName")}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.vat.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.vat.label")}
                 aria-label={t("fields.vat.aria")}
                 value={values.actum_vat || ""}
                 fullWidth
                 required
                 onChange={handleChange("actum_vat")}
-                onBlur={() => handleBlur("actum_vat")}
-                error={hasError("actum_vat")}
-                helperText={hasError("actum_vat") ? t("validation.vat") : " "}
+                error={t("validation.vat")}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.primaryCountry.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.primaryCountry.label")}
                 aria-label={t("fields.primaryCountry.aria")}
                 value={values.actum_primarycountry || ""}
                 fullWidth
                 required
                 onChange={handleChange("actum_primarycountry")}
-                onBlur={() => handleBlur("actum_primarycountry")}
-                error={hasError("actum_primarycountry")}
-                helperText={hasError("actum_primarycountry") ? t("validation.primaryCountry") : " "}
+                error={t("validation.primaryCountry")}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.companyPhone.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.companyPhone.label")}
                 aria-label={t("fields.companyPhone.aria")}
                 value={values.actum_companyphone || ""}
                 fullWidth
                 required
                 inputMode="tel"
                 onChange={handleChange("actum_companyphone")}
-                onBlur={() => handleBlur("actum_companyphone")}
-                error={hasError("actum_companyphone")}
-                helperText={hasError("actum_companyphone") ? t("validation.companyPhone") : " "}
+                error={t("validation.companyPhone")}
               />
             </Grid>
             <Grid item xs={12}>
-              <InputLabel>{t("fields.address.label")} *</InputLabel>
-              <TextField
-                aria-label={t("fields.address.aria")}
+              <InputLabelField
+                label={t("fields.address.label")}
                 value={values.actum_address || ""}
                 fullWidth
                 required
+                error={t("validation.address")}
+                aria-label={t("fields.address.aria")}
                 onChange={handleChange("actum_address")}
-                onBlur={() => handleBlur("actum_address")}
-                error={hasError("actum_address")}
-                helperText={hasError("actum_address") ? t("validation.address") : " "}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.companyBrand.label")} *</InputLabel>
-              <TextField
-                select
-                aria-label={t("fields.companyBrand.aria")}
-                SelectProps={{ multiple: true }}
+              <InputLabelField
+                label={t("fields.companyBrand.label")}
                 value={values.actum_brand || [""]}
                 fullWidth
                 required
+                select
+                error={t("validation.companyBrand")}
+                aria-label={t("fields.companyBrand.aria")}
                 onChange={handleChange("actum_brand")}
-                onBlur={() => handleBlur("actum_brand")}
-                error={hasError("actum_brand")}
-                helperText={hasError("actum_brand") ? t("validation.companyBrand") : " "}
               >
                 {Object.entries(t("fields.companyBrand.options", { returnObjects: true }) as Record<string, string>).map(([key, value]) => (
                   <MenuItem key={key} value={key}>{value}</MenuItem>
                 ))}
-              </TextField>
+              </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.companyRole.label")} *</InputLabel>
-              <TextField
+              <InputLabelField
                 select
+                label={t("fields.companyRole.label")}
                 aria-label={t("fields.companyRole.aria")}
                 value={values.actum_role || ""}
                 fullWidth
                 required
                 onChange={handleChange("actum_role")}
-                onBlur={() => handleBlur("actum_role")}
-                error={hasError("actum_role")}
-                helperText={hasError("actum_role") ? t("validation.companyRole") : " "}
+                error={t("validation.companyRole")}
               >
                 <MenuItem value="Distributor">Distributor</MenuItem>
                 <MenuItem value="Architect">Architect</MenuItem>
                 <MenuItem value="Installer">Installer</MenuItem>
-              </TextField>
+              </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <InputLabel>{t("fields.companyEmail.label")}</InputLabel>
-              <TextField
+              <InputLabelField
+                label={t("fields.companyEmail.label")}
                 aria-label={t("fields.companyEmail.aria")}
                 type="email"
                 value={values.actum_companyemail || ""}

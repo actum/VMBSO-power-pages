@@ -3,19 +3,17 @@ import {
   Container,
   Paper,
   Typography,
-  TextField,
   Button,
   Box,
   Link,
   Alert,
   CircularProgress,
   Grid,
-  InputLabel,
-  useTheme,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import InputLabelField from '../components/common/ui/InputLabelField';
 
 export const Login: React.FC = () => {
   const { login, loading } = useAuth();
@@ -89,10 +87,10 @@ export const Login: React.FC = () => {
 
               <form onSubmit={handleSubmit}>
                 <Box sx={{ mb: 5 }}>
-                  <InputLabel>{t("fields.email.label")} *</InputLabel>
-                  <TextField
-                    fullWidth
+                  <InputLabelField
+                    label={t("fields.email.label")}
                     type="email"
+                    aria-label={t("fields.email.aria")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -100,13 +98,13 @@ export const Login: React.FC = () => {
                     autoFocus
                     disabled={loading}
                     placeholder={t("fields.email.placeholder")}
+                    error={t("validation.email")}
                   />
                 </Box>
 
                 <Box sx={{ mb: 8 }}>
-                  <InputLabel>{t("fields.password.label")} *</InputLabel>
-                  <TextField
-                    fullWidth
+                  <InputLabelField
+                    label={t("fields.password.label")}
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -114,6 +112,7 @@ export const Login: React.FC = () => {
                     autoComplete="current-password"
                     disabled={loading}
                     placeholder="******"
+                    error={t("validation.password")}
                   />
                 </Box>
 
@@ -140,11 +139,11 @@ export const Login: React.FC = () => {
                 </Box>
               </form>
 
-              <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
-                <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
+              <Box sx={{ mt: "4rem", pt: "3rem", borderTop: '0.1rem solid #e0e0e0' }}>
+                <Typography variant="h4" sx={{ mb: "2rem", fontWeight: 600 }}>
                   {t("firstVisit.title")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: "2rem" }}>
                   {t("firstVisit.subtitle")}
                 </Typography>
                 <Button

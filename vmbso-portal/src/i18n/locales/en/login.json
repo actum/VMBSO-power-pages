@@ -17,6 +17,11 @@
     }
   },
 
+  "validation": {
+    "email": "Please enter your email",
+    "password": "Please enter your password"
+  },
+
   "actions": {
     "login": "Log in",
     "forgotPassword": "Forgot your password?",
