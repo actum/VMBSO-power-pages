@@ -24,7 +24,7 @@
 
   "actions": {
     "login": "Inloggen",
-    "updating": "Bezig met bijwerken…",
+    "forgotPassword": "Bent u uw wachtwoord vergeten?",
     "createAccount": "Account aanmaken"
   }
 }

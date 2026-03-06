@@ -5,11 +5,12 @@ type InputLabelFieldProps = Omit<TextFieldProps, "error"> & {
   label: string;
   error?: string;
   ariaLabel?: string;
+  hideHelperText?: boolean;
 }
 
 const InputLabelField: React.FC<InputLabelFieldProps> = ({
   label,
-  required = false,
+  required,
   children,
   value,
   onChange,
@@ -20,7 +21,7 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
   fullWidth,
   error,
   multiline,
-
+  hideHelperText
 }) => {
 
   const [touched, setTouched] = useState<boolean>(false);
@@ -49,7 +50,7 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
         onChange={onChange}
         onBlur={handleBlur}
         error={isError}
-        helperText={isError ? error : " "}
+        helperText={isError ? error : !hideHelperText && " "}
         multiline={multiline}
         rows={multiline ? rows : undefined}
       >

@@ -45,6 +45,8 @@ export const Login: React.FC = () => {
     }
   };
 
+  const invalidFields = !email || !password;
+
   return (
     <Box
       sx={{
@@ -120,7 +122,7 @@ export const Login: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  disabled={loading}
+                  disabled={loading || invalidFields}
                   size="large"
                   sx={{
                     textTransform: 'none',

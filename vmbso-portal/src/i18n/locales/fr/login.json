@@ -24,7 +24,7 @@
 
   "actions": {
     "login": "Identifiez-vous",
-    "updating": "Bezig met bijwerken…",
+    "forgotPassword": "Mot de passe oublié?",
     "createAccount": "Crér un compte"
   }
 }
