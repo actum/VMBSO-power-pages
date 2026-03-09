@@ -52,7 +52,12 @@
     },
     "companyRole": {
       "label": "COMPANY ROLE",
-      "aria": "Company role selector"
+      "aria": "Company role selector",
+      "options": {
+        "distributor": "Distributor",
+        "architect": "Architect",
+        "installer": "Installer"
+      }
     },
     "companyEmail": {
       "label": "COMPANY EMAIL",

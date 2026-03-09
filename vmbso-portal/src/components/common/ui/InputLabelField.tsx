@@ -21,7 +21,8 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
   fullWidth,
   error,
   multiline,
-  hideHelperText
+  hideHelperText,
+  ...rest
 }) => {
 
   const [touched, setTouched] = useState<boolean>(false);
@@ -53,6 +54,7 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
         helperText={isError ? error : !hideHelperText && " "}
         multiline={multiline}
         rows={multiline ? rows : undefined}
+        {...rest}
       >
         {children}
         </TextField>

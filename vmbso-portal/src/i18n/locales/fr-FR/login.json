@@ -1,6 +1,6 @@
 {
   "title": "Identifiez-vous",
-  "subtitle": "Bienvenue! Identifiez-vous pour consulter les documents qui vous sont",
+  "subtitle": "Bienvenue! Identifiez-vous pour consulter les documents qui vous sont dédiés.",
 
   "firstVisit": {
     "title": "Première visite?",
@@ -25,6 +25,6 @@
   "actions": {
     "login": "Identifiez-vous",
     "forgotPassword": "Mot de passe oublié?",
-    "createAccount": "Crér un compte"
+    "createAccount": "Créer un compte"
   }
 }

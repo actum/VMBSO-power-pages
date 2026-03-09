@@ -52,7 +52,12 @@
     },
     "companyRole": {
       "label": "RÔLE DANS L'ENTREPRISE",
-      "aria": "Sélecteur de rôle dans l'entreprise"
+      "aria": "Sélecteur de rôle dans l'entreprise",
+      "options": {
+        "distributor": "Distributeur",
+        "architect": "Architecte",
+        "installer": "Installateur"
+      }
     },
     "companyEmail": {
       "label": "E-MAIL DE L'ENTREPRISE",

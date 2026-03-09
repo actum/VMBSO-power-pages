@@ -44,7 +44,12 @@
     },
     "companyPhone": {
       "label": "TELEFOONNUMMER",
-      "aria": "Telefoonnummer van het bedrijf"
+      "aria": "Telefoonnummer van het bedrijf",
+      "options": {
+        "distributor": "Distributeur",
+        "architect": "Architect",
+        "installer": "Installateur"
+      }
     },
     "address": {
       "label": "ADRES",

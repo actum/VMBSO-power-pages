@@ -106,7 +106,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_language")}
                 error={t("validation.language")}
               >
-                {Object.entries(languages).map(([key, value]) => <MenuItem value={key}>{t(`updateProfile:fields.language.options.${key}`)}</MenuItem>)}
+                {Object.entries(languages).map(([key, value]) => <MenuItem key={key} value={key}>{t(`updateProfile:fields.language.options.${key}`)}</MenuItem>)}
               </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6} display={{ xs: "none", md: "initial" }} />
@@ -221,9 +221,9 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_role")}
                 error={t("validation.companyRole")}
               >
-                <MenuItem value="Distributor">Distributor</MenuItem>
-                <MenuItem value="Architect">Architect</MenuItem>
-                <MenuItem value="Installer">Installer</MenuItem>
+                {Object.entries(t("fields.companyRole.options", { returnObjects: true }) as Record<string, string>).map(([key, value]) => (
+                  <MenuItem key={key} value={key}>{value}</MenuItem>
+                ))}
               </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6}>
