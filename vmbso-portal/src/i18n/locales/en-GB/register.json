@@ -1,0 +1,65 @@
+{
+  "title": "First visit?",
+  "subtitle": "This space is reserved for VMZINC distributors. Submit a request to access your documents.",
+
+  "fields": {
+    "firstName": {
+      "label": "FIRST NAME",
+      "placeholder": "John"
+    },
+    "lastName": {
+      "label": "LAST NAME",
+      "placeholder": "Doe"
+    },
+    "email": {
+      "label": "EMAIL",
+      "placeholder": "email@email.com"
+    },
+    "password": {
+      "label": "PASSWORD",
+      "helper": "Minimum 8 characters"
+    },
+    "confirmPassword": {
+      "label": "CONFIRM PASSWORD"
+    },
+    "country": {
+      "label": "COUNTRY",
+      "placeholder": "Select a country"
+    },
+    "role": {
+      "label": "ROLE",
+      "placeholder": "Select a role"
+    }
+  },
+
+  "options": {
+    "countries": {
+      "DK": "Denmark",
+      "FR": "France",
+      "DE": "Germany",
+      "NL": "Netherlands",
+      "BE": "Belgium"
+    },
+    "roles": {
+      "architect": "Architect",
+      "distributor": "Distributor",
+      "installer": "Installer"
+    }
+  },
+
+  "validation": {
+    "allFieldsRequired": "Please fill in all required fields",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 8 characters long",
+    "passwordMismatch": "Passwords do not match"
+  },
+
+  "actions": {
+    "register": "Register",
+    "alreadyRegistered": "Already registered? Sign in"
+  },
+
+  "errors": {
+    "registrationFailed": "Registration failed. Please try again."
+  }
+}

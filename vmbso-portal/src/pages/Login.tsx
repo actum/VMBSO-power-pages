@@ -11,10 +11,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
+    const { t } = useTranslation("login");
 
   // Auto-redirect authenticated users
   React.useEffect(() => {
@@ -110,13 +112,12 @@ export const Login: React.FC = () => {
                 />
               </Box>
 
-              <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-                Identifiez-vous
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                Bienvenue ! Identifiez-vous pour consulter les documents qui vous sont dédiés.
-              </Typography>
-
+                <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+                  {t("title")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                  {t("subtitle")}
+                </Typography>
               <Button
                 fullWidth
                 variant="contained"
@@ -127,7 +128,7 @@ export const Login: React.FC = () => {
                   minHeight: '5.6rem',
                 }}
               >
-                Identifiez-vous
+                                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
               </Button>
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
@@ -164,22 +165,23 @@ export const Login: React.FC = () => {
                 p: 4,
               }}
             >
-              <Box
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundImage: `url(${config.assets.loginHeroImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderRadius: '0.4rem',
-                  bgcolor: 'rgba(91, 155, 213, 0.3)',
-                }}
-              />
-            </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    borderRadius: '0.4rem',
+                    bgcolor: 'rgba(91, 155, 213, 0.3)',
+                  }}
+                />
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+   
   );
 };
 

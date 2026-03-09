@@ -1,0 +1,89 @@
+{
+  "title": {
+    "completeProfile": "Vul uw profiel in",
+    "completeDetails": "Contactgegevens",
+    "completeCompanyDetails": "Bedrijfsgegevens"
+  },
+
+  "fields": {
+    "companyBrand": {
+      "label": "BEDRIJFSMERK",
+      "aria": "Selecteer het merk van uw bedrijf",
+      "options": {
+        "resitrix": "Resitrix",
+        "vmzinc": "VMZINC",
+        "mastersystems": "Mastersystems"
+      }
+    },
+    "language": {
+      "label": "TAAL",
+      "aria": "Taal",
+      "options": {
+        "en-GB": "Engels",
+        "fr-FR": "Frankrijk = Alleen Frans",
+        "be-NL": "België = Frans/Nederlands"
+      }
+    },
+    "email": {
+      "label": "E-MAIL"
+    },
+    "phoneNumber": {
+      "label": "TELEFOONNUMMER"
+    },
+    "companyName": {
+      "label": "BEDRIJFSNAAM",
+      "aria": "Bedrijfsnaam"
+    },
+    "vat": {
+      "label": "BTW",
+      "aria": "BTW van het bedrijf"
+    },
+    "primaryCountry": {
+      "label": "HOOFDLAND",
+      "aria": "Hoofdland van het bedrijf"
+    },
+    "companyPhone": {
+      "label": "TELEFOONNUMMER",
+      "aria": "Telefoonnummer van het bedrijf",
+      "options": {
+        "distributor": "Distributeur",
+        "architect": "Architect",
+        "installer": "Installateur"
+      }
+    },
+    "address": {
+      "label": "ADRES",
+      "aria": "Adres van het bedrijf"
+    },
+    "companyRole": {
+      "label": "FUNCTIE IN HET BEDRIJF",
+      "aria": "Functieselector van het bedrijf"
+    },
+    "companyEmail": {
+      "label": "BEDRIJFS-E-MAIL",
+      "aria": "E-mail van het bedrijf"
+    }
+  },
+
+  "validation": {
+    "language": "Taal is verplicht",
+    "phoneNumber": "Telefoonnummer is verplicht",
+    "companyName": "Bedrijfsnaam is verplicht",
+    "vat": "BTW-nummer is verplicht",
+    "primaryCountry": "Land is verplicht",
+    "companyPhone": "Bedrijfstelefoon is verplicht",
+    "address": "Bedrijfsadres is verplicht",
+    "companyBrand": "Selecteer minstens één merk",
+    "companyRole": "Functie is verplicht"
+  },
+
+  "section": {
+    "contact_details": "Contactgegevens",
+    "company_details": "Bedrijfsgegevens"
+  },
+
+  "action": {
+    "update": "Bijwerken",
+    "updating": "Bezig met bijwerken…"
+  }
+}

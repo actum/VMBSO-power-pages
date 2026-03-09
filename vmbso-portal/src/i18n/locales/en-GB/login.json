@@ -1,0 +1,30 @@
+{
+  "title": "Log in",
+  "subtitle": "Welcome! Please log in to access your documents.",
+
+  "firstVisit": {
+    "title": "First visit?",
+    "subtitle": "This space is reserved for VMZINC distributors. Submit a request to access your documents."
+  },
+
+  "fields": {
+    "email": {
+      "label": "E-MAIL",
+      "placeholder": "email@email.com"
+    },
+    "password": {
+      "label": "PASSWORD"
+    }
+  },
+
+  "validation": {
+    "email": "Please enter your email",
+    "password": "Please enter your password"
+  },
+
+  "actions": {
+    "login": "Log in",
+    "forgotPassword": "Forgot your password?",
+    "createAccount": "Create an account"
+  }
+}

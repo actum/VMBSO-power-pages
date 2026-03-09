@@ -20,6 +20,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguagePicker from './common/LanguagePicker';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,6 +30,7 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
+  const { t } = useTranslation(['header', 'footer']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -88,16 +91,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 padding: { xs: "0.4rem 1.2rem", md: "0.8rem 2.4rem" },
               }}
             >
-              Documents
+              {t('header:navigation.documents')}
             </Button>
           </Box>
 
           {/* Right side - Language and User Menu */}
-          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Language Switcher Placeholder */}
-            <IconButton color="inherit" sx={{ color: 'text.primary' }}>
-              <LanguageIcon />
-            </IconButton>
+          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Language Switcher */}
+            <LanguagePicker />
 
             {/* User name + avatar */}
             <Box
@@ -145,8 +146,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Box>
               )}
               <Divider />
-              <MenuItem onClick={handleProfile}>Mon profil</MenuItem>
-              <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
+              <MenuItem onClick={handleProfile}>{t('header:menu.profile')}</MenuItem>
+              <MenuItem onClick={handleLogout}>{t('header:menu.logout')}</MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -179,7 +180,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       >
         <Container maxWidth="xl">
           <Typography variant="body2" color="white" align="center">
-            © {new Date().getFullYear()} VM Building Solutions. All rights reserved.
+            {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
         </Container>
       </Box>
