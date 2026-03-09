@@ -19,8 +19,8 @@
       "label": "LANGUE",
       "aria": "Langue",
       "options": {
-        "en": "Anglais",
-        "fr": "France = Français uniquement",
+        "en-GB": "Anglais",
+        "fr-FR": "France = Français uniquement",
         "be-NL": "Belgique = Français/Néerlandais"
       }
     },

@@ -19,8 +19,8 @@
       "label": "TAAL",
       "aria": "Taal",
       "options": {
-        "en": "Engels",
-        "fr": "Frankrijk = Alleen Frans",
+        "en-GB": "Engels",
+        "fr-FR": "Frankrijk = Alleen Frans",
         "be-NL": "België = Frans/Nederlands"
       }
     },

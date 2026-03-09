@@ -1,8 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from 'i18next-browser-languagedetector';
-import enTranslations from "./locales/en";
-import frTranslations from "./locales/fr";
+import engbTranslations from "./locales/en-GB";
+import frfrTranslations from "./locales/fr-FR";
 import benlTranslations from "./locales/be-NL";
 
 i18n
@@ -10,11 +10,11 @@ i18n
 .use(LanguageDetector)
 .init({
   resources: {
-    "en-US": enTranslations,
-    "fr-FR": frTranslations,
+    "en-GB": engbTranslations,
+    "fr-FR": frfrTranslations,
     "be-NL": benlTranslations,
   },
-  fallbackLng: "en-US",
+  fallbackLng: "en-GB",
 });
 
 export default i18n;

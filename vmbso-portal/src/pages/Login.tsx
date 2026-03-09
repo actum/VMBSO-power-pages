@@ -52,12 +52,12 @@ export const Login: React.FC = () => {
     <Layout>
       <Box
         sx={{
-          minHeight: '100vh',
+          height: '100%',
           display: 'flex',
           bgcolor: 'background.default',
         }}
       >
-        <Container maxWidth="lg" sx={{ my: 'auto' }}>
+        <Container maxWidth="lg" sx={{ margin: 'auto' }}>
           <Grid container spacing={0} sx={{ minHeight: '60rem' }}>
             {/* Left side - Form */}
             <Grid item xs={12} md={6}>
