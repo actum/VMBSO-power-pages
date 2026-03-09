@@ -8,54 +8,76 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
+import { useAuth } from '../contexts/AuthContext';
 
 export const Login: React.FC = () => {
-  const [token, setToken] = React.useState<string>('');
+  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const navigate = useNavigate();
 
+  // Auto-redirect authenticated users
   React.useEffect(() => {
-    if (config.devMode) return;
-    // window.shell is injected by Power Pages — provides the anti-forgery token
-    // required for the ExternalLogin POST endpoint.
-    (window as any).shell
-      ?.getTokenDeferred()
-      ?.then((t: string) => setToken(t))
-      ?.catch((err: unknown) => console.error('Failed to get shell token:', err));
-  }, []);
+    console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
+    
+    if (loading) {
+      console.log('[LOGIN DEBUG] Still loading, waiting...');
+      return; // Wait for session check to complete
+    }
+
+    if (isAuthenticated) {
+      console.log('[LOGIN DEBUG] User is authenticated, redirecting...');
+      // User is already logged in, redirect appropriately
+      if (!isProfileComplete) {
+        console.log('[LOGIN DEBUG] Profile incomplete, redirecting to /update-profile');
+        navigate('/update-profile', { replace: true });
+      } else {
+        console.log('[LOGIN DEBUG] Profile complete, redirecting to /documents');
+        navigate('/documents', { replace: true });
+      }
+    } else {
+      console.log('[LOGIN DEBUG] User NOT authenticated, staying on /login');
+    }
+  }, [isAuthenticated, isProfileComplete, loading, navigate]);
 
   /**
-   * Submit a hidden form POST to /Account/Login/ExternalLogin.
-   * This is the only way to trigger Power Pages external auth without
-   * going through the intermediate sign-in selection page.
+   * Initiate Entra External ID authentication.
+   *
+   * Since Power Pages /SignIn doesn't auto-redirect (even with LoginButtonAuthenticationType set),
+   * we simply redirect to /SignIn where the user clicks the Entra External ID button.
+   *
+   * This is the simplest approach that works reliably without needing anti-forgery tokens
+   * or complex form submissions.
    */
   const submitExternalLogin = () => {
     if (config.devMode) {
+      console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /documents');
       window.location.href = '/documents';
       return;
     }
-    if (!config.auth.providerScheme) {
-      console.error('REACT_APP_ENTRA_PROVIDER is not set. Check .env.production.');
-      return;
-    }
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = config.auth.externalLoginUrl;
 
-    const addField = (name: string, value: string) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    };
-
-    addField('__RequestVerificationToken', token);
-    addField('provider', config.auth.providerScheme);
-    addField('returnUrl', config.auth.returnUrl);
-
-    document.body.appendChild(form);
-    form.submit();
+    console.log('[LOGIN DEBUG] Redirecting to /SignIn');
+    // Redirect to Power Pages /SignIn page
+    // User will see the Entra External ID button and click it (one extra click)
+    // After clicking, Power Pages handles the full OpenID Connect flow
+    window.location.href = '/SignIn';
   };
+
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -100,16 +122,12 @@ export const Login: React.FC = () => {
                 variant="contained"
                 size="large"
                 onClick={submitExternalLogin}
-                disabled={!config.devMode && !token}
                 sx={{
                   textTransform: 'none',
                   minHeight: '5.6rem',
                 }}
               >
-                {!config.devMode && !token
-                  ? <CircularProgress size={24} color="inherit" />
-                  : 'Identifiez-vous'
-                }
+                Identifiez-vous
               </Button>
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
@@ -122,7 +140,6 @@ export const Login: React.FC = () => {
                 <Button
                   variant="outlined"
                   onClick={submitExternalLogin}
-                  disabled={!config.devMode && !token}
                   sx={{
                     textTransform: 'none',
                     fontWeight: 500,

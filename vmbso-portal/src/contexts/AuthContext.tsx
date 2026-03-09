@@ -13,14 +13,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// required fields selectors
+// Required profile fields - matching UpdateProfile.tsx form requirements
+// NOTE: These fields don't exist in Dataverse yet and need to be added to Contact table
 const requiredFields: Array<keyof Contact> = [
   "actum_language",
+  "actum_phone",
   "actum_companyname",
   "actum_vat",
   "actum_primarycountry",
   "actum_companyphone",
-  "actum_phone",
   "actum_address",
   "actum_role",
   "actum_brand",
@@ -38,24 +39,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isProfileComplete = React.useMemo(() => {
     if (!currentUser) return false;
-    return requiredFields.every(key => {
+    const complete = requiredFields.every(key => {
       const value = currentUser[key];
       return value && value.toString().trim().length > 0;
     });
+    console.log('[AUTH CONTEXT DEBUG] Profile complete check:', complete, 'Required fields:', requiredFields);
+    return complete;
   }, [currentUser]);
 
   useEffect(() => {
+    console.log('[AUTH CONTEXT DEBUG] Initial session check on mount');
     checkSession();
   }, []);
 
   const checkSession = async () => {
     try {
+      console.log('[AUTH CONTEXT DEBUG] checkSession started');
       setLoading(true);
       const user = await authService.checkSession();
 
+      console.log('[AUTH CONTEXT DEBUG] checkSession result:', user ? `User: ${user.contactid}` : 'No user');
       setCurrentUser(user);
     } catch (error) {
-      console.error('Session check failed:', error);
+      console.error('[AUTH CONTEXT DEBUG] Session check failed:', error);
       setCurrentUser(null);
     } finally {
       setLoading(false);

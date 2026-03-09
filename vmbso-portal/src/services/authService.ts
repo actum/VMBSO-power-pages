@@ -1,5 +1,6 @@
 import { Contact } from '../types/contact';
 import { config } from '../config/powerPages.config';
+import { dataverseService } from './dataverseService';
 
 /**
  * Mock user used in local development (REACT_APP_DEV_MODE=true).
@@ -12,16 +13,36 @@ const DEV_MOCK_USER: Contact = {
   lastname: 'Doe',
   emailaddress1: 'john.doe@example.com',
   fullname: 'John Doe',
+  mobilephone: '+33 6 00 00 00 00',
+  telephone1: '+33 1 00 00 00 00',
+  jobtitle: 'General Manager',
   createdon: new Date().toISOString(),
+  modifiedon: new Date().toISOString(),
+  // Required custom fields
+  actum_approvalstatus: 182980000,  // Pending
+  _actum_languageid_value: 'mock-language-id',
+  actum_languageid: {
+    actum_languageid: 'mock-language-id',
+    actum_name: 'French'
+  },
+  _parentcustomerid_value: 'mock-account-id',
+  parentcustomerid: {
+    accountid: 'mock-account-id',
+    name: 'Actum Digital'
+  },
+  // UpdateProfile form fields
   actum_language: 'fr',
+  actum_phone: '+33 6 00 00 00 00',
   actum_companyname: 'Actum Digital',
   actum_vat: 'FR12345678901',
   actum_primarycountry: 'France',
   actum_companyphone: '+33 1 00 00 00 00',
-  actum_phone: '+33 6 00 00 00 00',
   actum_address: '1 rue de la Paix, 75001 Paris',
   actum_role: 'Distributor',
   actum_brand: ['VMZINC'],
+  actum_companyemail: 'contact@actumdigital.com',
+  adx_identity_username: 'dev_user',
+  adx_identity_emailaddress1confirmed: true,
 };
 
 export const authService = {
@@ -31,12 +52,12 @@ export const authService = {
    * Page navigates away — no return value needed.
    */
   logout: (): void => {
-    // if (config.devMode) {
-    //   console.log('DEV MODE: Mock logout');
-    //   localStorage.removeItem('dev_user');
-    //   window.location.href = config.auth.loginPageUrl;
-    //   return;
-    // }
+    if (config.devMode) {
+      console.log('DEV MODE: Mock logout');
+      localStorage.removeItem('dev_user');
+      window.location.href = config.auth.loginPageUrl;
+      return;
+    }
 
     // Federated logout: clears both Power Pages session and Entra External ID session
     window.location.href = config.auth.logoutUrl;
@@ -49,64 +70,40 @@ export const authService = {
    * @returns Current user Contact or null if not authenticated
    */
   checkSession: async (): Promise<Contact | null> => {
-    // if (config.devMode) {
-    //   // Read updated profile from localStorage (set by updateProfile in dev mode),
-    //   // or fall back to the seeded mock user.
-    //   const stored = localStorage.getItem('dev_user');
-    //   if (stored) return JSON.parse(stored) as Contact;
-    //   localStorage.setItem('dev_user', JSON.stringify(DEV_MOCK_USER));
-    //   return DEV_MOCK_USER;
-    // }
-
-    try {
-      const select = [
-        'contactid',
-        'firstname',
-        'lastname',
-        'emailaddress1',
-        'fullname',
-        'createdon',
-        'actum_language',
-        'actum_phone',
-        'actum_companyname',
-        'actum_vat',
-        'actum_primarycountry',
-        'actum_companyphone',
-        'actum_address',
-        'actum_role',
-        'actum_brand',
-      ].join(',');
-
-      const response = await fetch(`${config.api.contacts}?$select=${select}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'OData-MaxVersion': '4.0',
-          'OData-Version': '4.0',
-        },
-        credentials: 'include',
-      });
-
-      // 401/403 means no active session — not an error, just unauthenticated
-      if (response.status === 401 || response.status === 403) {
-        return null;
+    console.log('[AUTH DEBUG] checkSession called, devMode:', config.devMode);
+    
+    if (config.devMode) {
+      console.log('[AUTH DEBUG] DEV MODE active - using mock user');
+      // Read updated profile from localStorage (set by updateProfile in dev mode),
+      // or fall back to the seeded mock user.
+      const stored = localStorage.getItem('dev_user');
+      if (stored) {
+        console.log('[AUTH DEBUG] Found dev_user in localStorage');
+        return JSON.parse(stored) as Contact;
       }
+      console.log('[AUTH DEBUG] Setting new dev_user in localStorage');
+      localStorage.setItem('dev_user', JSON.stringify(DEV_MOCK_USER));
+      return DEV_MOCK_USER;
+    }
 
-      if (!response.ok) {
-        throw new Error(`Session check failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.value && data.value.length > 0) {
-        return data.value[0] as Contact;
-      }
-
-      // Authenticated but no Contact found (shouldn't happen in normal flow)
-      console.warn('Session active but no Contact record found');
+    // Production mode: check Power Pages global context first
+    // This is populated immediately after login callback (before Web API is ready)
+    const portalUser = (window as any)?.Microsoft?.Dynamic365?.Portal?.User;
+    const userName = portalUser?.userName;
+    console.log('[AUTH DEBUG] Power Pages context check - userName:', userName || 'Not found');
+    
+    if (!userName) {
+      console.log('[AUTH DEBUG] Not authenticated - no userName in Power Pages context');
       return null;
+    }
+
+    console.log('[AUTH DEBUG] Authenticated - fetching contact details from Web API');
+    try {
+      const contact = await dataverseService.contacts.getCurrent();
+      console.log('[AUTH DEBUG] Dataverse returned contact:', contact?.contactid, contact?.emailaddress1);
+      return contact;
     } catch (error) {
-      console.error('Session check error:', error);
+      console.error('[AUTH DEBUG] Session check error:', error);
       return null;
     }
   },
@@ -131,29 +128,6 @@ export const authService = {
       throw new Error('Missing contact ID for profile update');
     }
 
-    const response = await fetch(config.api.contactById(contactid), {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'OData-MaxVersion': '4.0',
-        'OData-Version': '4.0',
-        'If-Match': '*', // Required by Dataverse — prevents accidental create
-      },
-      credentials: 'include',
-      body: JSON.stringify(updateFields),
-    });
-
-    // Dataverse PATCH returns 204 No Content on success
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new Error(`Profile update failed (${response.status}): ${errorText}`);
-    }
-
-    // Re-fetch session to return the updated Contact with all fields
-    const updatedUser = await authService.checkSession();
-    if (!updatedUser) {
-      throw new Error('Unable to fetch updated user after profile save');
-    }
-    return updatedUser;
+    return dataverseService.contacts.update(contactid, updateFields);
   },
 };

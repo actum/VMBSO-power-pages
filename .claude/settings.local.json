@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pac powerpages download --path .powerpages-site --overwrite)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
