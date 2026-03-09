@@ -1,5 +1,5 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
-import { colors } from "./colors"; 
+import { colors } from './colors'; 
 
 const baseFontFamily = [
     'Inter',
@@ -13,6 +13,7 @@ const baseFontFamily = [
     'sans-serif',
   ].join(',');
   const baseFontFamilyWithGrotesk = `Ulm Grotesk,${baseFontFamily}`;
+  const baseFontFamilyWithRubik = `Rubik,${baseFontFamily}`;
 
 // Typography - using Inter font family
 const typography: ThemeOptions['typography'] = {
@@ -62,13 +63,14 @@ const typography: ThemeOptions['typography'] = {
   },
 
   body1: {
-    fontFamily: baseFontFamily,
+    fontFamily: baseFontFamilyWithRubik,
     fontSize: '1.6rem', // 16px
     fontWeight: 400,
     lineHeight: 1.5,
     color: colors.textPrimary,
   },
   body2: {
+    fontFamily: baseFontFamilyWithRubik,
     fontSize: '1.4rem', // 14px
     fontWeight: 400,
     lineHeight: 1.5,
@@ -143,7 +145,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.MuiMenuItem-root:hover': {
-            backgroundColor: "rgba(0, 144, 178, 0.14)",
+            backgroundColor: 'rgba(0, 144, 178, 0.14)',
           }
         }
       }
@@ -178,16 +180,32 @@ const theme = createTheme({
             backgroundColor: 'rgba(26, 58, 82, 0.04)',
           },
         },
+        text: {
+          '& .MuiTypography-root': {
+            color: colors.teal,
+          },
+          '&:hover': {
+            backgroundColor: 'inherit'
+          }
+        },
+        textSizeSmall: {
+          fontSize: '1.4rem',
+        },
+        sizeLarge: {
+          fontSize: '1.6rem',
+          padding: '0.8rem 2.4rem',
+          minHeight: '5.6rem',
+        }
       },
     },
 
     MuiSvgIcon: {
       styleOverrides: {
         fontSizeMedium : {
-          fontSize: "1.8rem",
+          fontSize: '1.8rem',
         },
         fontSizeLarge : {
-          fontSize: "2.2rem",
+          fontSize: '2.2rem',
         }
       }
     },
@@ -255,19 +273,36 @@ const theme = createTheme({
           fontWeight: 300,
           color: colors.textPrimary,
           letterSpacing: '0.05rem',
-        }
+
+        },
       }
+    },
+
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-error': {
+            border: `1px solid ${colors.red}`,
+          },
+        },
+        input: {
+          '&.Mui-disabled': {
+            background: colors.grey2,
+            cursor: 'not-allowed',
+          },
+        }
+      },
     },
 
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
           fontSize: '1.8rem',
-          border: `1px solid ${colors.grey2}`,
+          border: `1px solid ${colors.grey3}`,
           borderRadius: 0,
           backgroundColor: colors.grey1,
           '& fieldset': {
-            borderColor: colors.grey2,
+            borderColor: colors.grey3,
           },
           '&.Mui-focused': {
             boxShadow: '0 0 0 3px rgba(0, 144, 178, .35)'
@@ -278,6 +313,17 @@ const theme = createTheme({
         }
       }
     },
+
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        }
+      }
+    }
   },
 });
 

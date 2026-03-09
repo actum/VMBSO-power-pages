@@ -1,0 +1,30 @@
+{
+  "title": "Identifiez-vous",
+  "subtitle": "Bienvenue! Identifiez-vous pour consulter les documents qui vous sont dédiés.",
+
+  "firstVisit": {
+    "title": "Première visite?",
+    "subtitle": "Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace."
+  },
+
+  "fields": {
+    "email": {
+      "label": "E-MAIL",
+      "placeholder": "email@email.fr"
+    },
+    "password": {
+      "label": "MOT DE PASSE"
+    }
+  },
+
+  "validation": {
+    "email": "Veuillez entrer votre email",
+    "password": "Veuillez entrer votre mot de passe"
+  },
+
+  "actions": {
+    "login": "Identifiez-vous",
+    "forgotPassword": "Mot de passe oublié?",
+    "createAccount": "Créer un compte"
+  }
+}
