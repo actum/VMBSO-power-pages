@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pac powerpages download --path .powerpages-site --overwrite)"
+      "Bash(pac powerpages download --path .powerpages-site --overwrite)",
+      "Bash(uuidgen)",
+      "Bash(python3 -c \"import uuid; print(str(uuid.uuid4()))\")"
     ],
     "deny": [],
     "ask": []
