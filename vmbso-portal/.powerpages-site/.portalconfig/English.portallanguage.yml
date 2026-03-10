@@ -1,6 +1,6 @@
-displayname: English
-id: 840989ce-78c4-4f64-bfb5-468aee7ea7d7
-languagecode: en-US
-lcid: 1033
-name: English
-systemlanguage: 1033
+- displayname: English
+  id: 840989ce-78c4-4f64-bfb5-468aee7ea7d7
+  languagecode: en-US
+  lcid: 1033
+  name: English
+  systemlanguage: 1033

@@ -1,80 +1,116 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
   Typography,
   Button,
   Box,
-  Link,
-  Alert,
-  CircularProgress,
   Grid,
+  CircularProgress,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { config } from '../config/powerPages.config';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import InputLabelField from '../components/common/ui/InputLabelField';
-import { Layout } from '../components/Layout';
 
 export const Login: React.FC = () => {
-  const { login, loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { t } = useTranslation("login");
+  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const navigate = useNavigate();
+    const { t } = useTranslation("login");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  // Auto-redirect authenticated users
+  React.useEffect(() => {
+    console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
+    
+    if (loading) {
+      console.log('[LOGIN DEBUG] Still loading, waiting...');
+      return; // Wait for session check to complete
+    }
 
-    // Validation
-    if (!email || !password) {
-      setError('Please fill in all fields');
+    if (isAuthenticated) {
+      console.log('[LOGIN DEBUG] User is authenticated, redirecting...');
+      // User is already logged in, redirect appropriately
+      if (!isProfileComplete) {
+        console.log('[LOGIN DEBUG] Profile incomplete, redirecting to /update-profile');
+        navigate('/update-profile', { replace: true });
+      } else {
+        console.log('[LOGIN DEBUG] Profile complete, redirecting to /documents');
+        navigate('/documents', { replace: true });
+      }
+    } else {
+      console.log('[LOGIN DEBUG] User NOT authenticated, staying on /login');
+    }
+  }, [isAuthenticated, isProfileComplete, loading, navigate]);
+
+  /**
+   * Initiate Entra External ID authentication.
+   *
+   * Since Power Pages /SignIn doesn't auto-redirect (even with LoginButtonAuthenticationType set),
+   * we simply redirect to /SignIn where the user clicks the Entra External ID button.
+   *
+   * This is the simplest approach that works reliably without needing anti-forgery tokens
+   * or complex form submissions.
+   */
+  const submitExternalLogin = () => {
+    if (config.devMode) {
+      console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /documents');
+      window.location.href = '/documents';
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-
-    try {
-      await login(email, password);
-    } catch (err) {
-      // Error is already handled in AuthContext with toast
-      setError('Login failed. Please check your credentials.');
-    }
+    console.log('[LOGIN DEBUG] Redirecting to /SignIn');
+    // Redirect to Power Pages /SignIn page
+    // User will see the Entra External ID button and click it (one extra click)
+    // After clicking, Power Pages handles the full OpenID Connect flow
+    window.location.href = '/SignIn';
   };
 
-  const invalidFields = !email || !password;
-
-  return (
-    <Layout>
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
       <Box
         sx={{
-          height: '100%',
+          minHeight: '100vh',
           display: 'flex',
-          bgcolor: 'background.default',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <Container maxWidth="lg" sx={{ margin: 'auto' }}>
-          <Grid container spacing={0} sx={{ minHeight: '60rem' }}>
-            {/* Left side - Form */}
-            <Grid item xs={12} md={6}>
-              <Paper
-                sx={{
-                  p: "3rem",
-                  borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
-                }}
-              >
-                {/* Logo */}
-                <Box sx={{ mb: 4 }}>
-                  <img
-                    src="/images/logo-vmbso.svg"
-                    alt="VMBSO"
-                    style={{ height: "2.6rem" }}
-                  />
-                </Box>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        bgcolor: 'background.default',
+      }}
+    >
+      <Container maxWidth="lg" sx={{ my: 'auto' }}>
+        <Grid container spacing={0} sx={{ minHeight: '60rem' }}>
+          {/* Left side - Actions */}
+          <Grid item xs={12} md={6}>
+            <Paper
+              sx={{
+                p: 6,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
+              }}
+            >
+              {/* Logo */}
+              <Box sx={{ mb: 4 }}>
+                <img
+                  src="/images/logo-vmbso.svg"
+                  alt="VMBSO"
+                  style={{ height: "2.6rem" }}
+                />
+              </Box>
 
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
                   {t("title")}
@@ -82,104 +118,53 @@ export const Login: React.FC = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
                   {t("subtitle")}
                 </Typography>
-
-                {error && (
-                  <Alert severity="error" sx={{ mb: 3 }}>
-                    {error}
-                  </Alert>
-                )}
-
-                <form onSubmit={handleSubmit}>
-                  <Grid container>
-                    <Box sx={{ mb: "1rem" }} component={Grid} item xs={12} md={7}>
-                      <InputLabelField
-                        fullWidth
-                        label={t("fields.email.label")}
-                        type="email"
-                        aria-label={t("fields.email.aria")}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        autoComplete="email"
-                        autoFocus
-                        disabled={loading}
-                        placeholder={t("fields.email.placeholder")}
-                        error={t("validation.email")}
-                      />
-                    </Box>
-
-                    <Box sx={{ mb: "2rem" }} component={Grid}item xs={12} md={7}>
-                      <InputLabelField
-                        fullWidth
-                        label={t("fields.password.label")}
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        autoComplete="current-password"
-                        disabled={loading}
-                        placeholder="******"
-                        error={t("validation.password")}
-                      />
-                    </Box>
-                  </Grid>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    disabled={loading || invalidFields}
-                    size="large"
-                    sx={{
-                      textTransform: 'none',
-                    }}
-                  >
-                    {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
-                  </Button>
-
-                  <Box sx={{ textAlign: 'center', mt: 5 }}>
-                    <Link
-                      href="#"
-                      color="primary"
-                    >
-                      {t("actions.forgotPassword")}
-                    </Link>
-                  </Box>
-                </form>
-
-                <Box sx={{ mt: "4rem", pt: "3rem", borderTop: '0.1rem solid #e0e0e0' }}>
-                  <Typography variant="h4" sx={{ mb: "2rem", fontWeight: 600 }}>
-                    {t("firstVisit.title")}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: "2rem" }}>
-                    {t("firstVisit.subtitle")}
-                  </Typography>
-                  <Grid item sm={12} md={6}>
-                    <Button
-                      fullWidth
-                      component={RouterLink}
-                      to="/register"
-                      variant="outlined"
-                    >
-                      {t("actions.createAccount")}
-                    </Button>
-                  </Grid>
-                </Box>
-              </Paper>
-            </Grid>
-
-            {/* Right side - Image */}
-            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Box
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={submitExternalLogin}
                 sx={{
-                  height: '100%',
-                  background: 'linear-gradient(135deg, #5b9bd5 0%, #4a7fa8 100%)',
-                  borderRadius: '0 0.8rem 0.8rem 0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  p: 4,
+                  textTransform: 'none',
+                  minHeight: '5.6rem',
                 }}
               >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
+              </Button>
+
+              <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
+                <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
+                  Première visite ?
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
+                </Typography>
+                <Button
+                  variant="outlined"
+                  onClick={submitExternalLogin}
+                  sx={{
+                    textTransform: 'none',
+                    fontWeight: 500,
+                  }}
+                >
+                  Créer un compte
+                </Button>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Right side - Image */}
+          <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                height: '100%',
+                background: 'linear-gradient(135deg, #5b9bd5 0%, #4a7fa8 100%)',
+                borderRadius: '0 0.8rem 0.8rem 0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 4,
+              }}
+            >
                 <Box
                   sx={{
                     width: '100%',
@@ -196,6 +181,7 @@ export const Login: React.FC = () => {
           </Grid>
         </Container>
       </Box>
-    </Layout>
+   
   );
 };
+

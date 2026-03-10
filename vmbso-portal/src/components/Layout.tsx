@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
   Container,
+  Divider,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
@@ -42,14 +43,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     handleUserMenuClose();
-    await logout();
+    logout();
   };
 
   const handleProfile = () => {
     handleUserMenuClose();
-    navigate('/profile');
+    navigate('/update-profile');
   };
 
   return (
@@ -99,27 +100,52 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Language Switcher */}
             <LanguagePicker />
 
-            {/* User Menu */}
-            <IconButton
-              color="inherit"
+            {/* User name + avatar */}
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
               onClick={handleUserMenuOpen}
-              sx={{ color: 'text.primary' }}
             >
-              <AccountCircleIcon fontSize={isMobile ? "medium" : "large"}/>
-            </IconButton>
+              {currentUser && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.primary',
+                    fontWeight: 500,
+                    display: { xs: 'none', sm: 'block' },
+                  }}
+                >
+                  {currentUser.fullname || `${currentUser.firstname} ${currentUser.lastname}`}
+                </Typography>
+              )}
+              <IconButton
+                color="inherit"
+                sx={{ color: 'text.primary' }}
+                aria-label="user menu"
+              >
+                <AccountCircleIcon fontSize={isMobile ? "medium" : "large"} />
+              </IconButton>
+            </Box>
+
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleUserMenuClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{ paper: { sx: { minWidth: 200 } } }}
             >
+              {/* User info header */}
+              {currentUser && (
+                <Box sx={{ px: 2, py: 1.5 }}>
+                  <Typography variant="body2" fontWeight={600} noWrap>
+                    {currentUser.fullname || `${currentUser.firstname} ${currentUser.lastname}`}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" noWrap display="block">
+                    {currentUser.emailaddress1}
+                  </Typography>
+                </Box>
+              )}
+              <Divider />
               <MenuItem onClick={handleProfile}>{t('header:menu.profile')}</MenuItem>
               <MenuItem onClick={handleLogout}>{t('header:menu.logout')}</MenuItem>
             </Menu>
@@ -161,3 +187,4 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     </Box>
   );
 };
+

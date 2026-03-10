@@ -25,3 +25,6 @@ yarn-error.log*
 # IDE
 .vscode
 .idea
+
+# PAC CLI Code Site files are tracked in git for deployment
+# .powerpages-site/.paportal should NOT be ignored for Code Sites
