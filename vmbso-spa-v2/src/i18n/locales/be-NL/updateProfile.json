@@ -36,7 +36,10 @@
     },
     "vat": {
       "label": "BTW",
-      "aria": "BTW van het bedrijf"
+      "aria": "BTW van het bedrijf",
+      "searchButton": "Zoeken",
+      "found": "Bedrijf gevonden: {{name}}",
+      "notFound": "Geen bedrijf gevonden — vul de bedrijfsgegevens in."
     },
     "primaryCountry": {
       "label": "HOOFDLAND",
@@ -44,12 +47,7 @@
     },
     "companyPhone": {
       "label": "TELEFOONNUMMER",
-      "aria": "Telefoonnummer van het bedrijf",
-      "options": {
-        "distributor": "Distributeur",
-        "architect": "Architect",
-        "installer": "Installateur"
-      }
+      "aria": "Telefoonnummer van het bedrijf"
     },
     "address": {
       "label": "ADRES",
@@ -57,7 +55,12 @@
     },
     "companyRole": {
       "label": "FUNCTIE IN HET BEDRIJF",
-      "aria": "Functieselector van het bedrijf"
+      "aria": "Functieselector van het bedrijf",
+      "options": {
+        "distributor": "Distributeur",
+        "architect": "Architect",
+        "installer": "Installateur"
+      }
     },
     "companyEmail": {
       "label": "BEDRIJFS-E-MAIL",
@@ -79,11 +82,13 @@
 
   "section": {
     "contact_details": "Contactgegevens",
-    "company_details": "Bedrijfsgegevens"
+    "company_details": "Bedrijfsgegevens",
+    "companyCreate": "Bedrijfsgegevens (nieuw)"
   },
 
   "action": {
     "update": "Bijwerken",
-    "updating": "Bezig met bijwerken…"
+    "updating": "Bezig met bijwerken…",
+    "searching": "Zoeken…"
   }
 }

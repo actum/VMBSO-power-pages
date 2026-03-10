@@ -36,7 +36,10 @@
     },
     "vat": {
       "label": "TVA",
-      "aria": "TVA de l'entreprise"
+      "aria": "TVA de l'entreprise",
+      "searchButton": "Rechercher",
+      "found": "Entreprise trouvée : {{name}}",
+      "notFound": "Aucune entreprise trouvée — veuillez compléter les informations de l'entreprise."
     },
     "primaryCountry": {
       "label": "PAYS PRINCIPAL",
@@ -79,11 +82,13 @@
 
   "section": {
     "contact_details": "Coordonnées",
-    "company_details": "Détails de l'entreprise"
+    "company_details": "Détails de l'entreprise",
+    "companyCreate": "Détails de l'entreprise (nouveau)"
   },
 
   "action": {
     "update": "Mettre à jour",
-    "updating": "Mise à jour en cours…"
+    "updating": "Mise à jour en cours…",
+    "searching": "Recherche en cours…"
   }
 }

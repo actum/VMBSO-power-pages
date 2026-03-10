@@ -13,18 +13,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Required profile fields - matching UpdateProfile.tsx form requirements
-// NOTE: These fields don't exist in Dataverse yet and need to be added to Contact table
-const requiredFields: Array<keyof Contact> = [
+// Required personal profile fields — the contact must be linked to an Account
+// (_parentcustomerid_value) for the company portion to be considered complete.
+const requiredPersonalFields: Array<keyof Contact> = [
   "actum_language",
   "actum_phone",
-  "actum_companyname",
-  "actum_vat",
-  "actum_primarycountry",
-  "actum_companyphone",
-  "actum_address",
-  "actum_role",
-  "actum_brand",
 ];
 
 interface AuthProviderProps {
@@ -39,11 +32,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isProfileComplete = React.useMemo(() => {
     if (!currentUser) return false;
-    const complete = requiredFields.every(key => {
+    // Personal fields must be filled
+    const personalComplete = requiredPersonalFields.every(key => {
       const value = currentUser[key];
       return value && value.toString().trim().length > 0;
     });
-    console.log('[AUTH CONTEXT DEBUG] Profile complete check:', complete, 'Required fields:', requiredFields);
+    // Company is complete when the contact is linked to an Account
+    const companyComplete = !!currentUser._parentcustomerid_value;
+    const complete = personalComplete && companyComplete;
+    console.log('[AUTH CONTEXT DEBUG] Profile complete check:', complete, '| personal:', personalComplete, '| company (account linked):', companyComplete);
     return complete;
   }, [currentUser]);
 

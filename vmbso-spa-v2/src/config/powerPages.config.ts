@@ -57,6 +57,14 @@ export const config = {
     contacts: '/_api/contacts',
     /** Single contact record endpoint — used for PATCH updates. */
     contactById: (id: string) => `/_api/contacts(${id})`,
+    /** Account collection endpoint — used for VAT lookup and creation. */
+    accounts: '/_api/accounts',
+    /** Single account record endpoint — used for PATCH updates. */
+    accountById: (id: string) => `/_api/accounts(${id})`,
+    /** Brand lookup table. */
+    brands: '/_api/actum_brands',
+    /** Country lookup table. */
+    countries: '/_api/actum_countries',
   },
 
   /** Static asset paths. */

@@ -5,6 +5,9 @@
 
 import { apiClient, ApiError } from './apiClient';
 import { Contact } from '../types/contact';
+import { Account } from '../types/account';
+import { Brand } from '../types/brand';
+import { Country } from '../types/country';
 import { ClientDocument, DocumentFilters } from '../types/document';
 import { config } from '../config/powerPages.config';
 
@@ -110,7 +113,13 @@ export const dataverseService = {
       }
 
       // Remove read-only fields
-      const { contactid, createdon, ...updateFields } = fields;
+      const { contactid, createdon, _parentcustomerid_value, ...rest } = fields;
+
+      // Convert raw lookup value to OData bind syntax for Dataverse PATCH
+      const updateFields: Record<string, unknown> = { ...rest };
+      if (_parentcustomerid_value) {
+        updateFields['parentcustomerid_account@odata.bind'] = `/accounts(${_parentcustomerid_value})`;
+      }
 
       await apiClient.odata(`/contacts(${contactId})`, {
         method: 'PATCH',
@@ -129,6 +138,107 @@ export const dataverseService = {
         throw new Error('Unable to fetch updated contact');
       }
       return updated;
+    },
+  },
+
+  /**
+   * Account operations
+   */
+  accounts: {
+    /**
+     * Search for an account by VAT registration number.
+     * Returns the first match or null if none found.
+     */
+    async searchByVAT(vat: string): Promise<Account | null> {
+      const escaped = vat.replace(/'/g, "''");
+      const query = buildODataQuery({
+        filter: `actum_vatregistrationnumber eq '${escaped}'`,
+        select: ['accountid', 'name', 'actum_vatregistrationnumber'],
+        top: 1,
+      });
+      try {
+        const response = await apiClient.odata<{ value: Account[] }>(`/accounts${query}`);
+        return response.value?.[0] ?? null;
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return null;
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Create a new Account record.
+     * Uses Prefer: return=representation to get the created record back.
+     */
+    async create(fields: Omit<Account, 'accountid'>): Promise<Account> {
+      const response = await apiClient.odata<Account>('/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify(fields),
+      });
+      return response;
+    },
+
+    /**
+     * Set the primary contact on an existing Account.
+     */
+    async setPrimaryContact(accountId: string, contactId: string): Promise<void> {
+      await apiClient.odata(`/accounts(${accountId})`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'If-Match': '*',
+        },
+        body: JSON.stringify({
+          'primarycontactid@odata.bind': `/contacts(${contactId})`,
+        }),
+      });
+    },
+  },
+
+  /**
+   * Brand lookup operations
+   */
+  brands: {
+    async getAll(): Promise<Brand[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_brandId', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Brand[] }>(`/actum_brands${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Country lookup operations
+   */
+  countries: {
+    async getAll(): Promise<Country[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_countryId', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Country[] }>(`/actum_countries${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
     },
   },
 
