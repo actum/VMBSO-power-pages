@@ -1,0 +1,5 @@
+description: Enables or disables Web API access for the account table.
+id: 1f392d00-141c-f111-8341-000d3a688605
+name: Webapi/contact/enabled
+source: 0
+value: true

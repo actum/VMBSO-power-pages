@@ -1,0 +1,9 @@
+{
+  "navigation": {
+    "documents": "Documents"
+  },
+  "menu": {
+    "profile": "Profile",
+    "logout": "Logout"
+  }
+}
