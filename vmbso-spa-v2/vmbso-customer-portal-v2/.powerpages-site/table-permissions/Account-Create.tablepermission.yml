@@ -1,0 +1,18 @@
+accountrelationship: 
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: true
+appendto: true
+contactrelationship: 
+create: true
+delete: false
+entitylogicalname: account
+entityname: Account Create
+id: e50cf1d3-9dc7-474d-aa5f-80e70a383114
+parententitypermission: 
+parentrelationship: 
+read: true
+scope: 756150000
+statecode: 1
+statuscode: 2
+write: true

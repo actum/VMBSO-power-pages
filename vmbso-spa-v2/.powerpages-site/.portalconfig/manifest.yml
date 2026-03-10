@@ -1,5 +1,26 @@
 adx_webfile:
+- RecordId: 1b383e08-9b62-4506-bc61-55e0d97e8e16
+  DisplayName: main.3bd7451a.js
+  CheckSum: 
+  IsDeleted: true
 - RecordId: 1cd115d2-573e-4386-b882-b18abaa6babb
   DisplayName: main.3832687e.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 2cf435b9-3228-4687-95e6-81f4db97e36f
+  DisplayName: main.c627cfc6.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 89f66f7d-8d21-407c-8cee-67a57c91046e
+  DisplayName: main.b54e2f8f.css
+  CheckSum: 
+  IsDeleted: true
+- RecordId: cfaeaed7-2f7b-49c2-afad-244783eccd87
+  DisplayName: main.9a3363ac.js
+  CheckSum: 
+  IsDeleted: true
+annotation:
+- RecordId: 89f66f7d-8d21-407c-8cee-67a57c91046e
+  DisplayName: main.b54e2f8f.css
   CheckSum: 
   IsDeleted: true

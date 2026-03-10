@@ -1,4 +1,4 @@
 export interface Brand {
-  actum_brandId: string;
+  actum_brandid: string;
   actum_name: string;
 }

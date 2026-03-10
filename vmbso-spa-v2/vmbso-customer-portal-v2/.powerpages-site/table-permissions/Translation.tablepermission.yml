@@ -1,0 +1,16 @@
+accountrelationship: 
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+contactrelationship: 
+create: false
+delete: false
+entitylogicalname: actum_translation
+entityname: Translation
+id: db258607-cccf-493f-b473-443471e37666
+parententitypermission: 
+parentrelationship: 
+read: true
+scope: 756150000
+write: false

@@ -12,13 +12,14 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
+import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
-import { Contact } from "../types/contact";
-import { Account } from "../types/account";
-import { Brand } from "../types/brand";
-import { Country } from "../types/country";
+import type { Contact } from "../types/contact";
+import type { Account } from "../types/account";
+import type { Brand } from "../types/brand";
+import type { Country } from "../types/country";
+import type { Language } from "../types/language";
 import { authService } from "../services/authService";
 import { dataverseService } from "../services/dataverseService";
 import { useNavigate } from "react-router-dom";
@@ -33,10 +34,9 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation(["updateProfile", "languages"]);
+  const { t } = useTranslation(["updateProfile"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const languages = t("languages:options", { returnObjects: true }) as Record<string, string>;
 
   // VAT search state
   const [vatInput, setVatInput] = useState("");
@@ -46,8 +46,10 @@ export const UpdateProfile: React.FC = () => {
   // Dynamic lookup data
   const [brands, setBrands] = useState<Brand[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [countriesLoading, setCountriesLoading] = useState(true);
+  const [languagesLoading, setLanguagesLoading] = useState(true);
 
   useEffect(() => {
     if (currentUser) {
@@ -70,6 +72,11 @@ export const UpdateProfile: React.FC = () => {
       setCountries(data);
       setCountriesLoading(false);
     }).catch(() => setCountriesLoading(false));
+
+    dataverseService.languages.getAll().then(data => {
+      setLanguages(data);
+      setLanguagesLoading(false);
+    }).catch(() => setLanguagesLoading(false));
   }, [currentUser]);
 
   const handleChange = (field: keyof Contact) => (
@@ -86,7 +93,6 @@ export const UpdateProfile: React.FC = () => {
       const account = await dataverseService.accounts.searchByVAT(vatInput.trim());
       if (account) {
         setFoundAccount(account);
-        setValues(v => ({ ...v, actum_companyname: account.name }));
         setVatSearchState("found");
       } else {
         setFoundAccount(null);
@@ -119,7 +125,7 @@ export const UpdateProfile: React.FC = () => {
           name: values.actum_companyname!,
           actum_vatregistrationnumber: vatInput.trim(),
           telephone1: values.actum_companyphone,
-          actum_address: values.actum_address,
+          address1_line1: values.address1_line1,
         });
 
         // 2. Set current contact as primary contact on the new Account
@@ -159,14 +165,14 @@ export const UpdateProfile: React.FC = () => {
         ? !!values.actum_companyname?.toString().trim() &&
           !!values.actum_primarycountry?.toString().trim() &&
           !!values.actum_companyphone?.toString().trim() &&
-          !!values.actum_address?.toString().trim() &&
+          !!values.address1_line1?.toString().trim() &&
           !!values.actum_brand &&
           !!values.actum_role?.toString().trim()
         : false;
 
   const canSave = contactFieldsValid && vatSearchDone && companyFieldsValid;
 
-  const companyFieldsVisible = vatSearchState !== "idle";
+  const companyFieldsVisible = vatSearchDone;
 
   return (
     <Layout>
@@ -191,27 +197,6 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
 
           <Grid container spacing={3} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
-              <InputLabelField
-                select
-                label={t("fields.language.label")}
-                ariaLabel={t("fields.language.aria")}
-                value={values.actum_language || ""}
-                fullWidth
-                required
-                onChange={handleChange("actum_language")}
-                error={t("validation.language")}
-              >
-                {Object.entries(languages).map(([key]) => (
-                  <MenuItem key={key} value={key}>
-                    {t(`updateProfile:fields.language.options.${key}`)}
-                  </MenuItem>
-                ))}
-              </InputLabelField>
-            </Grid>
-
-            <Grid item xs={12} sm={6} display={{ xs: "none", md: "initial" }} />
-
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.email.label")}
@@ -268,11 +253,12 @@ export const UpdateProfile: React.FC = () => {
                   variant="outlined"
                   onClick={handleVatSearch}
                   disabled={!vatInput.trim() || vatSearchState === "searching"}
-                  sx={{ mt: "1.75rem", minWidth: "7rem", height: "3.5rem" }}
+                  sx={{ mt: "1.75rem", minWidth: "3.5rem", height: "3.5rem", px: 1 }}
+                  aria-label={t("fields.vat.searchButton")}
                 >
                   {vatSearchState === "searching"
-                    ? t("action.searching")
-                    : t("fields.vat.searchButton")}
+                    ? <CircularProgress size={20} />
+                    : <SearchIcon />}
                 </Button>
               </Box>
             </Grid>
@@ -295,7 +281,7 @@ export const UpdateProfile: React.FC = () => {
             {vatSearchState === "found" && foundAccount && (
               <Grid item xs={12}>
                 <Alert severity="success" sx={{ py: 0.5 }}>
-                  {t("fields.vat.found", { name: foundAccount.name })}
+                  {t("fields.vat.found")}
                 </Alert>
               </Grid>
             )}
@@ -325,7 +311,7 @@ export const UpdateProfile: React.FC = () => {
                     {countriesLoading
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : countries.map(c => (
-                          <MenuItem key={c.actum_countryId} value={c.actum_countryId}>
+                          <MenuItem key={c.actum_countryid} value={c.actum_countryid}>
                             {c.actum_name}
                           </MenuItem>
                         ))}
@@ -349,10 +335,10 @@ export const UpdateProfile: React.FC = () => {
                   <InputLabelField
                     label={t("fields.address.label")}
                     ariaLabel={t("fields.address.aria")}
-                    value={values.actum_address || ""}
+                    value={values.address1_line1 || ""}
                     fullWidth
                     required
-                    onChange={handleChange("actum_address")}
+                    onChange={handleChange("address1_line1")}
                     error={t("validation.address")}
                   />
                 </Grid>
@@ -383,7 +369,7 @@ export const UpdateProfile: React.FC = () => {
                     {brandsLoading
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : brands.map(b => (
-                          <MenuItem key={b.actum_brandId} value={b.actum_brandId}>
+                          <MenuItem key={b.actum_brandid} value={b.actum_brandid}>
                             {b.actum_name}
                           </MenuItem>
                         ))}
@@ -410,6 +396,29 @@ export const UpdateProfile: React.FC = () => {
                 </Grid>
               </>
             )}
+
+            {/* Language â€" always visible, filtered by country once country is selected */}
+            <Grid item xs={12} sm={6}>
+              <InputLabelField
+                select
+                label={t("fields.language.label")}
+                ariaLabel={t("fields.language.aria")}
+                value={values.actum_language || ""}
+                fullWidth
+                required
+                onChange={handleChange("actum_language")}
+                error={t("validation.language")}
+                disabled={languagesLoading}
+              >
+                {languagesLoading
+                  ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
+                  : languages.map(lang => (
+                      <MenuItem key={lang.actum_languageid} value={lang.actum_languageid}>
+                        {lang.actum_name}
+                      </MenuItem>
+                    ))}
+              </InputLabelField>
+            </Grid>
           </Grid>
 
           {error && (

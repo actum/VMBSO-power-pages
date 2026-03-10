@@ -37,7 +37,7 @@ const DEV_MOCK_USER: Contact = {
   actum_vat: 'FR12345678901',
   actum_primarycountry: 'France',
   actum_companyphone: '+33 1 00 00 00 00',
-  actum_address: '1 rue de la Paix, 75001 Paris',
+  address1_line1: '1 rue de la Paix, 75001 Paris',
   actum_role: 'Distributor',
   actum_brand: ['VMZINC'],
   actum_companyemail: 'contact@actumdigital.com',

@@ -4,11 +4,12 @@
  */
 
 import { apiClient, ApiError } from './apiClient';
-import { Contact } from '../types/contact';
-import { Account } from '../types/account';
-import { Brand } from '../types/brand';
-import { Country } from '../types/country';
-import { ClientDocument, DocumentFilters } from '../types/document';
+import type { Contact } from '../types/contact';
+import type { Account } from '../types/account';
+import type { Brand } from '../types/brand';
+import type { Country } from '../types/country';
+import type { Language } from '../types/language';
+import type { ClientDocument, DocumentFilters } from '../types/document';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -65,6 +66,7 @@ export const dataverseService = {
           '_actum_languageid_value',
           '_parentcustomerid_value',  // Account lookup for Company Name
           'mspp_userpreferredlcid',
+          'address1_line1',
           // Portal identity fields
           'adx_identity_username',
           'adx_identity_emailaddress1confirmed',
@@ -153,7 +155,7 @@ export const dataverseService = {
       const escaped = vat.replace(/'/g, "''");
       const query = buildODataQuery({
         filter: `actum_vatregistrationnumber eq '${escaped}'`,
-        select: ['accountid', 'name', 'actum_vatregistrationnumber'],
+        select: ['accountid', '_actum_primarycountryid_value'],
         top: 1,
       });
       try {
@@ -201,13 +203,35 @@ export const dataverseService = {
   },
 
   /**
+   * Language lookup operations
+   */
+  languages: {
+    async getAll(): Promise<Language[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
+          filter: 'statecode eq 0',
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Language[] }>(`/actum_languages${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
    * Brand lookup operations
    */
   brands: {
     async getAll(): Promise<Brand[]> {
       try {
         const query = buildODataQuery({
-          select: ['actum_brandId', 'actum_name'],
+          select: ['actum_brandid', 'actum_name'],
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Brand[] }>(`/actum_brands${query}`);
@@ -228,7 +252,7 @@ export const dataverseService = {
     async getAll(): Promise<Country[]> {
       try {
         const query = buildODataQuery({
-          select: ['actum_countryId', 'actum_name'],
+          select: ['actum_countryid', 'actum_name'],
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Country[] }>(`/actum_countries${query}`);

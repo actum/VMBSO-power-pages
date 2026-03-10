@@ -43,7 +43,7 @@ export interface Contact {
   actum_vat?: string;
   actum_primarycountry?: string;
   actum_companyphone?: string;
-  actum_address?: string;
+  address1_line1?: string;
   actum_role?: string;
   actum_brand?: string[];
   actum_companyemail?: string;
