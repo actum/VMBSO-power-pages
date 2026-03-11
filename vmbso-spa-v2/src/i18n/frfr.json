@@ -95,7 +95,7 @@
   "notFoundPage": {
     "code": "404",
     "title": "Page non trouvée",
-    "descprition": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
 
     "actions": {
       "goToDocuments": "Aller aux documents",

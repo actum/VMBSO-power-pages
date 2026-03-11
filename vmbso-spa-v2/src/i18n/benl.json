@@ -95,7 +95,7 @@
   "notFoundPage": {
     "code": "404",
     "title": "Pagina niet gevonden",
-    "descprition": "De pagina die u zoekt bestaat niet of is verplaatst.",
+    "description": "De pagina die u zoekt bestaat niet of is verplaatst.",
 
     "actions": {
       "goToDocuments": "Naar documenten",
