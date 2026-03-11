@@ -21,7 +21,7 @@ const LangHandler = () => {
 
       navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
     }
-  }, [searchParams, i18n]);
+  }, [searchParams, i18n, navigate]);
 
   return null;
 };
