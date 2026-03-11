@@ -33,7 +33,7 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
     onBlur?.(e);
   };
 
-  const valueMissing = !value || (Array.isArray(value) && value[0] === "");
+  const valueMissing = Array.isArray(value) ? value.length === 0 : !Boolean(value);
   const isError = touched && valueMissing && required;
 
   return (

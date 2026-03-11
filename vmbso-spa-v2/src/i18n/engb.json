@@ -24,7 +24,7 @@
       "placeholder": "Search documents..."
     },
     "documentsList": {
-      "results": "Found {count} document(s)"
+      "results": "Found {{count}} document(s)"
     },
     "account": {
       "name": "Account",

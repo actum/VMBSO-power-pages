@@ -16,12 +16,12 @@ import { useTranslation } from 'react-i18next';
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
-    const { t } = useTranslation("loginPage");
+  const { t } = useTranslation("loginPage");
 
   // Auto-redirect authenticated users
   React.useEffect(() => {
     console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
-    
+
     if (loading) {
       console.log('[LOGIN DEBUG] Still loading, waiting...');
       return; // Wait for session check to complete

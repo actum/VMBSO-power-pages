@@ -43,11 +43,15 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
     const stored = Cookie.get(COOKIE_CONSENT_KEY);
 
     if (stored) {
-      const parsed = JSON.parse(stored);
+      try {
+        const parsed = JSON.parse(stored);
 
-      setAnalyticsEnabled(Boolean(parsed.analyticsEnabled));
+        setAnalyticsEnabled(Boolean(parsed.analyticsEnabled));
 
-      return;
+        return;
+      } catch {
+        Cookie.remove(COOKIE_CONSENT_KEY);
+      }
     }
 
     setOpen(true);
@@ -60,7 +64,8 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
     }), {
       expires: 90,
       path: "/",
-      sameSite: "strict"
+      sameSite: "strict",
+      secure: true
     });
 
     setAnalyticsEnabled(options.analyticsEnabled);

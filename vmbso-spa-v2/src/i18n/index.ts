@@ -15,6 +15,7 @@ i18n
     "be-NL": benlTranslations,
   },
   fallbackLng: "en-GB",
+  supportedLngs: ["en-GB", "fr-FR", "be-NL"],
 });
 
 export default i18n;

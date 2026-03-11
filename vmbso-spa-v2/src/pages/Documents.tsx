@@ -63,7 +63,7 @@ export const Documents: React.FC = () => {
         {!loading && !error && (
           <Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {t("documentsList.results")}
+              {t("documentsList.results", { count: documents.length })}
             </Typography>
 
             {documents.length === 0 ? (

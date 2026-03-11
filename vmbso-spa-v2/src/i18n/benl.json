@@ -24,7 +24,7 @@
       "placeholder": "Documenten zoeken..."
     },
     "documentsList": {
-      "results": "Gevonden {count} document(en)"
+      "results": "Gevonden {{count}} document(en)"
     },
     "account": {
       "name": "Account",

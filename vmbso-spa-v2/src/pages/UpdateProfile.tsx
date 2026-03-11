@@ -202,7 +202,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyBrand.label")}
-                value={values.actum_brand || [""]}
+                value={values.actum_brand || []}
                 fullWidth
                 required
                 select

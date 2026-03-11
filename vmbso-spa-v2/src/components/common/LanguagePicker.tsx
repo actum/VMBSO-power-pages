@@ -21,8 +21,9 @@ const LanguagePicker: React.FC = () => {
 
   const handleChange = (newLangKey: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
-
-    newSearchParams.set("lang", newLangKey);
+    const lang = languages[newLangKey] ? newLangKey : i18n.languages[0];
+    
+    newSearchParams.set("lang", lang);
 
     navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
     handleClose();
