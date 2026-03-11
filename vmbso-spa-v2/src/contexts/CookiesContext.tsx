@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Cookie from "js-cookie";
 import { colors } from '../theme/colors';
 import { useMediaQuery, useTheme } from '@mui/material';
+import * as ReactGA from "react-ga";
 
 type CookiesContextType = {
   analyticsEnabled: boolean;
@@ -48,6 +49,15 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
 
         setAnalyticsEnabled(Boolean(parsed.analyticsEnabled));
 
+        if (parsed.analyticsEnabled) {
+          ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID || "");
+          ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
+        } else {
+          Cookie.remove("_ga");
+          Cookie.remove("_gat");
+          Cookie.remove("_gid");
+        }
+
         return;
       } catch {
         Cookie.remove(COOKIE_CONSENT_KEY);
@@ -69,6 +79,16 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
     });
 
     setAnalyticsEnabled(options.analyticsEnabled);
+
+    if (options.analyticsEnabled) {
+      ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID || "");
+      ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
+    } else {
+      Cookie.remove("_ga");
+      Cookie.remove("_gat");
+      Cookie.remove("_gid");
+    }
+
     setOpen(false);
   };
 
