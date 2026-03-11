@@ -136,7 +136,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             >
               {/* User info header */}
               {currentUser && (
-                <Box sx={{ px: 2, py: 1.5 }}>
+                <Box sx={{ px: 4, py: 1.5 }}>
                   <Typography variant="body2" fontWeight={600} noWrap>
                     {currentUser.fullname || `${currentUser.firstname} ${currentUser.lastname}`}
                   </Typography>

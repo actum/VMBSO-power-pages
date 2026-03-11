@@ -93,8 +93,8 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
             alignItems: { xs: "flex-end", md: "center" }
           },
           "& .MuiDialog-paper": {
-            margin: { xs: 0, md: "auto" },
-            borderRadius: { xs: 0, md: "0.4rem" }
+            margin: { xs: 0, sm: "auto" },
+            borderRadius: { xs: 0, sm: "0.4rem" }
           }
         }}
       >
@@ -135,9 +135,9 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
         <DialogActions
           disableSpacing={isMobile}
           sx={{
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: { xs: "stretch", md: "initial" },
-            gap: { xs: "1rem", md: 0 },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "initial" },
+            gap: { xs: "1rem", sm: 0 },
           }}
         >
           <Button onClick={acceptAll} color="primary" variant="contained">
