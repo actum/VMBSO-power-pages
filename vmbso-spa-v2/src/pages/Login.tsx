@@ -128,14 +128,14 @@ export const Login: React.FC = () => {
                   minHeight: '5.6rem',
                 }}
               >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
               </Button>
 
-              <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
+              <Box sx={{ mt: 4, pt: 4, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
                   {t("firstVisit.title")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ my: 4 }}>
                   {t("firstVisit.subtitle")}
                 </Typography>
                 <Button
@@ -165,23 +165,22 @@ export const Login: React.FC = () => {
                 p: 4,
               }}
             >
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    borderRadius: '0.4rem',
-                    bgcolor: 'rgba(91, 155, 213, 0.3)',
-                  }}
-                />
-              </Box>
-            </Grid>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  borderRadius: '0.4rem',
+                  bgcolor: 'rgba(91, 155, 213, 0.3)',
+                }}
+              />
+            </Box>
           </Grid>
-        </Container>
-      </Box>
-   
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 
