@@ -1,0 +1,269 @@
+{
+  "cookies": {
+    "title": "Vos paramètres de confidentialité",
+    "subtitle": "En cliquant sur « Tout accepter », vous acceptez le stockage de cookies sur votre appareil pour améliorer la navigation et analyser l'utilisation du site.",
+
+    "essential": {
+      "description": "Les cookies essentiels sont nécessaires au fonctionnement du site et ne peuvent pas être désactivés."
+    },
+    "analytics": {
+      "description": "Les cookies analytiques nous aident à améliorer le produit en comprenant l'utilisation. Ils sont optionnels."
+    },
+
+    "actions": {
+      "acceptAll": "Tout accepter",
+      "savePreferences": "Enregistrer les préférences",
+      "essentialToggle": "Essentiel",
+      "analyticsToggle": "Analytiques"
+    }
+  },
+
+  "documentsPage": {
+    "documentsSearch": {
+      "label": "Documents",
+      "placeholder": "Rechercher des documents..."
+    },
+    "documentsList": {
+      "results": "Trouvé {count} document(s)"
+    },
+    "account": {
+      "name": "Compte",
+      "created": "Créé"
+    },
+    "validation": {
+      "noDocumentsFound": "Aucun document trouvé."
+    },
+    "actions": {
+      "search": "Rechercher",
+      "clear": "Effacer"
+    }
+  },
+
+  "footer": {
+    "copyright": "© {{year}} VM Building Solutions. Tous droits réservés."
+  },
+
+  "header": {
+    "navigation": {
+      "documents": "Documents"
+    },
+    "menu": {
+      "profile": "Profil",
+      "logout": "Déconnexion"
+    }
+  },
+
+  "languages": {
+    "options": {
+      "en-GB": "Anglais",
+      "fr-FR": "Français",
+      "be-NL": "Néerlandais"
+    }
+  },
+
+  "loginPage": {
+    "title": "Connexion",
+    "subtitle": "Bienvenue ! Connectez-vous pour accéder à vos documents.",
+
+    "firstVisit": {
+      "title": "Première visite ?",
+      "subtitle": "Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour accéder à vos documents."
+    },
+
+    "fields": {
+      "email": {
+        "label": "E-MAIL",
+        "placeholder": "email@email.com"
+      },
+      "password": {
+        "label": "MOT DE PASSE"
+      }
+    },
+
+    "validation": {
+      "email": "Veuillez entrer votre e-mail",
+      "password": "Veuillez entrer votre mot de passe"
+    },
+
+    "actions": {
+      "login": "Se connecter",
+      "forgotPassword": "Mot de passe oublié ?",
+      "createAccount": "Créer un compte"
+    }
+  },
+
+  "notFoundPage": {
+    "code": "404",
+    "title": "Page non trouvée",
+    "descprition": "La page que vous recherchez n'existe pas ou a été déplacée.",
+
+    "actions": {
+      "goToDocuments": "Aller aux documents",
+      "back": "Retour"
+    }
+  },
+
+  "registerPage": {
+    "title": "Première visite ?",
+    "subtitle": "Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour accéder à vos documents.",
+
+    "fields": {
+      "firstName": {
+        "label": "PRÉNOM",
+        "placeholder": "Jean"
+      },
+      "lastName": {
+        "label": "NOM",
+        "placeholder": "Dupont"
+      },
+      "email": {
+        "label": "E-MAIL",
+        "placeholder": "email@email.com"
+      },
+      "password": {
+        "label": "MOT DE PASSE",
+        "helper": "Minimum 8 caractères"
+      },
+      "confirmPassword": {
+        "label": "CONFIRMER LE MOT DE PASSE"
+      },
+      "country": {
+        "label": "PAYS",
+        "placeholder": "Sélectionner un pays"
+      },
+      "role": {
+        "label": "RÔLE",
+        "placeholder": "Sélectionner un rôle"
+      }
+    },
+
+    "options": {
+      "countries": {
+        "DK": "Danemark",
+        "FR": "France",
+        "DE": "Allemagne",
+        "NL": "Pays-Bas",
+        "BE": "Belgique"
+      },
+      "roles": {
+        "architect": "Architecte",
+        "distributor": "Distributeur",
+        "installer": "Installateur"
+      }
+    },
+
+    "validation": {
+      "allFieldsRequired": "Veuillez remplir tous les champs obligatoires",
+      "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas"
+    },
+
+    "actions": {
+      "register": "S'inscrire",
+      "alreadyRegistered": "Déjà inscrit ? Se connecter"
+    },
+
+    "errors": {
+      "registrationFailed": "Échec de l'inscription. Veuillez réessayer."
+    }
+  },
+
+  "updateProfilePage": {
+    "title": {
+      "completeProfile": "Complétez votre profil",
+      "completeDetails": "Coordonnées",
+      "completeCompanyDetails": "Détails de l'entreprise"
+    },
+
+    "fields": {
+      "companyBrand": {
+        "label": "MARQUE DE L'ENTREPRISE",
+        "aria": "Sélectionnez votre marque",
+        "options": {
+          "resitrix": "Resitrix",
+          "vmzinc": "VMZINC",
+          "mastersystems": "Mastersystems"
+        }
+      },
+      "language": {
+        "label": "LANGUE",
+        "aria": "Langue",
+        "options": {
+          "en-GB": "Anglais",
+          "fr-FR": "France = Français uniquement",
+          "be-NL": "Belgique = Français/Néerlandais"
+        }
+      },
+      "email": {
+        "label": "E-MAIL",
+        "placeholder": "email@email.com"
+      },
+      "phoneNumber": {
+        "label": "NUMÉRO DE TÉLÉPHONE",
+        "placeholder": "+33 6 12 34 56 78"
+      },
+      "companyName": {
+        "label": "NOM DE L'ENTREPRISE",
+        "aria": "Nom de l'entreprise",
+        "placeholder": "Entreprise"
+      },
+      "vat": {
+        "label": "TVA",
+        "aria": "Numéro de TVA",
+        "placeholder": "FR123456789"
+      },
+      "primaryCountry": {
+        "label": "PAYS PRINCIPAL",
+        "aria": "Pays principal de l'entreprise",
+        "placeholder": "Pays"
+      },
+      "companyPhone": {
+        "label": "NUMÉRO DE TÉLÉPHONE",
+        "aria": "Téléphone de l'entreprise",
+        "placeholder": "+33 1 23 45 67 89"
+      },
+      "address": {
+        "label": "ADRESSE",
+        "aria": "Adresse de l'entreprise",
+        "placeholder": "12 Rue Principale, Paris"
+      },
+      "companyRole": {
+        "label": "RÔLE DANS L'ENTREPRISE",
+        "aria": "Sélection du rôle",
+        "options": {
+          "distributor": "Distributeur",
+          "architect": "Architecte",
+          "installer": "Installateur"
+        }
+      },
+      "companyEmail": {
+        "label": "E-MAIL DE L'ENTREPRISE",
+        "aria": "E-mail de l'entreprise",
+        "placeholder": "email@entreprise.com"
+      }
+    },
+
+    "validation": {
+      "language": "La langue est requise",
+      "phoneNumber": "Le numéro de téléphone est requis",
+      "companyName": "Le nom de l'entreprise est requis",
+      "vat": "Le numéro de TVA est requis",
+      "primaryCountry": "Le pays est requis",
+      "companyPhone": "Le téléphone de l'entreprise est requis",
+      "address": "L'adresse de l'entreprise est requise",
+      "companyBrand": "Au moins une marque doit être sélectionnée",
+      "companyRole": "Le rôle est requis"
+    },
+
+    "section": {
+      "contact_details": "Coordonnées",
+      "company_details": "Détails de l'entreprise"
+    },
+
+    "action": {
+      "update": "Mettre à jour",
+      "updating": "Mise à jour…"
+    }
+  }
+}

@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
-    const { t } = useTranslation("login");
+    const { t } = useTranslation("loginPage");
 
   // Auto-redirect authenticated users
   React.useEffect(() => {

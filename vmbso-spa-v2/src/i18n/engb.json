@@ -1,0 +1,271 @@
+{
+  "cookies": {
+    "title": "Your privacy settings",
+    "subtitle": "By clicking “Accept all” you agree to the storage of cookies on your device for improving website navigation and analyzing website usage.",
+
+    "essential": {
+      "description": "Essential cookies are required for the site to function and cannot be disabled."
+    },
+    "analytics": {
+      "description": "Analytics cookies help us improve the product by understanding usage. They are optional."
+    },
+
+    "actions": {
+      "acceptAll": "Accept All",
+      "savePreferences": "Save Preferences",
+      "essentialToggle": "Essential",
+      "analyticsToggle": "Analytics"
+    }
+  },
+
+  "documentsPage": {
+    "documentsSearch": {
+      "label": "Documents",
+      "placeholder": "Search documents..."
+    },
+    "documentsList": {
+      "results": "Found {count} document(s)"
+    },
+    "account": {
+      "name": "Account",
+      "created": "Created"
+    },
+
+    "validation": {
+      "noDocumentsFound": "No documents found."
+    },
+
+    "actions": {
+      "search": "Search",
+      "clear": "Clear"
+    }
+  },
+
+  "footer": {
+    "copyright": "© {{year}} VM Building Solutions. All rights reserved."
+  },
+
+  "header": {
+    "navigation": {
+      "documents": "Documents"
+    },
+    "menu": {
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+
+  "languages": {
+    "options": {
+      "en-GB": "English",
+      "fr-FR": "French",
+      "be-NL": "Dutch"
+    }
+  },
+
+  "loginPage": {
+    "title": "Log in",
+    "subtitle": "Welcome! Please log in to access your documents.",
+
+    "firstVisit": {
+      "title": "First visit?",
+      "subtitle": "This space is reserved for VMZINC distributors. Submit a request to access your documents."
+    },
+
+    "fields": {
+      "email": {
+        "label": "E-MAIL",
+        "placeholder": "email@email.com"
+      },
+      "password": {
+        "label": "PASSWORD"
+      }
+    },
+
+    "validation": {
+      "email": "Please enter your email",
+      "password": "Please enter your password"
+    },
+
+    "actions": {
+      "login": "Log in",
+      "forgotPassword": "Forgot your password?",
+      "createAccount": "Create an account"
+    }
+  },
+
+  "notFoundPage": {
+    "code": "404",
+    "title": "Page Not Found",
+    "descprition": "The page you are looking for doesn't exist or has been moved.",
+
+    "actions": {
+      "goToDocuments": "Go to Documents",
+      "back": "Go back"
+    }
+  },
+
+  "registerPage": {
+    "title": "First visit?",
+    "subtitle": "This space is reserved for VMZINC distributors. Submit a request to access your documents.",
+
+    "fields": {
+      "firstName": {
+        "label": "FIRST NAME",
+        "placeholder": "John"
+      },
+      "lastName": {
+        "label": "LAST NAME",
+        "placeholder": "Doe"
+      },
+      "email": {
+        "label": "EMAIL",
+        "placeholder": "email@email.com"
+      },
+      "password": {
+        "label": "PASSWORD",
+        "helper": "Minimum 8 characters"
+      },
+      "confirmPassword": {
+        "label": "CONFIRM PASSWORD"
+      },
+      "country": {
+        "label": "COUNTRY",
+        "placeholder": "Select a country"
+      },
+      "role": {
+        "label": "ROLE",
+        "placeholder": "Select a role"
+      }
+    },
+
+    "options": {
+      "countries": {
+        "DK": "Denmark",
+        "FR": "France",
+        "DE": "Germany",
+        "NL": "Netherlands",
+        "BE": "Belgium"
+      },
+      "roles": {
+        "architect": "Architect",
+        "distributor": "Distributor",
+        "installer": "Installer"
+      }
+    },
+
+    "validation": {
+      "allFieldsRequired": "Please fill in all required fields",
+      "invalidEmail": "Please enter a valid email address",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "passwordMismatch": "Passwords do not match"
+    },
+
+    "actions": {
+      "register": "Register",
+      "alreadyRegistered": "Already registered? Sign in"
+    },
+
+    "errors": {
+      "registrationFailed": "Registration failed. Please try again."
+    }
+  },
+
+  "updateProfilePage": {
+    "title": {
+      "completeProfile": "Complete your profile",
+      "completeDetails": "Contact details",
+      "completeCompanyDetails": "Company details"
+    },
+
+    "fields": {
+      "companyBrand": {
+        "label": "COMPANY BRAND",
+        "aria": "Select your company brand",
+        "options": {
+          "resitrix": "Resitrix",
+          "vmzinc": "VMZINC",
+          "mastersystems": "Mastersystems"
+        }
+      },
+      "language": {
+        "label": "LANGUAGE",
+        "aria": "Language",
+        "options": {
+          "en-GB": "English",
+          "fr-FR": "France = French only",
+          "be-NL": "Belgium = French/Dutch"
+        }
+      },
+      "email": {
+        "label": "EMAIL",
+        "placeholder": "email@email.com"
+      },
+      "phoneNumber": {
+        "label": "PHONE NUMBER",
+        "placeholder": "+44 7700 900000"
+      },
+      "companyName": {
+        "label": "COMPANY NAME",
+        "aria": "Company Name",
+        "placeholder": "Company"
+      },
+      "vat": {
+        "label": "VAT",
+        "aria": "Company VAT",
+        "placeholder": "GB123456789"
+      },
+      "primaryCountry": {
+        "label": "PRIMARY COUNTRY",
+        "aria": "Company primary country",
+        "placeholder": "Country"
+      },
+      "companyPhone": {
+        "label": "PHONE NUMBER",
+        "aria": "Company phone number",
+        "placeholder": "+44 7700 900000"
+      },
+      "address": {
+        "label": "ADDRESS",
+        "aria": "Company address",
+        "placeholder": "123 High Street, London"
+      },
+      "companyRole": {
+        "label": "COMPANY ROLE",
+        "aria": "Company role selector",
+        "options": {
+          "distributor": "Distributor",
+          "architect": "Architect",
+          "installer": "Installer"
+        }
+      },
+      "companyEmail": {
+        "label": "COMPANY EMAIL",
+        "aria": "Company email",
+        "placeholder": "email@email.com"
+      }
+    },
+
+    "validation": {
+      "language": "Language is required",
+      "phoneNumber": "Phone number is required",
+      "companyName": "Company name is required",
+      "vat": "VAT number is required",
+      "primaryCountry": "Country is required",
+      "companyPhone": "Company phone is required",
+      "address": "Company address is required",
+      "companyBrand": "At least one brand must be selected",
+      "companyRole": "Role is required"
+    },
+
+    "section": {
+      "contact_details": "Contact details",
+      "company_details": "Company details"
+    },
+
+    "action": {
+      "update": "Update",
+      "updating": "Updating…"
+    }
+  }
+}

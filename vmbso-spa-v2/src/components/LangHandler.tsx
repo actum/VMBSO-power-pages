@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 const LangHandler = () => {
 
-  const { i18n } = useTranslation("languages");
+  const { i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

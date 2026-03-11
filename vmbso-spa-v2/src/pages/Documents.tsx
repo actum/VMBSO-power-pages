@@ -9,7 +9,7 @@ export const Documents: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState<DocumentFilters>({});
   const { documents, loading, error, refetch } = useDocuments(filters);
-  const { t } = useTranslation("documents");
+  const { t } = useTranslation("documentsPage");
 
   const handleSearch = () => {
     setFilters({ searchText });

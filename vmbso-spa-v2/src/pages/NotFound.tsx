@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation("notFound");
+  const { t } = useTranslation("notFoundPage");
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>

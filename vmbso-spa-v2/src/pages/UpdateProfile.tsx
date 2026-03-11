@@ -38,7 +38,7 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation(["updateProfile", "languages"]);
+  const { t } = useTranslation(["updateProfilePage", "languages"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const languages = t("languages:options", { returnObjects: true }) as Record<string, string>;
@@ -104,7 +104,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("actum_language")}
                 error={t("validation.language")}
               >
-                {Object.entries(languages).map(([key, value]) => <MenuItem key={key} value={key}>{t(`updateProfile:fields.language.options.${key}`)}</MenuItem>)}
+                {Object.entries(languages).map(([key, value]) => <MenuItem key={key} value={key}>{t(`updateProfilePage:fields.language.options.${key}`)}</MenuItem>)}
               </InputLabelField>
             </Grid>
             <Grid item xs={12} sm={6} display={{ xs: "none", md: "initial" }} />
