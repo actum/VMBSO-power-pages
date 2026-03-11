@@ -72,7 +72,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
   };
 
   const handleSave = () => {
-    saveConsent({ analyticsEnabled: true });
+    saveConsent({ analyticsEnabled: analyticsEnabled });
   };
 
   const contextValue: CookiesContextType = {
@@ -100,7 +100,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
       >
         <DialogTitle fontSize={"2rem"} id="cookies-dialog-title">{t("title")}</DialogTitle>
         <DialogContent>
-          <Typography variant="body2" gutterBottom>
+          <Typography mb="1rem" variant="body2">
             {t("subtitle")}
           </Typography>
           <FormControlLabel
@@ -114,7 +114,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
             label={t("actions.essentialToggle")}
             sx={formLabelSx}
           />
-          <Typography sx={{ color: colors.textLight }} variant="body2">
+          <Typography gutterBottom sx={{ color: colors.textLight }} variant="body2">
             {t("essential.description")}
           </Typography>
           <FormControlLabel
