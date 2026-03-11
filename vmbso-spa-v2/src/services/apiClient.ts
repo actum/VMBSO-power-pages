@@ -138,4 +138,38 @@ export const apiClient = {
       credentials: 'include',
     });
   },
+
+  /**
+   * Invoke a Power Pages-registered cloud flow via `window.shell.ajaxSafePost`.
+   *
+   * Key rules (from official Power Pages SPA pattern):
+   *  - Use shell.ajaxSafePost — it injects the CSRF token and handles auth automatically
+   *  - Send data as { eventData: JSON.stringify(payload) } — a plain object
+   *  - Do NOT set contentType — jQuery must encode it as application/x-www-form-urlencoded
+   */
+  async flow<T = void>(url: string, eventData: Record<string, unknown>): Promise<T> {
+    interface ShellAjaxPromise<R> {
+      done: (cb: (response: R) => void) => ShellAjaxPromise<R>;
+      fail: (cb: (xhr: unknown, status: string, error: string) => void) => ShellAjaxPromise<R>;
+    }
+    interface Shell {
+      ajaxSafePost: <R = unknown>(settings: { type?: string; url: string; data?: unknown }) => ShellAjaxPromise<R>;
+    }
+
+    const shell = (window as { shell?: Shell }).shell;
+    if (!shell || typeof shell.ajaxSafePost !== 'function') {
+      throw new Error('window.shell.ajaxSafePost is not available — is this running inside Power Pages?');
+    }
+
+    return new Promise<T>((resolve, reject) => {
+      shell.ajaxSafePost<T>({
+        type: 'POST',
+        url,
+        data: { eventData: JSON.stringify(eventData) },
+        // NOTE: do NOT set contentType — jQuery must use application/x-www-form-urlencoded
+      })
+        .done((response) => resolve(response))
+        .fail((_xhr, status, error) => reject(new Error(`Flow call failed: ${status} — ${error}`)));
+    });
+  },
 };

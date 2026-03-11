@@ -65,6 +65,14 @@
     "companyEmail": {
       "label": "BEDRIJFS-E-MAIL",
       "aria": "E-mail van het bedrijf"
+    },
+    "city": {
+      "label": "STAD",
+      "aria": "Stad van het bedrijf"
+    },
+    "zipCode": {
+      "label": "POSTCODE",
+      "aria": "Postcode van het bedrijf"
     }
   },
 
@@ -76,6 +84,8 @@
     "primaryCountry": "Land is verplicht",
     "companyPhone": "Bedrijfstelefoon is verplicht",
     "address": "Bedrijfsadres is verplicht",
+    "city": "Stad is verplicht",
+    "zipCode": "Postcode is verplicht",
     "companyBrand": "Selecteer minstens één merk",
     "companyRole": "Functie is verplicht"
   },

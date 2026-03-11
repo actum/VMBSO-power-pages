@@ -65,6 +65,14 @@
     "companyEmail": {
       "label": "E-MAIL DE L'ENTREPRISE",
       "aria": "E-mail de l'entreprise"
+    },
+    "city": {
+      "label": "VILLE",
+      "aria": "Ville de l'entreprise"
+    },
+    "zipCode": {
+      "label": "CODE POSTAL",
+      "aria": "Code postal de l'entreprise"
     }
   },
 
@@ -76,6 +84,8 @@
     "primaryCountry": "Le pays est obligatoire",
     "companyPhone": "Le téléphone de l'entreprise est obligatoire",
     "address": "L'adresse de l'entreprise est obligatoire",
+    "city": "La ville est obligatoire",
+    "zipCode": "Le code postal est obligatoire",
     "companyBrand": "Au moins une marque doit être sélectionnée",
     "companyRole": "Le rôle est obligatoire"
   },

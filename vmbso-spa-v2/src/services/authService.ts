@@ -32,7 +32,7 @@ const DEV_MOCK_USER: Contact = {
   },
   // UpdateProfile form fields
   actum_language: 'fr',
-  actum_phone: '+33 6 00 00 00 00',
+  telephone1: '+33 6 00 00 00 00',
   actum_companyname: 'Actum Digital',
   actum_vat: 'FR12345678901',
   actum_primarycountry: 'France',

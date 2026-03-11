@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // (_parentcustomerid_value) for the company portion to be considered complete.
 const requiredPersonalFields: Array<keyof Contact> = [
   "actum_language",
-  "actum_phone",
+  "telephone1",
 ];
 
 interface AuthProviderProps {

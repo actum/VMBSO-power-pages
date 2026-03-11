@@ -65,6 +65,14 @@
     "companyEmail": {
       "label": "COMPANY EMAIL",
       "aria": "Company email"
+    },
+    "city": {
+      "label": "CITY",
+      "aria": "Company city"
+    },
+    "zipCode": {
+      "label": "ZIP CODE",
+      "aria": "Company zip code"
     }
   },
 
@@ -76,6 +84,8 @@
     "primaryCountry": "Country is required",
     "companyPhone": "Company phone is required",
     "address": "Company address is required",
+    "city": "City is required",
+    "zipCode": "Zip code is required",
     "companyBrand": "At least one brand must be selected",
     "companyRole": "Role is required"
   },

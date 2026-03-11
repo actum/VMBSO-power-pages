@@ -38,7 +38,6 @@ export interface Contact {
   // TODO: Fields used in UpdateProfile.tsx but NOT YET in Dataverse
   // These need to be added to Contact table before profile form will work
   actum_language?: string;
-  actum_phone?: string;
   actum_companyname?: string;
   actum_vat?: string;
   actum_primarycountry?: string;
@@ -47,4 +46,6 @@ export interface Contact {
   actum_role?: string;
   actum_brand?: string[];
   actum_companyemail?: string;
+  address1_city?: string;
+  address1_postalcode?: string;
 }

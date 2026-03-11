@@ -9,6 +9,7 @@ import type { Account } from '../types/account';
 import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
+import type { Role } from '../types/role';
 import type { ClientDocument, DocumentFilters } from '../types/document';
 import { config } from '../config/powerPages.config';
 
@@ -155,7 +156,7 @@ export const dataverseService = {
       const escaped = vat.replace(/'/g, "''");
       const query = buildODataQuery({
         filter: `actum_vatregistrationnumber eq '${escaped}'`,
-        select: ['accountid', '_actum_primarycountryid_value'],
+        select: ['accountid', 'name', '_actum_primarycountryid_value'],
         top: 1,
       });
       try {
@@ -222,6 +223,28 @@ export const dataverseService = {
         throw error;
       }
     },
+
+    /**
+     * Get languages linked to a specific country via the M2M relationship
+     * actum_country_actum_language_actum_language.
+     */
+    async getByCountry(countryId: string): Promise<Language[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Language[] }>(
+          `/actum_countries(${countryId})/actum_country_actum_language_actum_language${query}`
+        );
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
   },
 
   /**
@@ -235,6 +258,27 @@ export const dataverseService = {
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Brand[] }>(`/actum_brands${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Role lookup operations
+   */
+  roles: {
+    async getAll(): Promise<Role[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_roleid', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Role[] }>(`/actum_roles${query}`);
         return response.value ?? [];
       } catch (error) {
         if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
