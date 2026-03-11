@@ -25,26 +25,32 @@
       }
     },
     "email": {
-      "label": "E-MAIL"
+      "label": "E-MAIL",
+      "placeholder": "email@email.com"
     },
     "phoneNumber": {
-      "label": "NUMÉRO DE TÉLÉPHONE"
+      "label": "NUMÉRO DE TÉLÉPHONE",
+      "placeholder": "+33 6 00 00 00 00"
     },
     "companyName": {
       "label": "NOM DE L'ENTREPRISE",
-      "aria": "Nom de l'entreprise"
+      "aria": "Nom de l'entreprise",
+      "placeholder": "Nom de l'entreprise"
     },
     "vat": {
       "label": "TVA",
-      "aria": "TVA de l'entreprise"
+      "aria": "TVA de l'entreprise",
+      "placeholder": "FR12345678901"
     },
     "primaryCountry": {
       "label": "PAYS PRINCIPAL",
-      "aria": "Pays principal de l'entreprise"
+      "aria": "Pays principal de l'entreprise",
+      "placeholder": "Pays"
     },
     "companyPhone": {
       "label": "NUMÉRO DE TÉLÉPHONE",
-      "aria": "Numéro de téléphone de l'entreprise"
+      "aria": "Numéro de téléphone de l'entreprise",
+      "placeholder": "+33 6 00 00 00 00"
     },
     "address": {
       "label": "ADRESSE",
@@ -61,7 +67,8 @@
     },
     "companyEmail": {
       "label": "E-MAIL DE L'ENTREPRISE",
-      "aria": "E-mail de l'entreprise"
+      "aria": "E-mail de l'entreprise",
+      "placeholder": "email@email.com"
     }
   },
 

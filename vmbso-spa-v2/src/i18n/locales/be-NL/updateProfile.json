@@ -25,26 +25,32 @@
       }
     },
     "email": {
-      "label": "E-MAIL"
+      "label": "E-MAIL",
+      "placeholder": "email@email.com"
     },
     "phoneNumber": {
-      "label": "TELEFOONNUMMER"
+      "label": "TELEFOONNUMMER",
+      "placeholder": "+32 470 00 00 00"
     },
     "companyName": {
       "label": "BEDRIJFSNAAM",
-      "aria": "Bedrijfsnaam"
+      "aria": "Bedrijfsnaam",
+      "placeholder": "Bedrijfsnaam"
     },
     "vat": {
       "label": "BTW",
-      "aria": "BTW van het bedrijf"
+      "aria": "BTW van het bedrijf",
+      "placeholder": "BE0123456789"
     },
     "primaryCountry": {
       "label": "HOOFDLAND",
-      "aria": "Hoofdland van het bedrijf"
+      "aria": "Hoofdland van het bedrijf",
+      "placeholder": "Land"
     },
     "companyPhone": {
       "label": "TELEFOONNUMMER",
       "aria": "Telefoonnummer van het bedrijf",
+      "placeholder": "+32 470 00 00 00",
       "options": {
         "distributor": "Distributeur",
         "architect": "Architect",
@@ -53,7 +59,8 @@
     },
     "address": {
       "label": "ADRES",
-      "aria": "Adres van het bedrijf"
+      "aria": "Adres van het bedrijf",
+      "placeholder": "Koningsstraat 1, Brussel"
     },
     "companyRole": {
       "label": "FUNCTIE IN HET BEDRIJF",
@@ -61,7 +68,8 @@
     },
     "companyEmail": {
       "label": "BEDRIJFS-E-MAIL",
-      "aria": "E-mail van het bedrijf"
+      "aria": "E-mail van het bedrijf",
+      "placeholder": "email@email.com"
     }
   },
 

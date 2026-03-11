@@ -25,30 +25,37 @@
       }
     },
     "email": {
-      "label": "EMAIL"
+      "label": "EMAIL",
+      "placeholder": "email@email.com"
     },
     "phoneNumber": {
-      "label": "PHONE NUMBER"
+      "label": "PHONE NUMBER",
+      "placeholder": "+44 7700 900000"
     },
     "companyName": {
       "label": "COMPANY NAME",
-      "aria": "Company Name"
+      "aria": "Company Name",
+      "placeholder": "Company"
     },
     "vat": {
       "label": "VAT",
-      "aria": "Company VAT"
+      "aria": "Company VAT",
+      "placeholder": "GB123456789"
     },
     "primaryCountry": {
       "label": "PRIMARY COUNTRY",
-      "aria": "Company primary country"
+      "aria": "Company primary country",
+      "placeholder": "Country"
     },
     "companyPhone": {
       "label": "PHONE NUMBER",
-      "aria": "Company phone number"
+      "aria": "Company phone number",
+      "placeholder": "+44 7700 900000"
     },
     "address": {
       "label": "ADDRESS",
-      "aria": "Company address"
+      "aria": "Company address",
+      "placeholder": "123 High Street, London"
     },
     "companyRole": {
       "label": "COMPANY ROLE",
@@ -61,7 +68,8 @@
     },
     "companyEmail": {
       "label": "COMPANY EMAIL",
-      "aria": "Company email"
+      "aria": "Company email",
+      "placeholder": "email@email.com"
     }
   },
 

@@ -133,10 +133,10 @@ export const Login: React.FC = () => {
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-                  Première visite ?
+                  {t("firstVisit.title")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
+                  {t("firstVisit.subtitle")}
                 </Typography>
                 <Button
                   variant="outlined"
@@ -146,7 +146,7 @@ export const Login: React.FC = () => {
                     fontWeight: 500,
                   }}
                 >
-                  Créer un compte
+                  {t("actions.createAccount")}
                 </Button>
               </Box>
             </Paper>

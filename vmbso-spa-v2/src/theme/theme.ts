@@ -1,5 +1,5 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
-import { colors } from './colors'; 
+import { createTheme, type ThemeOptions } from '@mui/material/styles';
+import { colors } from './colors';
 
 const baseFontFamily = [
     'Inter',
@@ -305,7 +305,9 @@ const theme = createTheme({
             borderColor: colors.grey3,
           },
           '&.Mui-focused': {
-            boxShadow: '0 0 0 3px rgba(0, 144, 178, .35)'
+            boxShadow: '0 0 0 3px rgba(0, 144, 178, .35)',
+            transition: 'box-shadow .2s ease, border .2s ease',
+            border: '1px solid transparent',
           }
         },
         notchedOutline: {

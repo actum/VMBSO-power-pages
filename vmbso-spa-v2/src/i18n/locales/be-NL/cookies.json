@@ -1,0 +1,18 @@
+{
+  "title": "Uw privacy-instellingen",
+  "subtitle": "Door op “Alles accepteren” te klikken, stemt u in met het opslaan van cookies op uw apparaat voor het verbeteren van de websitenavigatie en het analyseren van het websitegebruik",
+
+  "essential": {
+    "description": "Essentiële cookies zijn vereist voor het functioneren van de site en kunnen niet worden uitgeschakeld."
+  },
+  "analytics": {
+    "description": "Analytics-cookies helpen ons het product te verbeteren door gebruik te begrijpen. Ze zijn optioneel."
+  },
+
+  "actions": {
+    "acceptAll": "Alles accepteren",
+    "savePreferences": "Voorkeuren opslaan",
+    "essentialToggle": "Essentieel",
+    "analyticsToggle": "Analyse"
+  }
+}

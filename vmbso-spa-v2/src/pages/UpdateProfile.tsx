@@ -14,7 +14,7 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
-import { Contact } from "../types/contact";
+import { type Contact } from "../types/contact";
 import { authService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -111,6 +111,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.email.label")}
+                placeholder={t("fields.email.placeholder")}
                 value={values.emailaddress1 || ""}
                 onChange={handleChange("emailaddress1")}
                 fullWidth
@@ -121,6 +122,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.phoneNumber.label")}
+                placeholder={t("fields.phoneNumber.placeholder")}
                 value={values.actum_phone || ""}
                 fullWidth
                 required
@@ -139,6 +141,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyName.label")}
+                placeholder={t("fields.companyName.placeholder")}
                 aria-label={t("fields.companyName.aria")}
                 value={values.actum_companyname || ""}
                 fullWidth
@@ -150,6 +153,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.vat.label")}
+                placeholder={t("fields.vat.placeholder")}
                 aria-label={t("fields.vat.aria")}
                 value={values.actum_vat || ""}
                 fullWidth
@@ -161,6 +165,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.primaryCountry.label")}
+                placeholder={t("fields.primaryCountry.placeholder")}
                 aria-label={t("fields.primaryCountry.aria")}
                 value={values.actum_primarycountry || ""}
                 fullWidth
@@ -172,6 +177,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyPhone.label")}
+                placeholder={t("fields.companyPhone.placeholder")}
                 aria-label={t("fields.companyPhone.aria")}
                 value={values.actum_companyphone || ""}
                 fullWidth
@@ -184,6 +190,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12}>
               <InputLabelField
                 label={t("fields.address.label")}
+                placeholder={t("fields.address.placeholder")}
                 value={values.actum_address || ""}
                 fullWidth
                 required
@@ -199,6 +206,9 @@ export const UpdateProfile: React.FC = () => {
                 fullWidth
                 required
                 select
+                SelectProps={{
+                  multiple: true
+                }}
                 error={t("validation.companyBrand")}
                 aria-label={t("fields.companyBrand.aria")}
                 onChange={handleChange("actum_brand")}
@@ -227,6 +237,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyEmail.label")}
+                placeholder={t("fields.companyEmail.placeholder")}
                 aria-label={t("fields.companyEmail.aria")}
                 type="email"
                 value={values.actum_companyemail || ""}

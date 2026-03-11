@@ -1,0 +1,18 @@
+{
+  "title": "Your privacy settings",
+  "subtitle": "By clicking “Accept all” you agree to the storage of cookies on your device for improving website navigation and analyzing website usage.",
+
+  "essential": {
+    "description": "Essential cookies are required for the site to function and cannot be disabled."
+  },
+  "analytics": {
+    "description": "Analytics cookies help us improve the product by understanding usage. They are optional."
+  },
+
+  "actions": {
+    "acceptAll": "Accept All",
+    "savePreferences": "Save Preferences",
+    "essentialToggle": "Essential",
+    "analyticsToggle": "Analytics"
+  }
+}
