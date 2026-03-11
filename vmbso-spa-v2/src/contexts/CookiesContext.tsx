@@ -72,7 +72,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
   };
 
   const handleSave = () => {
-    saveConsent({ analyticsEnabled: analyticsEnabled });
+    saveConsent({ analyticsEnabled: true });
   };
 
   const contextValue: CookiesContextType = {
