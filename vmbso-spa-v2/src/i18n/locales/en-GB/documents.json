@@ -1,0 +1,22 @@
+{
+  "documentsSearch": {
+    "label": "Documents",
+    "placeholder": "Search documents..."
+  },
+  "documentsList": {
+    "results": "Found {count} document(s)"
+  },
+  "account": {
+    "name": "Account",
+    "created": "Created"
+  },
+
+  "validation": {
+    "noDocumentsFound": "No documents found."
+  },
+
+  "actions": {
+    "search": "Search",
+    "clear": "Clear"
+  }
+}

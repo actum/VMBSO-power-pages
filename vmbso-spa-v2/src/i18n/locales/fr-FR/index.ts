@@ -7,6 +7,7 @@ import header from "./header.json";
 import footer from "./footer.json";
 import cookies from "./cookies.json";
 import notFound from "./notFound.json";
+import documents from "./documents.json";
 
 export default {
   languages,
@@ -17,4 +18,5 @@ export default {
   footer,
   cookies,
   notFound,
+  documents,
 }

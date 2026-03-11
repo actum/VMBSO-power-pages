@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Typography, Box, TextField, CircularProgress, Alert, Button } from '@mui/material';
 import { Layout } from '../components/Layout';
 import { useDocuments } from '../hooks/useDocuments';
-import { DocumentFilters } from '../types/document';
+import { type DocumentFilters } from '../types/document';
+import { useTranslation } from 'react-i18next';
 
 export const Documents: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState<DocumentFilters>({});
   const { documents, loading, error, refetch } = useDocuments(filters);
+  const { t } = useTranslation("documents");
 
   const handleSearch = () => {
     setFilters({ searchText });
@@ -22,13 +24,13 @@ export const Documents: React.FC = () => {
     <Layout>
       <Box>
         <Typography variant="h4" gutterBottom>
-          Documents
+          {t("documentsSearch.label")}
         </Typography>
 
         {/* Search Controls */}
         <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
           <TextField
-            placeholder="Search documents..."
+            placeholder={t("documentsSearch.placeholder")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -36,10 +38,10 @@ export const Documents: React.FC = () => {
             fullWidth
           />
           <Button variant="contained" onClick={handleSearch} disabled={loading}>
-            Search
+            {t("actions.search")}
           </Button>
           <Button variant="outlined" onClick={handleClearSearch} disabled={loading}>
-            Clear
+            {t("actions.clear")}
           </Button>
         </Box>
 
@@ -61,11 +63,11 @@ export const Documents: React.FC = () => {
         {!loading && !error && (
           <Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Found {documents.length} document(s)
+              {t("documentsList.results")}
             </Typography>
-            
+
             {documents.length === 0 ? (
-              <Alert severity="info">No documents found.</Alert>
+              <Alert severity="info">{t("validation.noDocumentsFound")}</Alert>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {documents.map((doc) => (
@@ -83,11 +85,11 @@ export const Documents: React.FC = () => {
                     <Typography variant="h6">{doc.actum_name}</Typography>
                     {doc.actum_account && (
                       <Typography variant="body2" color="text.secondary">
-                        Account: {doc.actum_account.name}
+                        {t("account.name")}: {doc.actum_account.name}
                       </Typography>
                     )}
                     <Typography variant="caption" color="text.secondary">
-                      Created: {new Date(doc.createdon).toLocaleDateString()}
+                      {t("account.created")}: {new Date(doc.createdon).toLocaleDateString()}
                     </Typography>
                   </Box>
                 ))}

@@ -1,0 +1,22 @@
+{
+  "documentsSearch": {
+    "label": "Documenten",
+    "placeholder": "Documenten zoeken..."
+  },
+  "documentsList": {
+    "results": "Gevonden {count} document(en)"
+  },
+  "account": {
+    "name": "Account",
+    "created": "Aangemaakt"
+  },
+
+  "validation": {
+    "noDocumentsFound": "Geen documenten gevonden."
+  },
+
+  "actions": {
+    "search": "Zoeken",
+    "clear": "Wissen"
+  }
+}
