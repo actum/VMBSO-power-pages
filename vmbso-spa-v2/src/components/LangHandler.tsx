@@ -10,17 +10,18 @@ const LangHandler = () => {
 
   useEffect(() => {
     const langParam = searchParams.get("lang");
+    const language = langParam || i18n.language;
 
-    if (langParam && langParam !== i18n.language) {
+    if (!langParam || langParam !== i18n.language) {
       const newSearchParams = new URLSearchParams(searchParams);
 
-      newSearchParams.set("lang", langParam);
+      newSearchParams.set("lang", language);
 
-      i18n.changeLanguage(langParam);
+      i18n.changeLanguage(language);
 
       navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
     }
-  }, [searchParams]);
+  }, [searchParams, i18n]);
 
   return null;
 };

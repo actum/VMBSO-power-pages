@@ -1,0 +1,10 @@
+{
+  "code": "404",
+  "title": "Page Not Found",
+  "descprition": "The page you are looking for doesn't exist or has been moved.",
+
+  "actions": {
+    "goToDocuments": "Go to Documents",
+    "back": "Go back"
+  }
+}

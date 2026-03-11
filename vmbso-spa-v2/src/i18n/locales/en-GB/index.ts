@@ -6,6 +6,7 @@ import register from "./register.json";
 import header from "./header.json";
 import footer from "./footer.json";
 import cookies from "./cookies.json";
+import notFound from "./notFound.json";
 
 export default {
   languages,
@@ -15,4 +16,5 @@ export default {
   header,
   footer,
   cookies,
+  notFound,
 }
