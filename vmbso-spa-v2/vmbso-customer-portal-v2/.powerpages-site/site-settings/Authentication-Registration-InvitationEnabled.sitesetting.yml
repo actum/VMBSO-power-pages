@@ -1,3 +1,4 @@
 id: 2af72ee0-b7b0-413b-aa99-9ec32e978a2f
 name: Authentication/Registration/InvitationEnabled
-value: true
+source: 0
+value: false

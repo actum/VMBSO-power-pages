@@ -71,8 +71,6 @@ export const config = {
   flows: {
     /** Update profile flow — creates/links Account and updates Contact. */
     updateProfile: '/_api/cloudflow/v1.0/trigger/0bc41f4c-841c-f111-8341-000d3a66f792',
-    /** Simple test flow — no inputs, returns plain text. Used to verify CSRF/connectivity. */
-    test: '/_api/cloudflow/v1.0/trigger/8518147b-9c1c-f111-8341-000d3a66f792',
   },
 
   /** Static asset paths. */

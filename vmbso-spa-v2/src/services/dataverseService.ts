@@ -67,7 +67,17 @@ export const dataverseService = {
           '_actum_languageid_value',
           '_parentcustomerid_value',  // Account lookup for Company Name
           'mspp_userpreferredlcid',
+          // Address fields
           'address1_line1',
+          'address1_city',
+          'address1_postalcode',
+          // UpdateProfile custom fields
+          'actum_companyname',
+          'actum_vat',
+          'actum_primarycountry',
+          'actum_companyphone',
+          'actum_companyemail',
+          'actum_role',
           // Portal identity fields
           'adx_identity_username',
           'adx_identity_emailaddress1confirmed',

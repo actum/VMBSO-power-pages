@@ -140,36 +140,67 @@ export const apiClient = {
   },
 
   /**
-   * Invoke a Power Pages-registered cloud flow via `window.shell.ajaxSafePost`.
+   * Invoke a Power Pages-registered cloud flow.
    *
-   * Key rules (from official Power Pages SPA pattern):
-   *  - Use shell.ajaxSafePost — it injects the CSRF token and handles auth automatically
-   *  - Send data as { eventData: JSON.stringify(payload) } — a plain object
-   *  - Do NOT set contentType — jQuery must encode it as application/x-www-form-urlencoded
+   * Strategy:
+   *  1. Get CSRF token via window.shell.getTokenDeferred() if available
+   *  2. Fall back to fetching /_layout/tokenhtml and parsing the <input> value
+   *  3. POST to the flow URL with application/x-www-form-urlencoded + token header
    */
   async flow<T = void>(url: string, eventData: Record<string, unknown>): Promise<T> {
-    interface ShellAjaxPromise<R> {
-      done: (cb: (response: R) => void) => ShellAjaxPromise<R>;
-      fail: (cb: (xhr: unknown, status: string, error: string) => void) => ShellAjaxPromise<R>;
-    }
-    interface Shell {
-      ajaxSafePost: <R = unknown>(settings: { type?: string; url: string; data?: unknown }) => ShellAjaxPromise<R>;
-    }
+    // ── Step 1: obtain CSRF token ──────────────────────────────────────────
+    const token = await getCsrfToken();
+    console.log('[FLOW] CSRF token obtained:', token ? `${token.substring(0, 12)}…` : 'EMPTY');
 
-    const shell = (window as { shell?: Shell }).shell;
-    if (!shell || typeof shell.ajaxSafePost !== 'function') {
-      throw new Error('window.shell.ajaxSafePost is not available — is this running inside Power Pages?');
-    }
-
-    return new Promise<T>((resolve, reject) => {
-      shell.ajaxSafePost<T>({
-        type: 'POST',
-        url,
-        data: { eventData: JSON.stringify(eventData) },
-        // NOTE: do NOT set contentType — jQuery must use application/x-www-form-urlencoded
-      })
-        .done((response) => resolve(response))
-        .fail((_xhr, status, error) => reject(new Error(`Flow call failed: ${status} — ${error}`)));
+    // ── Step 2: POST to the flow endpoint ─────────────────────────────────
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        '__RequestVerificationToken': token,
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-requested-with': 'XMLHttpRequest',
+      },
+      body: new URLSearchParams({ eventData: JSON.stringify(eventData) }),
     });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Flow request failed: ${response.status} - ${text}`);
+    }
+
+    // 204 No Content — flow returned nothing
+    if (response.status === 204) {
+      return null as T;
+    }
+
+    return response.json() as Promise<T>;
   },
 };
+
+/**
+ * Obtain the Power Pages CSRF (anti-forgery) token.
+ *  - Prefers window.shell.getTokenDeferred() — available in all modern portal setups
+ *  - Falls back to fetching /_layout/tokenhtml and parsing the hidden <input> value
+ */
+async function getCsrfToken(): Promise<string> {
+  // Strategy A: window.shell.getTokenDeferred()
+  const shell = (window as { shell?: { getTokenDeferred?: () => Promise<string> } }).shell;
+  if (shell && typeof shell.getTokenDeferred === 'function') {
+    const token = await shell.getTokenDeferred();
+    return token;
+  }
+
+  // Strategy B: fetch /_layout/tokenhtml and parse the hidden input
+  const res = await fetch('/_layout/tokenhtml', { credentials: 'include' });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch CSRF token page: ${res.status}`);
+  }
+  const text = await res.text();
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  const input = doc.querySelector<HTMLInputElement>('input[name="__RequestVerificationToken"]');
+  if (!input?.value) {
+    throw new Error('CSRF token not found in /_layout/tokenhtml');
+  }
+  return input.value;
+}

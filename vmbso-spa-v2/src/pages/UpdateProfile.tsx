@@ -37,8 +37,6 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [testResult, setTestResult] = useState<string | null>(null);
-  const [testRunning, setTestRunning] = useState(false);
   const { t } = useTranslation(["updateProfile"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -60,10 +58,33 @@ export const UpdateProfile: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      setValues({ ...currentUser });
+      setValues({
+        ...currentUser,
+        // Map the standard OData lookup ID to the field the form uses
+        actum_language: currentUser._actum_languageid_value ?? currentUser.actum_language,
+      });
+
+      // Pre-fill VAT input from existing contact data
+      if (currentUser.actum_vat) {
+        setVatInput(currentUser.actum_vat);
+      }
+
+      // If the user already has a linked account, restore the "found" state
+      // so company fields are read-only and the form is immediately saveable
+      if (currentUser._parentcustomerid_value) {
+        setFoundAccount({
+          accountid: currentUser._parentcustomerid_value,
+          name: currentUser.actum_companyname ?? "",
+          _actum_primarycountryid_value: currentUser.actum_primarycountry,
+        });
+        setVatSearchState("found");
+      }
+
       console.log("[UpdateProfile] user from Entra:", {
         firstName: currentUser.firstname,
         lastName: currentUser.lastname,
+        hasAccount: !!currentUser._parentcustomerid_value,
+        language: currentUser._actum_languageid_value,
       });
     }
   }, [currentUser]);
@@ -151,17 +172,17 @@ export const UpdateProfile: React.FC = () => {
         languageId: values.actum_language,
         // found-only
         accountId: foundAccount?.accountid,
-        // notFound-only
+        // notFound-only (empty string when account was found)
         vatNumber: vatInput.trim(),
-        companyName: values.actum_companyname,
-        countryId: values.actum_primarycountry,
-        companyPhone: values.actum_companyphone,
-        address: values.address1_line1,
-        city: values.address1_city,
-        zipCode: values.address1_postalcode,
-        companyEmail: values.actum_companyemail,
+        companyName: values.actum_companyname ?? "",
+        countryId: values.actum_primarycountry ?? "",
+        companyPhone: values.actum_companyphone ?? "",
+        address: values.address1_line1 ?? "",
+        city: values.address1_city ?? "",
+        zipCode: values.address1_postalcode ?? "",
+        companyEmail: values.actum_companyemail ?? "",
         brandIds: (values.actum_brand ?? []).join(","),
-        roleId: values.actum_role,
+        roleId: values.actum_role ?? "",
       });
 
       await refreshUser();
@@ -170,19 +191,6 @@ export const UpdateProfile: React.FC = () => {
       setError(err instanceof Error ? err.message : "Updating profile information failed.");
     } finally {
       setUpdating(false);
-    }
-  };
-
-  const handleTestFlow = async () => {
-    setTestResult(null);
-    setTestRunning(true);
-    try {
-      const result = await apiClient.flow<unknown>(config.flows.test, {});
-      setTestResult(JSON.stringify(result, null, 2));
-    } catch (err) {
-      setTestResult(`ERROR: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setTestRunning(false);
     }
   };
 
@@ -508,16 +516,6 @@ export const UpdateProfile: React.FC = () => {
             </Grid>
           </Grid>
 
-          {testResult && (
-            <Alert
-              sx={{ marginTop: "1rem", whiteSpace: "pre-wrap", fontFamily: "monospace" }}
-              severity={testResult.startsWith("ERROR") ? "error" : "success"}
-              onClose={() => setTestResult(null)}
-            >
-              <strong>Test flow response:</strong>{"\n"}{testResult}
-            </Alert>
-          )}
-
           {error && (
             <Alert
               sx={{ marginTop: "2rem" }}
@@ -533,15 +531,6 @@ export const UpdateProfile: React.FC = () => {
           )}
 
           <Box display="flex" justifyContent="flex-end" gap={2} mt="5rem">
-            <Button
-              variant="outlined"
-              size={isMobile ? "large" : "medium"}
-              disabled={testRunning}
-              onClick={handleTestFlow}
-            >
-              {testRunning ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
-              {testRunning ? "Testing…" : "Test Flow"}
-            </Button>
             <Button
               fullWidth={isMobile}
               size={isMobile ? "large" : "medium"}
