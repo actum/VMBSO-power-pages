@@ -183,7 +183,7 @@ export const apiClient = {
  *  - Prefers window.shell.getTokenDeferred() — available in all modern portal setups
  *  - Falls back to fetching /_layout/tokenhtml and parsing the hidden <input> value
  */
-async function getCsrfToken(): Promise<string> {
+export async function getCsrfToken(): Promise<string> {
   // Strategy A: window.shell.getTokenDeferred()
   const shell = (window as { shell?: { getTokenDeferred?: () => Promise<string> } }).shell;
   if (shell && typeof shell.getTokenDeferred === 'function') {

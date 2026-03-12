@@ -10,13 +10,17 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
+import { getCsrfToken } from '../services/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
-    const { t } = useTranslation("login");
+  const { t } = useTranslation("login");
+  const [loginLoading, setLoginLoading] = React.useState(false);
+
+  React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);
 
   // Auto-redirect authenticated users
   React.useEffect(() => {
@@ -43,26 +47,47 @@ export const Login: React.FC = () => {
   }, [isAuthenticated, isProfileComplete, loading, navigate]);
 
   /**
-   * Initiate Entra External ID authentication.
-   *
-   * Since Power Pages /SignIn doesn't auto-redirect (even with LoginButtonAuthenticationType set),
-   * we simply redirect to /SignIn where the user clicks the Entra External ID button.
-   *
-   * This is the simplest approach that works reliably without needing anti-forgery tokens
-   * or complex form submissions.
+   * Initiate Entra External ID authentication via a hidden form POST to
+   * /Account/Login/ExternalLogin. Power Pages then issues a 302 redirect
+   * directly to Entra External ID — no intermediate sign-in page.
    */
-  const submitExternalLogin = () => {
+  const submitExternalLogin = async () => {
     if (config.devMode) {
       console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /documents');
       window.location.href = '/documents';
       return;
     }
 
-    console.log('[LOGIN DEBUG] Redirecting to /SignIn');
-    // Redirect to Power Pages /SignIn page
-    // User will see the Entra External ID button and click it (one extra click)
-    // After clicking, Power Pages handles the full OpenID Connect flow
-    window.location.href = '/SignIn';
+    try {
+      setLoginLoading(true);
+      const token = await getCsrfToken();
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = config.auth.externalLoginUrl;
+
+      const fields: Record<string, string> = {
+        provider: config.auth.providerScheme,
+        returnUrl: config.auth.returnUrl,
+        __RequestVerificationToken: token,
+      };
+
+      for (const [name, value] of Object.entries(fields)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (err) {
+      console.error('[LOGIN DEBUG] ExternalLogin form POST failed:', err);
+      setLoginLoading(false);
+      // Fallback: redirect to /SignIn so the user is not stuck
+      window.location.href = '/SignIn';
+    }
   };
 
   // Show loading spinner while checking authentication
@@ -123,12 +148,13 @@ export const Login: React.FC = () => {
                 variant="contained"
                 size="large"
                 onClick={submitExternalLogin}
+                disabled={loginLoading}
                 sx={{
                   textTransform: 'none',
                   minHeight: '5.6rem',
                 }}
               >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
+                {loginLoading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
               </Button>
 
               <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>

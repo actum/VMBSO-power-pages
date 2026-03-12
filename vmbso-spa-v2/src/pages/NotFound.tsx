@@ -4,6 +4,8 @@ import { ErrorOutline as ErrorIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 export const NotFound: React.FC = () => {
+  React.useEffect(() => { document.title = 'Page Not Found | VMBSO Customer Portal'; }, []);
+
   const navigate = useNavigate();
 
   return (

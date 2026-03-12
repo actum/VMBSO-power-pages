@@ -359,7 +359,7 @@ adx_webfile:
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: 4da9b490-5971-4b39-9162-14db60a55554
-  CheckSum: b24fa1bd83ebc64b064060d839f7c9d073292cb9cd50b5c9e136a55bfa438f56
+  CheckSum: f440bbddfdbf23a23e1816e7bae5e571050116a5c0c0d63a85f92663d1fcedbe
   IsDeleted: false
 - RecordId: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
   DisplayName: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
@@ -403,7 +403,7 @@ adx_webfile:
   IsDeleted: false
 - RecordId: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
   DisplayName: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
-  CheckSum: bd91a1ac43b7c31247b631f61b9b5f041b8fc9ec0314a4bb3cc92d1d47d5a77b
+  CheckSum: 8e5db71e6ec053f33f7f1f70482f26e3e019f9ec1c0a3cbda270a3a3ce7c5dbd
   IsDeleted: false
 - RecordId: 8f137d15-bedb-4204-a792-7531d4bbefa6
   DisplayName: 8f137d15-bedb-4204-a792-7531d4bbefa6
@@ -416,6 +416,10 @@ adx_webfile:
 - RecordId: 963a1874-4eed-4168-ac6c-c6f7b43c474a
   DisplayName: 963a1874-4eed-4168-ac6c-c6f7b43c474a
   CheckSum: e468ec23f2735c6b0c765166348d275a35c6f8774a90459ca672cfff209de473
+  IsDeleted: false
+- RecordId: 987a2fec-345c-423c-b14a-bae9d20a455f
+  DisplayName: 987a2fec-345c-423c-b14a-bae9d20a455f
+  CheckSum: fa1ac55e348a1558224643254ab8a3b299886168090def9e922dbc35b2059694
   IsDeleted: false
 - RecordId: 98852734-e05c-452c-9bf2-30ee8159ff43
   DisplayName: 98852734-e05c-452c-9bf2-30ee8159ff43
@@ -476,6 +480,10 @@ adx_webfile:
 - RecordId: e690b951-0a70-49f8-9bf1-66daa8908dfe
   DisplayName: e690b951-0a70-49f8-9bf1-66daa8908dfe
   CheckSum: 016de8427155599c0f9406a78f1c0bbf33492a4a57e74e676ab63af9ae0b9e3c
+  IsDeleted: false
+- RecordId: f4521975-4833-41aa-9a82-a97adb4e8740
+  DisplayName: f4521975-4833-41aa-9a82-a97adb4e8740
+  CheckSum: 763eeaf59f5a0242e98b20eb9dd0e0bf6ce15dc97443524575a21ea213775526
   IsDeleted: false
 - RecordId: f6593d8f-746e-4017-92c7-0098afe5eb60
   DisplayName: f6593d8f-746e-4017-92c7-0098afe5eb60
@@ -558,7 +566,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: ca622aa0-ccdc-41d3-b919-09c47a49d28c
   DisplayName: ca622aa0-ccdc-41d3-b919-09c47a49d28c
-  CheckSum: 68500bd2edcd2b61f7d5a2b93d98118e48aacd9a1f3dec96fd4705b290858a50
+  CheckSum: b66ee6f0616650f77ba1c5810110377a6c3b0e6c3666e26174eefee4d3c8d64c
   IsDeleted: false
 - RecordId: ccf3929b-3570-48fd-8a43-1c01a888ca96
   DisplayName: ccf3929b-3570-48fd-8a43-1c01a888ca96
@@ -743,7 +751,7 @@ annotation:
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: asset-manifest.json
-  CheckSum: 6e8222aff4b3935d9c9cad30b914cf39cef30387f65f9812e49e1a6f172ea4f0
+  CheckSum: 4fdf93d4ac12bd662618900145aaa05251886fc3cdbb0f44e7f6859ab3a0f6f1
   IsDeleted: false
 - RecordId: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
   DisplayName: portalbasictheme.css
@@ -787,7 +795,7 @@ annotation:
   IsDeleted: false
 - RecordId: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
   DisplayName: index.html
-  CheckSum: 28adbb5f91693a03ebaf1538e7e9fc7655f1aa4c5a9235aa564b13f06d7731ca
+  CheckSum: 06907604454f042ca14aa6c50bd577b878eae9a5b7c466f0bcbd186ecc22f43b
   IsDeleted: false
 - RecordId: 8f137d15-bedb-4204-a792-7531d4bbefa6
   DisplayName: main.34a21f2b.js.LICENSE.txt
@@ -800,6 +808,10 @@ annotation:
 - RecordId: 963a1874-4eed-4168-ac6c-c6f7b43c474a
   DisplayName: theme.css
   CheckSum: 7360307645ab1e78ac2b786fe59ad953398687d69616c06c0b41e843eccb1c48
+  IsDeleted: false
+- RecordId: 987a2fec-345c-423c-b14a-bae9d20a455f
+  DisplayName: main.4e6af9c2.js.LICENSE.txt
+  CheckSum: c3bbcd9504970ab5c58f4a411bd9f0e6606bdb0b10c65d114f348595c8d898ca
   IsDeleted: false
 - RecordId: 98852734-e05c-452c-9bf2-30ee8159ff43
   DisplayName: main.202b9e81.js.LICENSE.txt
@@ -860,6 +872,10 @@ annotation:
 - RecordId: e690b951-0a70-49f8-9bf1-66daa8908dfe
   DisplayName: main.d5ff4def.js.map
   CheckSum: 2daad0841860bd0625b4a410eb2b6b0ba55ea61f93904947ad997cec2c50512f
+  IsDeleted: false
+- RecordId: f4521975-4833-41aa-9a82-a97adb4e8740
+  DisplayName: main.4e6af9c2.js.map
+  CheckSum: a7fa5d62b7fe17edf9793cd3530b5a5596e91c022ee6fb29ce27828a53d1f9e8
   IsDeleted: false
 - RecordId: f6593d8f-746e-4017-92c7-0098afe5eb60
   DisplayName: bootstrap.min.css

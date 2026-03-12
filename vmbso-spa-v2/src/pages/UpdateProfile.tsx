@@ -32,6 +32,8 @@ import InputLabelField from "../components/common/ui/InputLabelField";
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
 export const UpdateProfile: React.FC = () => {
+  useEffect(() => { document.title = 'Complete Your Profile | VMBSO Customer Portal'; }, []);
+
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});

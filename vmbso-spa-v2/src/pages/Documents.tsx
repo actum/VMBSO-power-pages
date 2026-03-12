@@ -5,6 +5,8 @@ import { useDocuments } from '../hooks/useDocuments';
 import { DocumentFilters } from '../types/document';
 
 export const Documents: React.FC = () => {
+  React.useEffect(() => { document.title = 'Documents | VMBSO Customer Portal'; }, []);
+
   const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState<DocumentFilters>({});
   const { documents, loading, error, refetch } = useDocuments(filters);
