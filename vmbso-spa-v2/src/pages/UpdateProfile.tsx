@@ -83,8 +83,8 @@ export const UpdateProfile: React.FC = () => {
       <Box sx={{ maxWidth: "87.6rem" }} mx={{ xs: "1rem", md: "auto" }}>
         <Typography
           variant="h2"
-          gutterBottom
-          margin={{ xs: "2rem 0 3rem 2rem", md: "2rem 0 3rem 3rem"}}
+          textAlign={isMobile ? "center" : "start"}
+          margin={{ xs: "1rem 1rem 2rem", md: "2rem 0 3rem 3rem"}}
         >
           {t("title.completeProfile")}
         </Typography>

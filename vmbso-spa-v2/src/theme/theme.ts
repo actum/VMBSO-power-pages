@@ -284,6 +284,9 @@ const theme = createTheme({
             border: '1px solid transparent',
           }
         },
+        input: {
+          padding: "1.35rem 1.6rem",
+        },
         notchedOutline: {
           border: 0,
         }
