@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Cookie from "js-cookie";
 import { colors } from '../theme/colors';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import * as ReactGA from "react-ga";
 
 type CookiesContextType = {
@@ -42,6 +43,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   const { t } = useTranslation("cookies");
   const theme = useTheme();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
@@ -53,23 +55,22 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
 
         setAnalyticsEnabled(Boolean(parsed.analyticsEnabled));
 
-        if (parsed.analyticsEnabled) {
-          ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID || "");
-          ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
-        } else {
-          Cookie.remove("_ga");
-          Cookie.remove("_gat");
-          Cookie.remove("_gid");
-        }
-
         return;
       } catch {
         Cookie.remove(COOKIE_CONSENT_KEY);
       }
     }
 
+    if (process.env.REACT_APP_GOOGLE_ANALYTICS_ID) {
+      ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+    }
+
     setOpen(true);
   }, []);
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [location]);
 
   const saveConsent = (options: { analyticsEnabled: boolean }) => {
     Cookie.set(COOKIE_CONSENT_KEY, JSON.stringify({
@@ -84,10 +85,7 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
 
     setAnalyticsEnabled(options.analyticsEnabled);
 
-    if (options.analyticsEnabled) {
-      ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID || "");
-      ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
-    } else {
+    if (!options.analyticsEnabled) {
       Cookie.remove("_ga");
       Cookie.remove("_gat");
       Cookie.remove("_gid");
