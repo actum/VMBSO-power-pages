@@ -28,7 +28,7 @@ const requiredFields: Array<keyof Contact> = [
 ];
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
