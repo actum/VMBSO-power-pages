@@ -72,6 +72,7 @@ export const dataverseService = {
           'address1_city',
           'address1_postalcode',
           // UpdateProfile custom fields
+          'actum_language',
           'actum_companyname',
           'actum_vat',
           'actum_primarycountry',

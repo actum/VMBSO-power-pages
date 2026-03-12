@@ -317,6 +317,10 @@ adx_webfile:
   DisplayName: 09a78751-ddd5-41b9-87a2-4cb084cf1d31
   CheckSum: b20c11a462364a4081788fe9d8cdb4425b9caf959b3175c4f0dd39f10dab3ee6
   IsDeleted: false
+- RecordId: 0c19245d-6d65-4fc8-933b-3809a5b53a60
+  DisplayName: 0c19245d-6d65-4fc8-933b-3809a5b53a60
+  CheckSum: 4c17a1e91ab84e8efe7468ffb307d7ee22e47e536f12254d88df42c0e8999104
+  IsDeleted: false
 - RecordId: 0cad008f-cdc0-4422-bc38-e3f3e3764432
   DisplayName: 0cad008f-cdc0-4422-bc38-e3f3e3764432
   CheckSum: 95b42f3a71d7bbe95492db7ba4cf280a15d51e165518c28ced584b1bc1562ad6
@@ -359,7 +363,7 @@ adx_webfile:
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: 4da9b490-5971-4b39-9162-14db60a55554
-  CheckSum: f440bbddfdbf23a23e1816e7bae5e571050116a5c0c0d63a85f92663d1fcedbe
+  CheckSum: 4b5cf157bf39045e53dba501fd319fef7571a69e4af0fa7715796fccdd920cfd
   IsDeleted: false
 - RecordId: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
   DisplayName: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
@@ -376,6 +380,10 @@ adx_webfile:
 - RecordId: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
   DisplayName: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
   CheckSum: 3f3df151778635058f44d438aaca584ab535251fbb3902e5b94ccecfde739045
+  IsDeleted: false
+- RecordId: 64db5d6c-9dba-4de2-9cc4-fffb1b98d7cb
+  DisplayName: 64db5d6c-9dba-4de2-9cc4-fffb1b98d7cb
+  CheckSum: 523426cf773c8908cc1b178b474401c9e4cb11b25f7a678fee3d0dee87612f83
   IsDeleted: false
 - RecordId: 64ec8c8d-a0b9-4f47-bf97-2c0fce8c120e
   DisplayName: 64ec8c8d-a0b9-4f47-bf97-2c0fce8c120e
@@ -403,7 +411,7 @@ adx_webfile:
   IsDeleted: false
 - RecordId: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
   DisplayName: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
-  CheckSum: 8e5db71e6ec053f33f7f1f70482f26e3e019f9ec1c0a3cbda270a3a3ce7c5dbd
+  CheckSum: 991799fbfc0d4384dc24619dbc8ad87fcd0b5c1502d3ba591502325ecb4c002d
   IsDeleted: false
 - RecordId: 8f137d15-bedb-4204-a792-7531d4bbefa6
   DisplayName: 8f137d15-bedb-4204-a792-7531d4bbefa6
@@ -566,7 +574,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: ca622aa0-ccdc-41d3-b919-09c47a49d28c
   DisplayName: ca622aa0-ccdc-41d3-b919-09c47a49d28c
-  CheckSum: b66ee6f0616650f77ba1c5810110377a6c3b0e6c3666e26174eefee4d3c8d64c
+  CheckSum: 1e506c4a24974c5e58bfb68b7250351b489d0d43b74cd30918eed57c690f1f51
   IsDeleted: false
 - RecordId: ccf3929b-3570-48fd-8a43-1c01a888ca96
   DisplayName: ccf3929b-3570-48fd-8a43-1c01a888ca96
@@ -709,6 +717,10 @@ annotation:
   DisplayName: manifest.json
   CheckSum: 1db724a467cfb5a0a893fbfd1ecd72ec95ef9e9360981d0d0103053120f7c841
   IsDeleted: false
+- RecordId: 0c19245d-6d65-4fc8-933b-3809a5b53a60
+  DisplayName: main.9caf2866.js.map
+  CheckSum: 5e057398394ebed6c8a16966bdf73221916de1ba8c6e827487566d8d2dc457ff
+  IsDeleted: false
 - RecordId: 0cad008f-cdc0-4422-bc38-e3f3e3764432
   DisplayName: main.3832687e.js.LICENSE.txt
   CheckSum: 5df113156db8b745b803bd9a3c23080b6e0f7c4858bdf1278a619923a85ebbfd
@@ -751,7 +763,7 @@ annotation:
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: asset-manifest.json
-  CheckSum: 4fdf93d4ac12bd662618900145aaa05251886fc3cdbb0f44e7f6859ab3a0f6f1
+  CheckSum: f7ef3499cf1782407eb693e5652825f486bed6773925c71941479a3fa361a5af
   IsDeleted: false
 - RecordId: 4dc9ad6c-d53e-41f0-8c96-1eec665ce3e9
   DisplayName: portalbasictheme.css
@@ -768,6 +780,10 @@ annotation:
 - RecordId: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
   DisplayName: main.e630eb1c.css.map
   CheckSum: 3a9b29f566d101359448d2e78db5e559bde2889f933f221ff08eec882297c243
+  IsDeleted: false
+- RecordId: 64db5d6c-9dba-4de2-9cc4-fffb1b98d7cb
+  DisplayName: main.9caf2866.js.LICENSE.txt
+  CheckSum: e2d41dcd2531cdd59f718003778bb747daf697cc6892c0e70fc6d7ce8b8e04c6
   IsDeleted: false
 - RecordId: 64ec8c8d-a0b9-4f47-bf97-2c0fce8c120e
   DisplayName: logo-vmbso.svg
@@ -795,7 +811,7 @@ annotation:
   IsDeleted: false
 - RecordId: 8e6a721d-28a5-46b8-8629-c2cf3853ec63
   DisplayName: index.html
-  CheckSum: 06907604454f042ca14aa6c50bd577b878eae9a5b7c466f0bcbd186ecc22f43b
+  CheckSum: 749c9ff50eb226b8ddc7b424f7927575b3f10a2bcf8d0dc3d1c450cb0e25c07b
   IsDeleted: false
 - RecordId: 8f137d15-bedb-4204-a792-7531d4bbefa6
   DisplayName: main.34a21f2b.js.LICENSE.txt
