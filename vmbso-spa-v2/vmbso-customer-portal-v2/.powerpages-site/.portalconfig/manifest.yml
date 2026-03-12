@@ -1,3 +1,13 @@
+adx_cloudflowconsumer:
+- RecordId: 58902197-9c1c-f111-8341-000d3a688605
+  DisplayName: 58902197-9c1c-f111-8341-000d3a688605
+  CheckSum: 
+  IsDeleted: true
+adx_CloudFlowConsumer_adx_webrole:
+- RecordId: 7cd9bdff-1527-405b-bb88-611db94d307c
+  DisplayName: $RELATIONSHIP$adx_cloudflowconsumer:58902197-9c1c-f111-8341-000d3a688605:adx_webrole
+  CheckSum: 
+  IsDeleted: true
 adx_webfile:
 - RecordId: 1b383e08-9b62-4506-bc61-55e0d97e8e16
   DisplayName: 1b383e08-9b62-4506-bc61-55e0d97e8e16
@@ -17,6 +27,10 @@ adx_webfile:
   IsDeleted: true
 - RecordId: 571704a0-e769-49a0-ac85-bd0536f97180
   DisplayName: 571704a0-e769-49a0-ac85-bd0536f97180
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 7de3ebda-8d12-40fe-9c95-b964741529cb
+  DisplayName: 7de3ebda-8d12-40fe-9c95-b964741529cb
   CheckSum: 
   IsDeleted: true
 - RecordId: 89f66f7d-8d21-407c-8cee-67a57c91046e
@@ -70,6 +84,10 @@ annotation:
   IsDeleted: true
 - RecordId: 571704a0-e769-49a0-ac85-bd0536f97180
   DisplayName: main.202b9e81.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 7de3ebda-8d12-40fe-9c95-b964741529cb
+  DisplayName: main.9caf2866.js
   CheckSum: 
   IsDeleted: true
 - RecordId: 89f66f7d-8d21-407c-8cee-67a57c91046e

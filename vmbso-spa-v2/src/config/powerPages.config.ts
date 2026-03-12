@@ -44,7 +44,7 @@ export const config = {
      */
     providerScheme: process.env.REACT_APP_ENTRA_PROVIDER ?? '',
     /** Where Power Pages should redirect after successful authentication. */
-    returnUrl: '/',
+    returnUrl: '/login',
     /** Federated logout URL — clears both Power Pages and Entra sessions. */
     logoutUrl: '/Account/Login/LogOff?federated=true',
     /** React-side login page (used only in dev mode after mock logout). */

@@ -62,23 +62,15 @@ export const dataverseService = {
           'jobtitle',
           'createdon',
           'modifiedon',
-          // Custom fields that actually exist (from screenshot)
+          // Custom fields that exist on Contact table
           'actum_approvalstatus',
           '_actum_languageid_value',
-          '_parentcustomerid_value',  // Account lookup for Company Name
+          '_parentcustomerid_value',  // Account lookup
           'mspp_userpreferredlcid',
-          // Address fields
+          // Address fields on Contact
           'address1_line1',
           'address1_city',
           'address1_postalcode',
-          // UpdateProfile custom fields
-          'actum_language',
-          'actum_companyname',
-          'actum_vat',
-          'actum_primarycountry',
-          'actum_companyphone',
-          'actum_companyemail',
-          'actum_role',
           // Portal identity fields
           'adx_identity_username',
           'adx_identity_emailaddress1confirmed',

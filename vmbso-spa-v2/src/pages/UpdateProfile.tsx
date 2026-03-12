@@ -27,6 +27,7 @@ import { apiClient } from "../services/apiClient";
 import { config } from "../config/powerPages.config";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import InputLabelField from "../components/common/ui/InputLabelField";
 
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
@@ -167,28 +168,45 @@ export const UpdateProfile: React.FC = () => {
     try {
       setUpdating(true);
 
-      await apiClient.flow(config.flows.updateProfile, {
-        hasAccount: vatSearchState === "found" ? "YES" : "NO",
-        contactId: currentUser?.contactid,
-        phone: values.telephone1,
-        languageId: values.actum_language,
-        // found-only
-        accountId: foundAccount?.accountid,
-        // notFound-only (empty string when account was found)
-        vatNumber: vatInput.trim(),
-        companyName: values.actum_companyname ?? "",
-        countryId: values.actum_primarycountry ?? "",
-        companyPhone: values.actum_companyphone ?? "",
-        address: values.address1_line1 ?? "",
-        city: values.address1_city ?? "",
-        zipCode: values.address1_postalcode ?? "",
-        companyEmail: values.actum_companyemail ?? "",
-        brandIds: (values.actum_brand ?? []).join(","),
-        roleId: values.actum_role ?? "",
-      });
+      const response = await apiClient.flow<{ status: string; message: string }>(
+        config.flows.updateProfile,
+        {
+          hasAccount: vatSearchState === "found" ? "YES" : "NO",
+          contactId: currentUser?.contactid,
+          phone: values.telephone1,
+          languageId: values.actum_language,
+          // found-only
+          accountId: foundAccount?.accountid,
+          // notFound-only (empty string when account was found)
+          vatNumber: vatInput.trim(),
+          companyName: values.actum_companyname ?? "",
+          countryId: values.actum_primarycountry ?? "",
+          companyPhone: values.actum_companyphone ?? "",
+          address: values.address1_line1 ?? "",
+          city: values.address1_city ?? "",
+          zipCode: values.address1_postalcode ?? "",
+          companyEmail: values.actum_companyemail ?? "",
+          brandIds: (values.actum_brand ?? []).join(","),
+          roleId: values.actum_role ?? "",
+        }
+      );
 
-      await refreshUser();
-      navigate("/documents");
+      // Handle flow response
+      if (response?.status === "200") {
+        // Success: show message and redirect after 2 seconds
+        toast.success(response.message || "Profile updated successfully!");
+        await refreshUser();
+        
+        setTimeout(() => {
+          navigate("/documents");
+        }, 2000);
+      } else if (response?.status === "500") {
+        // Error: show error message
+        setError(response.message || "An error occurred while updating your profile.");
+      } else {
+        // Unexpected response format
+        setError("Unexpected response from server. Please try again.");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Updating profile information failed.");
     } finally {
