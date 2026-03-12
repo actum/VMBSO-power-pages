@@ -14,15 +14,19 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import * as ReactGA from "react-ga";
 
 type CookiesContextType = {
+  dialogOpen: boolean;
   analyticsEnabled: boolean;
   setAnalyticsEnabled: (value: boolean) => void;
   acceptAll: () => void;
+  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CookiesContext = React.createContext<CookiesContextType>({
+  dialogOpen: false,
   analyticsEnabled: false,
   setAnalyticsEnabled: () => {},
   acceptAll: () => {},
+  setDialogOpen: () => {},
 });
 
 const COOKIE_CONSENT_KEY = 'cookieConsent';
@@ -101,9 +105,11 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
   };
 
   const contextValue: CookiesContextType = {
+    dialogOpen: open,
     analyticsEnabled,
     setAnalyticsEnabled,
     acceptAll,
+    setDialogOpen: setOpen,
   };
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Container,
   Paper,
@@ -7,16 +7,21 @@ import {
   Box,
   Grid,
   CircularProgress,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Cookie as CookieIcon } from '@mui/icons-material'
+import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation("loginPage");
+  const { t } = useTranslation(["loginPage", "cookies"]);
+  const { setDialogOpen } = useContext(CookiesContext);
 
   // Auto-redirect authenticated users
   React.useEffect(() => {
@@ -113,10 +118,10 @@ export const Login: React.FC = () => {
               </Box>
 
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-                  {t("title")}
+                  {t("loginPage:title")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                  {t("subtitle")}
+                  {t("loginPage:subtitle")}
                 </Typography>
               <Button
                 fullWidth
@@ -128,15 +133,15 @@ export const Login: React.FC = () => {
                   minHeight: '5.6rem',
                 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("loginPage:actions.login")}
               </Button>
 
               <Box sx={{ mt: 4, pt: 4, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-                  {t("firstVisit.title")}
+                  {t("loginPage:firstVisit.title")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ my: 4 }}>
-                  {t("firstVisit.subtitle")}
+                  {t("loginPage:firstVisit.subtitle")}
                 </Typography>
                 <Button
                   variant="outlined"
@@ -146,7 +151,7 @@ export const Login: React.FC = () => {
                     fontWeight: 500,
                   }}
                 >
-                  {t("actions.createAccount")}
+                  {t("loginPage:actions.createAccount")}
                 </Button>
               </Box>
             </Paper>
@@ -180,6 +185,21 @@ export const Login: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+
+      <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
+        <IconButton
+          onClick={() => setDialogOpen(prev => !prev)}
+          sx={{
+            position: "fixed",
+            bottom: "1rem",
+            left: "1rem",
+            width: "4rem",
+            height: "4rem"
+          }}
+        >
+          <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };

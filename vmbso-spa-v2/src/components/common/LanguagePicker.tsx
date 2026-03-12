@@ -1,4 +1,4 @@
-import { Button, Menu, MenuItem, Typography } from '@mui/material';
+import { Link, Menu, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ const LanguagePicker: React.FC = () => {
   const handleChange = (newLangKey: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
     const lang = languages[newLangKey] ? newLangKey : i18n.languages[0];
-    
+
     newSearchParams.set("lang", lang);
 
     navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
@@ -31,9 +31,7 @@ const LanguagePicker: React.FC = () => {
 
   return (
     <>
-      <Button disableRipple size="small" variant="text" onClick={handleOpen}>
-        <Typography variant="body2">{t(`options.${i18n.language}`)}</Typography>
-      </Button>
+      <Link component="button" variant="body2" onClick={handleOpen}>{t(`options.${i18n.language}`)}</Link>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         {Object.entries(languages).map(([key, value]) => (

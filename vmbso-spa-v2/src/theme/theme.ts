@@ -141,14 +141,14 @@ const theme = createTheme({
 
   components: {
 
-    MuiButtonBase: {
+    MuiAppBar: {
       styleOverrides: {
         root: {
-          '&.MuiMenuItem-root:hover': {
-            backgroundColor: 'rgba(0, 144, 178, 0.14)',
-          }
-        }
-      }
+          backgroundColor: colors.primaryWhite,
+          color: colors.textPrimary,
+          boxShadow: `0 2px 4px ${colors.shadowColor}`,
+        },
+      },
     },
 
     MuiButton: {
@@ -199,37 +199,14 @@ const theme = createTheme({
       },
     },
 
-    MuiSvgIcon: {
+    MuiButtonBase: {
       styleOverrides: {
-        fontSizeMedium : {
-          fontSize: '1.8rem',
-        },
-        fontSizeLarge : {
-          fontSize: '2.2rem',
+        root: {
+          '&.MuiMenuItem-root:hover': {
+            backgroundColor: 'rgba(0, 144, 178, 0.14)',
+          }
         }
       }
-    },
-
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiOutlinedInput-root': {
-            '&:hover fieldset': {
-              borderColor: colors.primaryTeal,
-            },
-          },
-        },
-      },
-    },
-
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: colors.primaryWhite,
-          color: colors.textPrimary,
-          boxShadow: `0 2px 4px ${colors.shadowColor}`,
-        },
-      },
     },
 
     MuiCard: {
@@ -241,25 +218,27 @@ const theme = createTheme({
       },
     },
 
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          boxShadow: `0 2px 4px ${colors.shadowColor}`,
-        },
-        elevation1: {
-          boxShadow: `0 2px 4px ${colors.shadowColor}`,
-        },
-        elevation2: {
-          boxShadow: `0 4px 8px ${colors.shadowColor}`,
-        },
-      },
-    },
-
     MuiChip: {
       styleOverrides: {
         root: {
           borderRadius: 4,
         },
+      },
+    },
+
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-error': {
+            border: `1px solid ${colors.red}`,
+          },
+        },
+        input: {
+          '&.Mui-disabled': {
+            background: colors.grey2,
+            cursor: 'not-allowed',
+          },
+        }
       },
     },
 
@@ -278,20 +257,15 @@ const theme = createTheme({
       }
     },
 
-    MuiInputBase: {
+    MuiLink: {
       styleOverrides: {
         root: {
-          '&.Mui-error': {
-            border: `1px solid ${colors.red}`,
-          },
-        },
-        input: {
-          '&.Mui-disabled': {
-            background: colors.grey2,
-            cursor: 'not-allowed',
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
           },
         }
-      },
+      }
     },
 
     MuiOutlinedInput: {
@@ -316,16 +290,55 @@ const theme = createTheme({
       }
     },
 
-    MuiLink: {
+    MuiPaper: {
       styleOverrides: {
         root: {
-          textDecoration: 'none',
-          '&:hover': {
-            textDecoration: 'underline',
-          },
+          boxShadow: `0 2px 4px ${colors.shadowColor}`,
+        },
+        elevation1: {
+          boxShadow: `0 2px 4px ${colors.shadowColor}`,
+        },
+        elevation2: {
+          boxShadow: `0 4px 8px ${colors.shadowColor}`,
+        },
+      },
+    },
+
+    MuiSvgIcon: {
+      styleOverrides: {
+        fontSizeMedium : {
+          fontSize: '1.8rem',
+        },
+        fontSizeLarge : {
+          fontSize: '2.2rem',
         }
       }
-    }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: "1.2rem",
+          backgroundColor: colors.zincGray,
+          padding: "1rem"
+        },
+        arrow: {
+          color: colors.zincGray,
+        },
+      },
+    },
+
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: colors.primaryTeal,
+            },
+          },
+        },
+      },
+    },
   },
 });
 

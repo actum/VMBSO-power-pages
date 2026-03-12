@@ -11,6 +11,7 @@
     },
 
     "actions": {
+      "openCookiesTooltip": "Opent cookie-instellingen.",
       "acceptAll": "Alles accepteren",
       "savePreferences": "Voorkeuren opslaan",
       "essentialToggle": "Essentieel",
@@ -40,7 +41,8 @@
   },
 
   "footer": {
-    "copyright": "© {{year}} VM Building Solutions. Alle rechten voorbehouden."
+    "copyright": "© {{year}} VM Building Solutions. Alle rechten voorbehouden.",
+    "cookieSettings": "Cookie-instellingen"
   },
 
   "header": {

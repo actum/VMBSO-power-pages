@@ -60,7 +60,7 @@ const LangHandler = () => {
 
     fetchAndAddTranslations(language);
 
-  }, [searchParams, i18n, navigate]);
+  }, [searchParams, i18n, navigate, fetchAndAddTranslations]);
 
   return null;
 };
