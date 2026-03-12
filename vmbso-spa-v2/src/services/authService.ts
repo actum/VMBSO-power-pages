@@ -1,4 +1,4 @@
-import { Contact } from '../types/contact';
+import { type Contact } from '../types/contact';
 import { config } from '../config/powerPages.config';
 import { dataverseService } from './dataverseService';
 
@@ -31,15 +31,15 @@ const DEV_MOCK_USER: Contact = {
     name: 'Actum Digital'
   },
   // UpdateProfile form fields
-  actum_language: 'fr',
+  actum_language: 'fr-FR',
   actum_phone: '+33 6 00 00 00 00',
   actum_companyname: 'Actum Digital',
   actum_vat: 'FR12345678901',
   actum_primarycountry: 'France',
   actum_companyphone: '+33 1 00 00 00 00',
   actum_address: '1 rue de la Paix, 75001 Paris',
-  actum_role: 'Distributor',
-  actum_brand: ['VMZINC'],
+  actum_role: 'distributor',
+  actum_brand: ['vmzinc'],
   actum_companyemail: 'contact@actumdigital.com',
   adx_identity_username: 'dev_user',
   adx_identity_emailaddress1confirmed: true,

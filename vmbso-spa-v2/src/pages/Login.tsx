@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Container,
   Paper,
@@ -7,21 +7,26 @@ import {
   Box,
   Grid,
   CircularProgress,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Cookie as CookieIcon } from '@mui/icons-material'
+import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
-    const { t } = useTranslation("login");
+  const { t } = useTranslation(["loginPage", "cookies"]);
+  const { setDialogOpen } = useContext(CookiesContext);
 
   // Auto-redirect authenticated users
   React.useEffect(() => {
     console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
-    
+
     if (loading) {
       console.log('[LOGIN DEBUG] Still loading, waiting...');
       return; // Wait for session check to complete
@@ -113,10 +118,10 @@ export const Login: React.FC = () => {
               </Box>
 
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-                  {t("title")}
+                  {t("loginPage:title")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                  {t("subtitle")}
+                  {t("loginPage:subtitle")}
                 </Typography>
               <Button
                 fullWidth
@@ -128,15 +133,15 @@ export const Login: React.FC = () => {
                   minHeight: '5.6rem',
                 }}
               >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : t("actions.login")}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("loginPage:actions.login")}
               </Button>
 
-              <Box sx={{ mt: 4, pt: 3, borderTop: '0.1rem solid #e0e0e0' }}>
+              <Box sx={{ mt: 4, pt: 4, borderTop: '0.1rem solid #e0e0e0' }}>
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-                  Première visite ?
+                  {t("loginPage:firstVisit.title")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Cet espace est réservé aux distributeurs VMZINC. Faites une demande pour avoir accès à votre espace.
+                <Typography variant="body2" color="text.secondary" sx={{ my: 4 }}>
+                  {t("loginPage:firstVisit.subtitle")}
                 </Typography>
                 <Button
                   variant="outlined"
@@ -146,7 +151,7 @@ export const Login: React.FC = () => {
                     fontWeight: 500,
                   }}
                 >
-                  Créer un compte
+                  {t("loginPage:actions.createAccount")}
                 </Button>
               </Box>
             </Paper>
@@ -165,23 +170,37 @@ export const Login: React.FC = () => {
                 p: 4,
               }}
             >
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    borderRadius: '0.4rem',
-                    bgcolor: 'rgba(91, 155, 213, 0.3)',
-                  }}
-                />
-              </Box>
-            </Grid>
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  borderRadius: '0.4rem',
+                  bgcolor: 'rgba(91, 155, 213, 0.3)',
+                }}
+              />
+            </Box>
           </Grid>
-        </Container>
-      </Box>
-   
+        </Grid>
+      </Container>
+
+      <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
+        <IconButton
+          onClick={() => setDialogOpen(prev => !prev)}
+          sx={{
+            position: "fixed",
+            bottom: "1rem",
+            left: "1rem",
+            width: "4rem",
+            height: "4rem"
+          }}
+        >
+          <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
+        </IconButton>
+      </Tooltip>
+    </Box>
   );
 };
 

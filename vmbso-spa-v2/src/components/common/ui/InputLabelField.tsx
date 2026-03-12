@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InputLabel, TextField, TextFieldProps } from "@mui/material";
+import { InputLabel, TextField, type TextFieldProps } from "@mui/material";
 
 type InputLabelFieldProps = Omit<TextFieldProps, "error"> & {
   label: string;
@@ -33,7 +33,8 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
     onBlur?.(e);
   };
 
-  const isError = touched && !value;
+  const valueMissing = Array.isArray(value) ? value.length === 0 : !Boolean(value);
+  const isError = touched && valueMissing && required;
 
   return (
     <>

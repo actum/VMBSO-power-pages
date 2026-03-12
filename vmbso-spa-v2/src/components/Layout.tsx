@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,16 +12,17 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Link,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
   Description as DocumentsIcon,
-  Language as LanguageIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from './common/LanguagePicker';
+import { CookiesContext } from '../contexts/CookiesContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { setDialogOpen } = useContext(CookiesContext);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -136,7 +138,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             >
               {/* User info header */}
               {currentUser && (
-                <Box sx={{ px: 2, py: 1.5 }}>
+                <Box sx={{ px: 4, py: 1.5 }}>
                   <Typography variant="body2" fontWeight={600} noWrap>
                     {currentUser.fullname || `${currentUser.firstname} ${currentUser.lastname}`}
                   </Typography>
@@ -178,10 +180,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           color: 'text.primary',
         }}
       >
-        <Container maxWidth="xl">
-          <Typography variant="body2" color="white" align="center">
+        <Container maxWidth="xl" sx={{
+          display:"flex" ,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: "2rem",
+          alignItems:"center",
+        }}>
+          <Typography variant="body2" color="white">
             {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
+          <Link
+            color="primary.contrastText"
+            component="a"
+            variant="caption"
+            underline="always"
+            onClick={() => setDialogOpen(prev => !prev)}
+            sx={{ cursor: "pointer" }}
+          >
+            {t('footer:cookieSettings')}
+          </Link>
         </Container>
       </Box>
     </Box>
