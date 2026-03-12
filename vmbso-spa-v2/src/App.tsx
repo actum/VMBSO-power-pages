@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import * as ReactGA from "react-ga";
 import theme from './theme/theme';
 import { AuthProvider } from './contexts/AuthContext';
 import { CookiesProvider } from './contexts/CookiesContext';
@@ -16,6 +16,8 @@ import { NotFound } from './pages/NotFound';
 import LangHandler from './components/LangHandler';
 
 function App() {
+  const location = useLocation();
+
   // Debug: Log when App mounts and current URL
   React.useEffect(() => {
     console.log('[APP DEBUG] App mounted');
@@ -27,6 +29,10 @@ function App() {
     // Check for any auth-related cookies
     console.log('[APP DEBUG] Document cookies:', document.cookie.split(';').map(c => c.trim().split('=')[0]).join(', '));
   }, []);
+
+  React.useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [location]);
 
   return (
     <ThemeProvider theme={theme}>
