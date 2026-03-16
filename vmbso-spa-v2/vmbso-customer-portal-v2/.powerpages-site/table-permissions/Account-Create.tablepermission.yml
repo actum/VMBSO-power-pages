@@ -4,7 +4,7 @@ adx_entitypermission_webrole:
 append: true
 appendto: true
 contactrelationship: 
-create: true
+create: false
 delete: false
 entitylogicalname: account
 entityname: Account Create
@@ -15,4 +15,4 @@ read: true
 scope: 756150000
 statecode: 1
 statuscode: 2
-write: true
+write: false
