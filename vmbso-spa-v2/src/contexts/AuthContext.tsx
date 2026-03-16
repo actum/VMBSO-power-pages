@@ -16,7 +16,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Required personal profile fields — the contact must be linked to an Account
 // (_parentcustomerid_value) for the company portion to be considered complete.
 const requiredPersonalFields: Array<keyof Contact> = [
-  "_actum_languageid_value",
+  "actum_language",
   "telephone1",
 ];
 
