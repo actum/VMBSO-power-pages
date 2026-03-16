@@ -12,6 +12,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Alert,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
@@ -152,6 +153,23 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Pending Approval Ribbon */}
+      {currentUser?.actum_approvalstatus === 182980000 && (
+        <Alert 
+          severity="warning" 
+          sx={{ 
+            borderRadius: 0,
+            justifyContent: 'center',
+            '& .MuiAlert-message': {
+              width: '100%',
+              textAlign: 'center',
+            },
+          }}
+        >
+          Your account is pending approval. Some features may be limited until your account is approved.
+        </Alert>
+      )}
 
       {/* Main Content */}
       <Box

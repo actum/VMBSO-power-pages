@@ -10,7 +10,6 @@ import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
-import type { ClientDocument, DocumentFilters } from '../types/document';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -314,65 +313,94 @@ export const dataverseService = {
   },
 
   /**
-   * Document operations
+   * Download Log operations
    */
-  documents: {
+  downloadLogs: {
     /**
-     * Get documents with optional filtering
+     * Create a new download log record
+     * Backend flow will populate actum_sastoken field
      */
-    async getAll(filters?: DocumentFilters): Promise<ClientDocument[]> {
-      // Build filter string
-      const filterParts: string[] = [];
-
-      if (filters?.accountId) {
-        filterParts.push(`_actum_account_value eq ${filters.accountId}`);
-      }
-      if (filters?.status !== undefined) {
-        filterParts.push(`statecode eq ${filters.status}`);
-      }
-      if (filters?.searchText) {
-        // OData contains() function for case-insensitive search
-        const sanitized = filters.searchText.replace(/'/g, "''"); // Escape single quotes
-        filterParts.push(`contains(tolower(actum_name), tolower('${sanitized}'))`);
-      }
-
-      const query = buildODataQuery({
-        expand: [
-          'actum_account($select=accountid,name)',
-          'actum_referencedocument', // Structure to be determined
-        ],
-        filter: filterParts.join(' and ') || undefined,
-        orderby: 'createdon desc',
-        top: 100,
+    async create(contactId: string, documentId: string): Promise<{ actum_downloadlogid: string }> {
+      // Use special handling for POST that may return 204
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'OData-MaxVersion': '4.0',
+        'OData-Version': '4.0',
       });
 
-      const response = await apiClient.odata<{ value: ClientDocument[] }>(
-        `/actum_clientdocuments${query}`
-      );
+      // Add CSRF token
+      const token = await (window as any).shell?.getTokenDeferred?.() || 
+                    await fetch('/_layout/tokenhtml', { credentials: 'include' })
+                      .then(r => r.text())
+                      .then(text => {
+                        const doc = new DOMParser().parseFromString(text, 'text/html');
+                        const input = doc.querySelector<HTMLInputElement>('input[name="__RequestVerificationToken"]');
+                        return input?.value || '';
+                      });
+      headers.set('__RequestVerificationToken', token);
 
-      // Log first document's expanded data for debugging
-      if (response.value?.length) {
-        console.log('Sample document with expanded data:', response.value[0]);
-        if (response.value[0].actum_referencedocument) {
-          console.log('actum_referencedocument structure:', response.value[0].actum_referencedocument);
-        }
+      const response = await fetch('/_api/actum_downloadlogs', {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: JSON.stringify({
+          'Actum_contactid@odata.bind': `/contacts(${contactId})`,
+          'Actum_documentid@odata.bind': `/actum_productdocumentations(${documentId})`,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Failed to create download log: ${response.status} - ${error}`);
       }
 
-      return response.value || [];
+      // Handle 204 No Content - extract ID from OData-EntityId header
+      if (response.status === 204) {
+        const entityIdHeader = response.headers.get('OData-EntityId');
+        console.log('[DOWNLOAD] 204 response, OData-EntityId header:', entityIdHeader);
+        
+        if (entityIdHeader) {
+          // OData-EntityId format: https://.../_api/actum_downloadlogs(GUID)
+          const match = entityIdHeader.match(/actum_downloadlogs\(([a-f0-9-]+)\)/i);
+          if (match) {
+            return { actum_downloadlogid: match[1] };
+          }
+        }
+        throw new Error('Download log created but ID not found in response headers');
+      }
+
+      // Handle 201 Created with body
+      const data = await response.json();
+      return { actum_downloadlogid: data.actum_downloadlogid };
     },
 
     /**
-     * Get single document by ID
+     * Get download log by ID to check for SAS token
+     * Uses a filter with timestamp to break Power Pages cache
+     * (Records updated outside portal don't automatically break cache)
      */
-    async getById(id: string): Promise<ClientDocument> {
+    async getById(downloadLogId: string): Promise<{ actum_sastoken: string | null }> {
+      // Create a filter that's always true but changes each request to break cache
+      // Use modifiedon field (datetime) compared with a future timestamp
+      const futureTimestamp = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(); // 1 year in future
+      const cacheBustFilter = `modifiedon lt '${futureTimestamp}'`; // modifiedon will always be less than future date
+      
       const query = buildODataQuery({
-        expand: [
-          'actum_account($select=accountid,name)',
-          'actum_referencedocument',
-        ],
+        select: ['actum_downloadlogid', 'actum_sastoken'],
+        filter: cacheBustFilter, // This breaks the cache while still returning the record
       });
-
-      return apiClient.odata<ClientDocument>(`/actum_clientdocuments(${id})${query}`);
+      
+      const response = await apiClient.odata<{ actum_sastoken: string | null }>(
+        `/actum_downloadlogs(${downloadLogId})${query}`,
+        {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        }
+      );
+      return response;
     },
   },
 };

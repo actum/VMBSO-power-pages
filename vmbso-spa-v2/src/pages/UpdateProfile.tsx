@@ -193,13 +193,19 @@ export const UpdateProfile: React.FC = () => {
 
       // Handle flow response
       if (response?.status === "200") {
-        // Success: show message and redirect after 2 seconds
+        // Success: show message and redirect after refreshing user data
         toast.success(response.message || "Profile updated successfully!");
+        
+        // Wait a moment for Dataverse to commit the changes
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Refresh user data to get updated profile
         await refreshUser();
         
+        // Redirect to documents
         setTimeout(() => {
           navigate("/documents");
-        }, 2000);
+        }, 1000);
       } else if (response?.status === "500") {
         // Error: show error message
         setError(response.message || "An error occurred while updating your profile.");

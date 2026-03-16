@@ -71,6 +71,8 @@ export const config = {
   flows: {
     /** Update profile flow — creates/links Account and updates Contact. */
     updateProfile: '/_api/cloudflow/v1.0/trigger/0bc41f4c-841c-f111-8341-000d3a66f792',
+    /** Fetch documents flow — returns list of product documentation for contact. */
+    fetchDocuments: '/_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974',
   },
 
   /** Static asset paths. */

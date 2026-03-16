@@ -67,8 +67,9 @@ async function handleApiError(response: Response): Promise<ApiError> {
 export const apiClient = {
   /**
    * Enhanced fetch with timeout, retry, and error handling
+   * Returns both response data and the raw Response object for header access
    */
-  async request<T>(url: string, config: FetchConfig = {}): Promise<T> {
+  async requestWithResponse<T>(url: string, config: FetchConfig = {}): Promise<{ data: T; response: Response }> {
     const {
       timeout = DEFAULT_TIMEOUT,
       retries = DEFAULT_RETRIES,
@@ -93,10 +94,11 @@ export const apiClient = {
 
         // Handle 204 No Content
         if (response.status === 204) {
-          return null as T;
+          return { data: null as T, response };
         }
 
-        return await response.json();
+        const data = await response.json();
+        return { data, response };
       } catch (error) {
         clearTimeout(timeoutId);
 
@@ -124,6 +126,14 @@ export const apiClient = {
   },
 
   /**
+   * Enhanced fetch with timeout, retry, and error handling
+   */
+  async request<T>(url: string, config: FetchConfig = {}): Promise<T> {
+    const { data } = await this.requestWithResponse<T>(url, config);
+    return data;
+  },
+
+  /**
    * OData-specific request with proper headers
    */
   async odata<T>(endpoint: string, config: FetchConfig = {}): Promise<T> {
@@ -131,6 +141,13 @@ export const apiClient = {
     headers.set('Accept', 'application/json');
     headers.set('OData-MaxVersion', '4.0');
     headers.set('OData-Version', '4.0');
+
+    // Add CSRF token for mutating operations
+    const method = (config.method || 'GET').toUpperCase();
+    if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
+      const token = await getCsrfToken();
+      headers.set('__RequestVerificationToken', token);
+    }
 
     return this.request<T>(`/_api${endpoint}`, {
       ...config,

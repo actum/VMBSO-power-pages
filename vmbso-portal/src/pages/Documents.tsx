@@ -21,7 +21,7 @@ export const Documents: React.FC = () => {
   return (
     <Layout>
       <Box>
-        <Typography variant="h4" gutterBottom>
+        <Typography sx={{ mt: 3}} variant="h4" gutterBottom>
           Documents
         </Typography>
 

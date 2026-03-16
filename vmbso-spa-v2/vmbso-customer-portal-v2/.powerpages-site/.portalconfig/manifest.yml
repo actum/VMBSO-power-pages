@@ -17,6 +17,10 @@ adx_webfile:
   DisplayName: 1cd115d2-573e-4386-b882-b18abaa6babb
   CheckSum: 
   IsDeleted: true
+- RecordId: 1f78d275-0cb2-4dd2-baf9-a313a5104bbd
+  DisplayName: 1f78d275-0cb2-4dd2-baf9-a313a5104bbd
+  CheckSum: 
+  IsDeleted: true
 - RecordId: 2cf435b9-3228-4687-95e6-81f4db97e36f
   DisplayName: 2cf435b9-3228-4687-95e6-81f4db97e36f
   CheckSum: 
@@ -45,6 +49,10 @@ adx_webfile:
   DisplayName: c273724d-45a3-4acb-b37f-416204570c52
   CheckSum: 
   IsDeleted: true
+- RecordId: c3e0aeff-e8cf-4dd0-a0bd-1035d3695768
+  DisplayName: c3e0aeff-e8cf-4dd0-a0bd-1035d3695768
+  CheckSum: 
+  IsDeleted: true
 - RecordId: cfaeaed7-2f7b-49c2-afad-244783eccd87
   DisplayName: cfaeaed7-2f7b-49c2-afad-244783eccd87
   CheckSum: 
@@ -55,6 +63,10 @@ adx_webfile:
   IsDeleted: true
 - RecordId: d92d3f3f-2316-4c05-8bb2-54ea4d0e3b6d
   DisplayName: d92d3f3f-2316-4c05-8bb2-54ea4d0e3b6d
+  CheckSum: 
+  IsDeleted: true
+- RecordId: f4ce9f66-0612-41bb-98ad-1f9234b3ac1e
+  DisplayName: f4ce9f66-0612-41bb-98ad-1f9234b3ac1e
   CheckSum: 
   IsDeleted: true
 - RecordId: f542acd5-2630-4fa1-90c1-573d70d66918
@@ -72,6 +84,10 @@ annotation:
   IsDeleted: true
 - RecordId: 1cd115d2-573e-4386-b882-b18abaa6babb
   DisplayName: main.3832687e.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 1f78d275-0cb2-4dd2-baf9-a313a5104bbd
+  DisplayName: main.70a52a97.js
   CheckSum: 
   IsDeleted: true
 - RecordId: 2cf435b9-3228-4687-95e6-81f4db97e36f
@@ -102,6 +118,10 @@ annotation:
   DisplayName: main.4e6af9c2.js
   CheckSum: 
   IsDeleted: true
+- RecordId: c3e0aeff-e8cf-4dd0-a0bd-1035d3695768
+  DisplayName: main.c90364a1.js
+  CheckSum: 
+  IsDeleted: true
 - RecordId: cfaeaed7-2f7b-49c2-afad-244783eccd87
   DisplayName: main.9a3363ac.js
   CheckSum: 
@@ -112,6 +132,10 @@ annotation:
   IsDeleted: true
 - RecordId: d92d3f3f-2316-4c05-8bb2-54ea4d0e3b6d
   DisplayName: main.73fc73c9.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: f4ce9f66-0612-41bb-98ad-1f9234b3ac1e
+  DisplayName: main.0391a43b.js
   CheckSum: 
   IsDeleted: true
 - RecordId: f542acd5-2630-4fa1-90c1-573d70d66918
