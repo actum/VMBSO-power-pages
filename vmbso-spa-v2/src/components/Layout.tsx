@@ -29,10 +29,14 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+enum ApprovalStatus {
+  Pending = 182980000,
+}
+
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
-  const { t } = useTranslation(['header', 'footer']);
+  const { t } = useTranslation(['header', 'footer', 'layout']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -157,7 +161,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </AppBar>
 
       {/* Pending Approval Ribbon */}
-      {currentUser?.actum_approvalstatus === 182980000 && (
+      {currentUser?.actum_approvalstatus === ApprovalStatus.Pending && (
         <Alert 
           severity="warning" 
           sx={{ 
@@ -169,7 +173,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             },
           }}
         >
-          Your account is pending approval. Some features may be limited until your account is approved.
+          {t('layout:pendingApprovalBanner')}
         </Alert>
       )}
 
