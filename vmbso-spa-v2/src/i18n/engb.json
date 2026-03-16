@@ -39,6 +39,24 @@
     "actions": {
       "search": "Search",
       "clear": "Clear"
+    },
+    "download": {
+      "preparing": "We're preparing your download",
+      "preparingSubtext": "This may take up to 60 seconds...",
+      "buttonAriaLabel": "Download {{documentName}}"
+    },
+    "documentDetails": {
+      "fileName": "File",
+      "visible": "Visible",
+      "unapprovedAccess": "Unapproved Access",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "errors": {
+      "notAuthenticated": "User not authenticated",
+      "timeout": "Download preparation timed out. Please try again.",
+      "statusCheck": "Failed to check download status. Please try again.",
+      "downloadFailed": "Failed to download document. Please try again."
     }
   },
 
@@ -193,6 +211,7 @@
       "language": {
         "label": "LANGUAGE",
         "aria": "Language",
+        "noOptions": "Select a country first",
         "options": {
           "en-GB": "English",
           "fr-FR": "France = French only",
@@ -215,7 +234,10 @@
       "vat": {
         "label": "VAT",
         "aria": "Company VAT",
-        "placeholder": "GB123456789"
+        "placeholder": "GB123456789",
+        "searchButton": "Search",
+        "found": "Company found: {{name}}",
+        "notFound": "No company found — please complete the company details."
       },
       "primaryCountry": {
         "label": "PRIMARY COUNTRY",
@@ -245,6 +267,14 @@
         "label": "COMPANY EMAIL",
         "aria": "Company email",
         "placeholder": "email@email.com"
+      },
+      "city": {
+        "label": "CITY",
+        "aria": "Company city"
+      },
+      "zipCode": {
+        "label": "ZIP CODE",
+        "aria": "Company zip code"
       }
     },
 
@@ -256,18 +286,22 @@
       "primaryCountry": "Country is required",
       "companyPhone": "Company phone is required",
       "address": "Company address is required",
+      "city": "City is required",
+      "zipCode": "Zip code is required",
       "companyBrand": "At least one brand must be selected",
       "companyRole": "Role is required"
     },
 
     "section": {
       "contact_details": "Contact details",
-      "company_details": "Company details"
+      "company_details": "Company details",
+      "companyCreate": "Company Details (new)"
     },
 
     "action": {
       "update": "Update",
-      "updating": "Updating…"
+      "updating": "Updating…",
+      "searching": "Searching…"
     }
   }
 }

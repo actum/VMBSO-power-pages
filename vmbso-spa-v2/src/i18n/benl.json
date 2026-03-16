@@ -37,6 +37,24 @@
     "actions": {
       "search": "Zoeken",
       "clear": "Wissen"
+    },
+    "download": {
+      "preparing": "We bereiden uw download voor",
+      "preparingSubtext": "Dit kan tot 60 seconden duren...",
+      "buttonAriaLabel": "Download {{documentName}}"
+    },
+    "documentDetails": {
+      "fileName": "Bestand",
+      "visible": "Zichtbaar",
+      "unapprovedAccess": "Niet-goedgekeurde toegang",
+      "yes": "Ja",
+      "no": "Nee"
+    },
+    "errors": {
+      "notAuthenticated": "Gebruiker niet geauthenticeerd",
+      "timeout": "Download voorbereiding time-out. Probeer het opnieuw.",
+      "statusCheck": "Kan downloadstatus niet controleren. Probeer het opnieuw.",
+      "downloadFailed": "Kan document niet downloaden. Probeer het opnieuw."
     }
   },
 
@@ -191,6 +209,7 @@
       "language": {
         "label": "TAAL",
         "aria": "Taal",
+        "noOptions": "Selecteer eerst een land",
         "options": {
           "en-GB": "Engels",
           "fr-FR": "Frankrijk = alleen Frans",
@@ -213,7 +232,10 @@
       "vat": {
         "label": "BTW-NUMMER",
         "aria": "BTW-nummer bedrijf",
-        "placeholder": "NL123456789B01"
+        "placeholder": "NL123456789B01",
+        "searchButton": "Zoeken",
+        "found": "Bedrijf gevonden: {{name}}",
+        "notFound": "Geen bedrijf gevonden — vul de bedrijfsgegevens in."
       },
       "primaryCountry": {
         "label": "PRIMAIR LAND",
@@ -243,6 +265,14 @@
         "label": "BEDRIJFS E-MAIL",
         "aria": "E-mail bedrijf",
         "placeholder": "email@bedrijf.nl"
+      },
+      "city": {
+        "label": "STAD",
+        "aria": "Stad van het bedrijf"
+      },
+      "zipCode": {
+        "label": "POSTCODE",
+        "aria": "Postcode van het bedrijf"
       }
     },
 
@@ -254,18 +284,22 @@
       "primaryCountry": "Land is verplicht",
       "companyPhone": "Bedrijfstelefoon is verplicht",
       "address": "Bedrijfsadres is verplicht",
+      "city": "Stad is verplicht",
+      "zipCode": "Postcode is verplicht",
       "companyBrand": "Minstens één merk moet worden geselecteerd",
       "companyRole": "Rol is verplicht"
     },
 
     "section": {
       "contact_details": "Contactgegevens",
-      "company_details": "Bedrijfsgegevens"
+      "company_details": "Bedrijfsgegevens",
+      "companyCreate": "Bedrijfsgegevens (nieuw)"
     },
 
     "action": {
       "update": "Bijwerken",
-      "updating": "Bezig met bijwerken…"
+      "updating": "Bezig met bijwerken…",
+      "searching": "Zoeken…"
     }
   }
 }

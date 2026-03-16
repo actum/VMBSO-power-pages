@@ -67,8 +67,9 @@ async function handleApiError(response: Response): Promise<ApiError> {
 export const apiClient = {
   /**
    * Enhanced fetch with timeout, retry, and error handling
+   * Returns both response data and the raw Response object for header access
    */
-  async request<T>(url: string, config: FetchConfig = {}): Promise<T> {
+  async requestWithResponse<T>(url: string, config: FetchConfig = {}): Promise<{ data: T; response: Response }> {
     const {
       timeout = DEFAULT_TIMEOUT,
       retries = DEFAULT_RETRIES,
@@ -93,10 +94,11 @@ export const apiClient = {
 
         // Handle 204 No Content
         if (response.status === 204) {
-          return null as T;
+          return { data: null as T, response };
         }
 
-        return await response.json();
+        const data = await response.json();
+        return { data, response };
       } catch (error) {
         clearTimeout(timeoutId);
 
@@ -124,6 +126,14 @@ export const apiClient = {
   },
 
   /**
+   * Enhanced fetch with timeout, retry, and error handling
+   */
+  async request<T>(url: string, config: FetchConfig = {}): Promise<T> {
+    const { data } = await this.requestWithResponse<T>(url, config);
+    return data;
+  },
+
+  /**
    * OData-specific request with proper headers
    */
   async odata<T>(endpoint: string, config: FetchConfig = {}): Promise<T> {
@@ -132,10 +142,82 @@ export const apiClient = {
     headers.set('OData-MaxVersion', '4.0');
     headers.set('OData-Version', '4.0');
 
+    // Add CSRF token for mutating operations
+    const method = (config.method || 'GET').toUpperCase();
+    if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
+      const token = await getCsrfToken();
+      headers.set('__RequestVerificationToken', token);
+    }
+
     return this.request<T>(`/_api${endpoint}`, {
       ...config,
       headers,
       credentials: 'include',
     });
   },
+
+  /**
+   * Invoke a Power Pages-registered cloud flow.
+   *
+   * Strategy:
+   *  1. Get CSRF token via window.shell.getTokenDeferred() if available
+   *  2. Fall back to fetching /_layout/tokenhtml and parsing the <input> value
+   *  3. POST to the flow URL with application/x-www-form-urlencoded + token header
+   */
+  async flow<T = void>(url: string, eventData: Record<string, unknown>): Promise<T> {
+    // ── Step 1: obtain CSRF token ──────────────────────────────────────────
+    const token = await getCsrfToken();
+    console.log('[FLOW] CSRF token obtained:', token ? `${token.substring(0, 12)}…` : 'EMPTY');
+
+    // ── Step 2: POST to the flow endpoint ─────────────────────────────────
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        '__RequestVerificationToken': token,
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-requested-with': 'XMLHttpRequest',
+      },
+      body: new URLSearchParams({ eventData: JSON.stringify(eventData) }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Flow request failed: ${response.status} - ${text}`);
+    }
+
+    // 204 No Content — flow returned nothing
+    if (response.status === 204) {
+      return null as T;
+    }
+
+    return response.json() as Promise<T>;
+  },
 };
+
+/**
+ * Obtain the Power Pages CSRF (anti-forgery) token.
+ *  - Prefers window.shell.getTokenDeferred() — available in all modern portal setups
+ *  - Falls back to fetching /_layout/tokenhtml and parsing the hidden <input> value
+ */
+export async function getCsrfToken(): Promise<string> {
+  // Strategy A: window.shell.getTokenDeferred()
+  const shell = (window as { shell?: { getTokenDeferred?: () => Promise<string> } }).shell;
+  if (shell && typeof shell.getTokenDeferred === 'function') {
+    const token = await shell.getTokenDeferred();
+    return token;
+  }
+
+  // Strategy B: fetch /_layout/tokenhtml and parse the hidden input
+  const res = await fetch('/_layout/tokenhtml', { credentials: 'include' });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch CSRF token page: ${res.status}`);
+  }
+  const text = await res.text();
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  const input = doc.querySelector<HTMLInputElement>('input[name="__RequestVerificationToken"]');
+  if (!input?.value) {
+    throw new Error('CSRF token not found in /_layout/tokenhtml');
+  }
+  return input.value;
+}

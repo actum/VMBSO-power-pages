@@ -2,7 +2,7 @@
   "name": "vmbso-portal",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://site-alfw4.powerappsportals.com",
+  "proxy": "https://vmbso-spa.powerappsportals.com/",
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -36,7 +36,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal\""
+    "deploy": "npm run build && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal v2\"",
+    "download": "pac pages download-code-site --path ./ --webSiteId ac923a79-af52-4a68-8d8f-9f947a0d5821 --overwrite"
   },
   "eslintConfig": {
     "extends": [

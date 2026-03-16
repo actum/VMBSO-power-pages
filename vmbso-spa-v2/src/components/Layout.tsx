@@ -12,6 +12,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Alert,
   Link,
 } from '@mui/material';
 import {
@@ -28,10 +29,14 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+enum ApprovalStatus {
+  Pending = 182980000,
+}
+
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
-  const { t } = useTranslation(['header', 'footer']);
+  const { t } = useTranslation(['header', 'footer', 'layout']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -154,6 +159,23 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Pending Approval Ribbon */}
+      {currentUser?.actum_approvalstatus === ApprovalStatus.Pending && (
+        <Alert 
+          severity="warning" 
+          sx={{ 
+            borderRadius: 0,
+            justifyContent: 'center',
+            '& .MuiAlert-message': {
+              width: '100%',
+              textAlign: 'center',
+            },
+          }}
+        >
+          {t('layout:pendingApprovalBanner')}
+        </Alert>
+      )}
 
       {/* Main Content */}
       <Box

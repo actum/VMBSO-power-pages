@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974
+flowtriggerurl: ''
+id: e5db3aed-bf1e-f111-8341-000d3a688605
+metadata: ''
+name: VPortal - Get Visible Documents
+processid: a276b369-b11e-f111-8341-000d3a66f974

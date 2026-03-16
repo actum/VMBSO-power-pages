@@ -1,22 +1,13 @@
-export interface ClientDocument {
-  actum_clientdocumentid: string;
+/**
+ * Product Documentation document from fetch documents flow
+ */
+export interface ProductDocument {
+  '@odata.etag'?: string;
+  actum_productdocumentationid: string;
   actum_name: string;
-  statecode: number;
-  statuscode: number;
-  createdon: string;
-  modifiedon: string;
-  // Expanded lookups
-  actum_account?: {
-    accountid: string;
-    name: string;
-  };
-  actum_referencedocument?: any; // Type unknown until we see response
-  _actum_account_value?: string; // Lookup ID
-  _actum_referencedocument_value?: string; // Lookup ID
-}
-
-export interface DocumentFilters {
-  accountId?: string;
-  status?: number;
-  searchText?: string;
+  actum_filename: string;
+  actum_visible: boolean;
+  'actum_visible@OData.Community.Display.V1.FormattedValue'?: string;
+  actum_unapprovedaccess: boolean;
+  'actum_unapprovedaccess@OData.Community.Display.V1.FormattedValue'?: string;
 }

@@ -4,8 +4,12 @@
  */
 
 import { apiClient, ApiError } from './apiClient';
-import { Contact } from '../types/contact';
-import { ClientDocument, DocumentFilters } from '../types/document';
+import type { Contact } from '../types/contact';
+import type { Account } from '../types/account';
+import type { Brand } from '../types/brand';
+import type { Country } from '../types/country';
+import type { Language } from '../types/language';
+import type { Role } from '../types/role';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -57,11 +61,15 @@ export const dataverseService = {
           'jobtitle',
           'createdon',
           'modifiedon',
-          // Custom fields that actually exist (from screenshot)
+          // Custom fields that exist on Contact table
           'actum_approvalstatus',
           '_actum_languageid_value',
-          '_parentcustomerid_value',  // Account lookup for Company Name
+          '_parentcustomerid_value',  // Account lookup
           'mspp_userpreferredlcid',
+          // Address fields on Contact
+          'address1_line1',
+          'address1_city',
+          'address1_postalcode',
           // Portal identity fields
           'adx_identity_username',
           'adx_identity_emailaddress1confirmed',
@@ -110,7 +118,13 @@ export const dataverseService = {
       }
 
       // Remove read-only fields
-      const { contactid, createdon, ...updateFields } = fields;
+      const { contactid, createdon, _parentcustomerid_value, ...rest } = fields;
+
+      // Convert raw lookup value to OData bind syntax for Dataverse PATCH
+      const updateFields: Record<string, unknown> = { ...rest };
+      if (_parentcustomerid_value) {
+        updateFields['parentcustomerid_account@odata.bind'] = `/accounts(${_parentcustomerid_value})`;
+      }
 
       await apiClient.odata(`/contacts(${contactId})`, {
         method: 'PATCH',
@@ -133,65 +147,260 @@ export const dataverseService = {
   },
 
   /**
-   * Document operations
+   * Account operations
    */
-  documents: {
+  accounts: {
     /**
-     * Get documents with optional filtering
+     * Search for an account by VAT registration number.
+     * Returns the first match or null if none found.
      */
-    async getAll(filters?: DocumentFilters): Promise<ClientDocument[]> {
-      // Build filter string
-      const filterParts: string[] = [];
-
-      if (filters?.accountId) {
-        filterParts.push(`_actum_account_value eq ${filters.accountId}`);
-      }
-      if (filters?.status !== undefined) {
-        filterParts.push(`statecode eq ${filters.status}`);
-      }
-      if (filters?.searchText) {
-        // OData contains() function for case-insensitive search
-        const sanitized = filters.searchText.replace(/'/g, "''"); // Escape single quotes
-        filterParts.push(`contains(tolower(actum_name), tolower('${sanitized}'))`);
-      }
-
+    async searchByVAT(vat: string): Promise<Account | null> {
+      const escaped = vat.replace(/'/g, "''");
       const query = buildODataQuery({
-        expand: [
-          'actum_account($select=accountid,name)',
-          'actum_referencedocument', // Structure to be determined
-        ],
-        filter: filterParts.join(' and ') || undefined,
-        orderby: 'createdon desc',
-        top: 100,
+        filter: `actum_vatregistrationnumber eq '${escaped}'`,
+        select: ['accountid', 'name', '_actum_primarycountryid_value'],
+        top: 1,
       });
-
-      const response = await apiClient.odata<{ value: ClientDocument[] }>(
-        `/actum_clientdocuments${query}`
-      );
-
-      // Log first document's expanded data for debugging
-      if (response.value?.length) {
-        console.log('Sample document with expanded data:', response.value[0]);
-        if (response.value[0].actum_referencedocument) {
-          console.log('actum_referencedocument structure:', response.value[0].actum_referencedocument);
+      try {
+        const response = await apiClient.odata<{ value: Account[] }>(`/accounts${query}`);
+        return response.value?.[0] ?? null;
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return null;
         }
+        throw error;
       }
-
-      return response.value || [];
     },
 
     /**
-     * Get single document by ID
+     * Create a new Account record.
+     * Uses Prefer: return=representation to get the created record back.
      */
-    async getById(id: string): Promise<ClientDocument> {
-      const query = buildODataQuery({
-        expand: [
-          'actum_account($select=accountid,name)',
-          'actum_referencedocument',
-        ],
+    async create(fields: Omit<Account, 'accountid'>): Promise<Account> {
+      const response = await apiClient.odata<Account>('/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify(fields),
+      });
+      return response;
+    },
+
+    /**
+     * Set the primary contact on an existing Account.
+     */
+    async setPrimaryContact(accountId: string, contactId: string): Promise<void> {
+      await apiClient.odata(`/accounts(${accountId})`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'If-Match': '*',
+        },
+        body: JSON.stringify({
+          'primarycontactid@odata.bind': `/contacts(${contactId})`,
+        }),
+      });
+    },
+  },
+
+  /**
+   * Language lookup operations
+   */
+  languages: {
+    async getAll(): Promise<Language[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
+          filter: 'statecode eq 0',
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Language[] }>(`/actum_languages${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Get languages linked to a specific country via the M2M relationship
+     * actum_country_actum_language_actum_language.
+     */
+    async getByCountry(countryId: string): Promise<Language[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Language[] }>(
+          `/actum_countries(${countryId})/actum_country_actum_language_actum_language${query}`
+        );
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Brand lookup operations
+   */
+  brands: {
+    async getAll(): Promise<Brand[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_brandid', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Brand[] }>(`/actum_brands${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Role lookup operations
+   */
+  roles: {
+    async getAll(): Promise<Role[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_roleid', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Role[] }>(`/actum_roles${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Country lookup operations
+   */
+  countries: {
+    async getAll(): Promise<Country[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_countryid', 'actum_name'],
+          orderby: 'actum_name asc',
+        });
+        const response = await apiClient.odata<{ value: Country[] }>(`/actum_countries${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Download Log operations
+   */
+  downloadLogs: {
+    /**
+     * Create a new download log record
+     * Backend flow will populate actum_sastoken field
+     */
+    async create(contactId: string, documentId: string): Promise<{ actum_downloadlogid: string }> {
+      // Use special handling for POST that may return 204
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'OData-MaxVersion': '4.0',
+        'OData-Version': '4.0',
       });
 
-      return apiClient.odata<ClientDocument>(`/actum_clientdocuments(${id})${query}`);
+      // Add CSRF token
+      const token = await (window as any).shell?.getTokenDeferred?.() || 
+                    await fetch('/_layout/tokenhtml', { credentials: 'include' })
+                      .then(r => r.text())
+                      .then(text => {
+                        const doc = new DOMParser().parseFromString(text, 'text/html');
+                        const input = doc.querySelector<HTMLInputElement>('input[name="__RequestVerificationToken"]');
+                        return input?.value || '';
+                      });
+      headers.set('__RequestVerificationToken', token);
+
+      const response = await fetch('/_api/actum_downloadlogs', {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: JSON.stringify({
+          'Actum_contactid@odata.bind': `/contacts(${contactId})`,
+          'Actum_documentid@odata.bind': `/actum_productdocumentations(${documentId})`,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Failed to create download log: ${response.status} - ${error}`);
+      }
+
+      // Handle 204 No Content - extract ID from OData-EntityId header
+      if (response.status === 204) {
+        const entityIdHeader = response.headers.get('OData-EntityId');
+        console.log('[DOWNLOAD] 204 response, OData-EntityId header:', entityIdHeader);
+        
+        if (entityIdHeader) {
+          // OData-EntityId format: https://.../_api/actum_downloadlogs(GUID)
+          const match = entityIdHeader.match(/actum_downloadlogs\(([a-f0-9-]+)\)/i);
+          if (match) {
+            return { actum_downloadlogid: match[1] };
+          }
+        }
+        throw new Error('Download log created but ID not found in response headers');
+      }
+
+      // Handle 201 Created with body
+      const data = await response.json();
+      return { actum_downloadlogid: data.actum_downloadlogid };
+    },
+
+    /**
+     * Get download log by ID to check for SAS token
+     * Uses a filter with timestamp to break Power Pages cache
+     * (Records updated outside portal don't automatically break cache)
+     */
+    async getById(downloadLogId: string): Promise<{ actum_sastoken: string | null }> {
+      // Create a filter that's always true but changes each request to break cache
+      // Use modifiedon field (datetime) compared with a future timestamp
+      const futureTimestamp = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(); // 1 year in future
+      const cacheBustFilter = `modifiedon lt '${futureTimestamp}'`; // modifiedon will always be less than future date
+      
+      const query = buildODataQuery({
+        select: ['actum_downloadlogid', 'actum_sastoken'],
+        filter: cacheBustFilter, // This breaks the cache while still returning the record
+      });
+      
+      const response = await apiClient.odata<{ actum_sastoken: string | null }>(
+        `/actum_downloadlogs(${downloadLogId})${query}`,
+        {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        }
+      );
+      return response;
     },
   },
 };

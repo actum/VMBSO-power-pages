@@ -44,7 +44,7 @@ export const config = {
      */
     providerScheme: process.env.REACT_APP_ENTRA_PROVIDER ?? '',
     /** Where Power Pages should redirect after successful authentication. */
-    returnUrl: '/',
+    returnUrl: '/login',
     /** Federated logout URL — clears both Power Pages and Entra sessions. */
     logoutUrl: '/Account/Login/LogOff?federated=true',
     /** React-side login page (used only in dev mode after mock logout). */
@@ -57,6 +57,22 @@ export const config = {
     contacts: '/_api/contacts',
     /** Single contact record endpoint — used for PATCH updates. */
     contactById: (id: string) => `/_api/contacts(${id})`,
+    /** Account collection endpoint — used for VAT lookup and creation. */
+    accounts: '/_api/accounts',
+    /** Single account record endpoint — used for PATCH updates. */
+    accountById: (id: string) => `/_api/accounts(${id})`,
+    /** Brand lookup table. */
+    brands: '/_api/actum_brands',
+    /** Country lookup table. */
+    countries: '/_api/actum_countries',
+  },
+
+  /** Power Automate cloud flow endpoints. */
+  flows: {
+    /** Update profile flow — creates/links Account and updates Contact. */
+    updateProfile: '/_api/cloudflow/v1.0/trigger/0bc41f4c-841c-f111-8341-000d3a66f792',
+    /** Fetch documents flow — returns list of product documentation for contact. */
+    fetchDocuments: '/_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974',
   },
 
   /** Static asset paths. */

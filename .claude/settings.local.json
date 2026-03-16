@@ -3,7 +3,12 @@
     "allow": [
       "Bash(pac powerpages download --path .powerpages-site --overwrite)",
       "Bash(uuidgen)",
-      "Bash(python3 -c \"import uuid; print(str(uuid.uuid4()))\")"
+      "Bash(ls c:/https/VMBS-powerpages/vmbso-spa-v2/.env*)",
+      "Bash(ls c:/https/VMBS-powerpages/vmbso-spa-v2/.env.*)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/https/VMBS-powerpages/**)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
