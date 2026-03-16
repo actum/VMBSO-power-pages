@@ -40,25 +40,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Company is complete when the contact is linked to an Account
     const companyComplete = !!currentUser._parentcustomerid_value;
     const complete = personalComplete && companyComplete;
-    console.log('[AUTH CONTEXT DEBUG] Profile complete check:', complete, '| personal:', personalComplete, '| company (account linked):', companyComplete);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[AUTH CONTEXT DEBUG] Profile complete check:', complete, '| personal:', personalComplete, '| company (account linked):', companyComplete);
+    }
     return complete;
   }, [currentUser]);
 
   useEffect(() => {
-    console.log('[AUTH CONTEXT DEBUG] Initial session check on mount');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[AUTH CONTEXT DEBUG] Initial session check on mount');
+    }
     checkSession();
   }, []);
 
   const checkSession = async () => {
     try {
-      console.log('[AUTH CONTEXT DEBUG] checkSession started');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH CONTEXT DEBUG] checkSession started');
+      }
       setLoading(true);
       const user = await authService.checkSession();
 
-      console.log('[AUTH CONTEXT DEBUG] checkSession result:', user ? `User: ${user.contactid}` : 'No user');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH CONTEXT DEBUG] checkSession result:', user ? `User: ${user.contactid}` : 'No user');
+      }
       setCurrentUser(user);
     } catch (error) {
-      console.error('[AUTH CONTEXT DEBUG] Session check failed:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[AUTH CONTEXT DEBUG] Session check failed:', error);
+      }
       setCurrentUser(null);
     } finally {
       setLoading(false);
