@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Contact } from '../types/contact';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { type Contact } from '../types/contact';
 import { authService } from '../services/authService';
 
 interface AuthContextType {
@@ -21,7 +21,7 @@ const requiredPersonalFields: Array<keyof Contact> = [
 ];
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {

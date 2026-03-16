@@ -6,6 +6,7 @@ import { Layout } from '../components/Layout';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
+import { useTranslation } from 'react-i18next';
 
 export const Documents: React.FC = () => {
   React.useEffect(() => { document.title = 'Documents | VMBSO Customer Portal'; }, []);
@@ -15,6 +16,7 @@ export const Documents: React.FC = () => {
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
   const { documents, loading, error, refetch } = useDocuments();
   const { currentUser } = useAuth();
+  const { t } = useTranslation("documentsPage");
 
   // Client-side filtering
   const filteredDocuments = useMemo(() => {
@@ -36,7 +38,7 @@ export const Documents: React.FC = () => {
 
   const handleDownload = async (doc: typeof documents[0]) => {
     if (!currentUser?.contactid) {
-      toast.error('User not authenticated');
+      toast.error(t("errors.notAuthenticated"));
       return;
     }
 
@@ -73,7 +75,7 @@ export const Documents: React.FC = () => {
           console.error('[DOWNLOAD] Timeout reached after', pollAttempt, 'attempts');
           setDownloadingDocId(null);
           setIsPreparingDownload(false);
-          toast.error('Download preparation timed out. Please try again.');
+          toast.error(t("errors.timeout"));
           return;
         }
 
@@ -113,7 +115,7 @@ export const Documents: React.FC = () => {
             } else {
               setDownloadingDocId(null);
               setIsPreparingDownload(false);
-              toast.error('Failed to check download status. Please try again.');
+              toast.error(t("errors.statusCheck"));
             }
           });
       };
@@ -125,7 +127,7 @@ export const Documents: React.FC = () => {
       setDownloadingDocId(null);
       setIsPreparingDownload(false);
       console.error('Download error:', error);
-      toast.error('Failed to download document. Please try again.');
+      toast.error(t("errors.downloadFailed"));
     }
   };
 
@@ -152,23 +154,23 @@ export const Documents: React.FC = () => {
         >
           <CircularProgress size={60} sx={{ color: 'primary.main', mb: 3 }} />
           <Typography variant="h5" sx={{ fontWeight: 500, color: 'primary.main' }}>
-            We're preparing your download
+            {t("download.preparing")}
           </Typography>
           <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-            This may take up to 60 seconds...
+            {t("download.preparingSubtext")}
           </Typography>
         </Box>
       </Modal>
 
       <Box>
         <Typography variant="h4" gutterBottom>
-          Documents
+          {t("documentsSearch.label")}
         </Typography>
 
         {/* Search Controls */}
         <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
           <TextField
-            placeholder="Search documents..."
+            placeholder={t("documentsSearch.placeholder")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -176,10 +178,10 @@ export const Documents: React.FC = () => {
             fullWidth
           />
           <Button variant="contained" onClick={handleSearch} disabled={loading}>
-            Search
+            {t("actions.search")}
           </Button>
           <Button variant="outlined" onClick={handleClearSearch} disabled={loading}>
-            Clear
+            {t("actions.clear")}
           </Button>
         </Box>
 
@@ -201,12 +203,12 @@ export const Documents: React.FC = () => {
         {!loading && !error && (
           <Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Found {filteredDocuments.length} document(s)
+              {t("documentsList.results", { count: filteredDocuments.length })}
             </Typography>
             
             {filteredDocuments.length === 0 ? (
               <Alert severity="info">
-                {searchText ? 'No documents match your search.' : 'No documents found.'}
+                {t("validation.noDocumentsFound")}
               </Alert>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -228,16 +230,16 @@ export const Documents: React.FC = () => {
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="h6">{doc.actum_name}</Typography>
                       <Typography variant="body2" color="text.secondary">
-                        File: {doc.actum_filename}
+                        {t("documentDetails.fileName")}: {doc.actum_filename}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                        Visible: {doc.actum_visible ? 'Yes' : 'No'} | 
-                        Unapproved Access: {doc.actum_unapprovedaccess ? 'Yes' : 'No'}
+                        {t("documentDetails.visible")}: {doc.actum_visible ? t("documentDetails.yes") : t("documentDetails.no")} | 
+                        {t("documentDetails.unapprovedAccess")}: {doc.actum_unapprovedaccess ? t("documentDetails.yes") : t("documentDetails.no")}
                       </Typography>
                     </Box>
                     <IconButton
                       onClick={() => handleDownload(doc)}
-                      aria-label={`Download ${doc.actum_name}`}
+                      aria-label={t("download.buttonAriaLabel", { documentName: doc.actum_name })}
                       disabled={downloadingDocId === doc.actum_productdocumentationid}
                       sx={{ 
                         ml: 2,

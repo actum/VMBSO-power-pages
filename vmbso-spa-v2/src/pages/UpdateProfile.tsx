@@ -16,12 +16,12 @@ import {
 import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
-import type { Contact } from "../types/contact";
-import type { Account } from "../types/account";
-import type { Brand } from "../types/brand";
-import type { Country } from "../types/country";
-import type { Language } from "../types/language";
-import type { Role } from "../types/role";
+import { type Contact } from "../types/contact";
+import { type Account } from "../types/account";
+import { type Brand } from "../types/brand";
+import { type Country } from "../types/country";
+import { type Language } from "../types/language";
+import { type Role } from "../types/role";
 import { dataverseService } from "../services/dataverseService";
 import { apiClient } from "../services/apiClient";
 import { config } from "../config/powerPages.config";
@@ -40,7 +40,7 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation(["updateProfile"]);
+  const { t } = useTranslation(["updateProfilePage"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -250,8 +250,8 @@ export const UpdateProfile: React.FC = () => {
       <Box sx={{ maxWidth: "87.6rem" }} mx={{ xs: "1rem", md: "auto" }}>
         <Typography
           variant="h2"
-          gutterBottom
-          margin={{ xs: "2rem 0 3rem 2rem", md: "2rem 0 3rem 3rem" }}
+          textAlign={isMobile ? "center" : "start"}
+          margin={{ xs: "1rem 1rem 2rem", md: "2rem 0 3rem 3rem"}}
         >
           {t("title.completeProfile")}
         </Typography>
@@ -271,6 +271,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.email.label")}
+                placeholder={t("fields.email.placeholder")}
                 value={values.emailaddress1 || ""}
                 onChange={handleChange("emailaddress1")}
                 fullWidth
@@ -282,6 +283,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.phoneNumber.label")}
+                placeholder={t("fields.phoneNumber.placeholder")}
                 value={values.telephone1 || ""}
                 fullWidth
                 required
@@ -346,6 +348,7 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyName.label")}
+                placeholder={t("fields.companyName.placeholder")}
                 ariaLabel={t("fields.companyName.aria")}
                 value={values.actum_companyname || ""}
                 fullWidth

@@ -1,4 +1,4 @@
-import { Contact } from '../types/contact';
+import { type Contact } from '../types/contact';
 import { config } from '../config/powerPages.config';
 import { dataverseService } from './dataverseService';
 
@@ -14,7 +14,7 @@ const DEV_MOCK_USER: Contact = {
   emailaddress1: 'john.doe@example.com',
   fullname: 'John Doe',
   mobilephone: '+33 6 00 00 00 00',
-  telephone1: '+33 1 00 00 00 00',
+  telephone1: '+33 6 00 00 00 00',
   jobtitle: 'General Manager',
   createdon: new Date().toISOString(),
   modifiedon: new Date().toISOString(),
@@ -32,7 +32,6 @@ const DEV_MOCK_USER: Contact = {
   },
   // UpdateProfile form fields
   actum_language: 'fr',
-  telephone1: '+33 6 00 00 00 00',
   actum_companyname: 'Actum Digital',
   actum_vat: 'FR12345678901',
   actum_primarycountry: 'France',
