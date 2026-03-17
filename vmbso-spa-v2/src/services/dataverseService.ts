@@ -75,6 +75,9 @@ export const dataverseService = {
           'adx_identity_emailaddress1confirmed',
         ];
 
+        // Add cache-busting filter with current datetime (always false condition)
+        const cacheBuster = new Date().toISOString();
+        
         const query = buildODataQuery({ 
           select: fields,
           // Temporarily disable $expand to avoid 400 errors
@@ -82,6 +85,7 @@ export const dataverseService = {
           //   'actum_languageid($select=actum_languageid,actum_name)',
           //   'parentcustomerid($select=accountid,name)'  // Expand Account for Company Name
           // ],
+          filter: `createdon ne ${cacheBuster}`,  // Cache-busting: always unique, never affects results
           top: 1 
         });
         
