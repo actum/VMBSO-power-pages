@@ -19,7 +19,7 @@ import { Cookie as CookieIcon } from '@mui/icons-material'
 import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   const { setDialogOpen } = useContext(CookiesContext);
@@ -27,29 +27,14 @@ export const Login: React.FC = () => {
 
   React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);
 
-  // Auto-redirect authenticated users
+  // Auto-redirect authenticated users to documents page
+  // ProtectedRoute will handle profile completion check and redirect to /update-profile if needed
   React.useEffect(() => {
-    console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
-
-    if (loading) {
-      console.log('[LOGIN DEBUG] Still loading, waiting...');
-      return; // Wait for session check to complete
+    if (!loading && isAuthenticated) {
+      console.log('[LOGIN] User already authenticated, redirecting to /documents');
+      navigate('/documents', { replace: true });
     }
-
-    if (isAuthenticated) {
-      console.log('[LOGIN DEBUG] User is authenticated, redirecting...');
-      // User is already logged in, redirect appropriately
-      if (!isProfileComplete) {
-        console.log('[LOGIN DEBUG] Profile incomplete, redirecting to /update-profile');
-        navigate('/update-profile', { replace: true });
-      } else {
-        console.log('[LOGIN DEBUG] Profile complete, redirecting to /documents');
-        navigate('/documents', { replace: true });
-      }
-    } else {
-      console.log('[LOGIN DEBUG] User NOT authenticated, staying on /login');
-    }
-  }, [isAuthenticated, isProfileComplete, loading, navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
   /**
    * Initiate Entra External ID authentication via a hidden form POST to
