@@ -227,24 +227,14 @@ export const UpdateProfile: React.FC = () => {
 
   const vatSearchDone = vatSearchState === "found" || vatSearchState === "notFound";
 
-  const companyFieldsValid =
-    vatSearchState === "found"
-      ? true
-      : vatSearchState === "notFound"
-        ? !!values.actum_companyname?.toString().trim() &&
-          !!values.actum_primarycountry?.toString().trim() &&
-          !!values.actum_companyphone?.toString().trim() &&
-          !!values.address1_line1?.toString().trim() &&
-          !!values.address1_city?.toString().trim() &&
-          !!values.address1_postalcode?.toString().trim() &&
-          (values.actum_brand?.length ?? 0) > 0 &&
-          !!values.actum_role?.toString().trim()
-        : false;
+  // Simplified: only require VAT search completion
+  // The flow will handle creating/linking the account and validate required fields
+  const companyFieldsValid = vatSearchDone;
 
   // When profile is complete, only validate language and phone
   const canSave = isProfileComplete 
     ? contactFieldsValid
-    : contactFieldsValid && vatSearchDone && companyFieldsValid;
+    : contactFieldsValid && companyFieldsValid;
 
   const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
 
