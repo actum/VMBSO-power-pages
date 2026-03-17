@@ -1,4 +1,0 @@
-id: a8f3c2d1-9e4b-4a7c-8d5f-1b2c3e4f5a6b
-name: Authentication/OpenIdConnect/EntraExternalID_1/RegistrationClaimsMapping
-value: firstname=given_name,lastname=family_name,emailaddress1=email
-description: Maps Entra External ID token claims to Contact fields during user provisioning. This ensures firstname and lastname are populated when new users authenticate.
