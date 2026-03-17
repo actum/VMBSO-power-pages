@@ -35,7 +35,7 @@ type VatSearchState = "idle" | "searching" | "found" | "notFound";
 export const UpdateProfile: React.FC = () => {
   useEffect(() => { document.title = 'Complete Your Profile | VMBSO Customer Portal'; }, []);
 
-  const { currentUser, refreshUser } = useAuth();
+  const { currentUser, refreshUser, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
@@ -241,9 +241,12 @@ export const UpdateProfile: React.FC = () => {
           !!values.actum_role?.toString().trim()
         : false;
 
-  const canSave = contactFieldsValid && vatSearchDone && companyFieldsValid;
+  // When profile is complete, only validate language and phone
+  const canSave = isProfileComplete 
+    ? contactFieldsValid
+    : contactFieldsValid && vatSearchDone && companyFieldsValid;
 
-  const companyFieldsVisible = vatSearchState === "notFound";
+  const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
 
   return (
     <Layout>
@@ -266,7 +269,11 @@ export const UpdateProfile: React.FC = () => {
           <Typography variant="h6" sx={{ mt: 2 }}>
             {t("title.completeDetails")}
           </Typography>
-
+          {isProfileComplete && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              You can update your phone number and language preference. Company information is locked and cannot be modified.
+            </Alert>
+          )}
           <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
               <InputLabelField
@@ -307,7 +314,8 @@ export const UpdateProfile: React.FC = () => {
                 ariaLabel={t("fields.vat.aria")}
                 value={vatInput}
                 fullWidth
-                required
+                required={!isProfileComplete}
+                disabled={isProfileComplete}
                 onChange={e => {
                   setVatInput(e.target.value);
                   // Reset search state if user edits the VAT after searching
@@ -324,7 +332,7 @@ export const UpdateProfile: React.FC = () => {
                 error={t("validation.vat")}
                 hideHelperText
                 InputProps={{
-                  endAdornment: (
+                  endAdornment: !isProfileComplete ? (
                     <InputAdornment position="end">
                       <IconButton
                         aria-label={t("fields.vat.searchButton")}
@@ -339,7 +347,7 @@ export const UpdateProfile: React.FC = () => {
                           : <SearchIcon />}
                       </IconButton>
                     </InputAdornment>
-                  ),
+                  ) : undefined,
                 }}
               />
             </Grid>
@@ -352,22 +360,22 @@ export const UpdateProfile: React.FC = () => {
                 ariaLabel={t("fields.companyName.aria")}
                 value={values.actum_companyname || ""}
                 fullWidth
-                required={vatSearchState === "notFound"}
-                disabled={vatSearchState === "found"}
+                required={vatSearchState === "notFound" && !isProfileComplete}
+                disabled={vatSearchState === "found" || isProfileComplete}
                 onChange={handleChange("actum_companyname")}
                 error={t("validation.companyName")}
               />
             </Grid>
 
             {/* VAT search result message */}
-            {vatSearchState === "found" && foundAccount && (
+            {!isProfileComplete && vatSearchState === "found" && foundAccount && (
               <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="success" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.found", { name: foundAccount.name })}
                 </Alert>
               </Grid>
             )}
-            {vatSearchState === "notFound" && (
+            {!isProfileComplete && vatSearchState === "notFound" && (
               <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="info" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.notFound")}
