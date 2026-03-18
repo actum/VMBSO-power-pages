@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
@@ -13,16 +13,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { getCsrfToken } from '../services/apiClient';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { Cookie as CookieIcon } from '@mui/icons-material'
-import { CookiesContext } from '../contexts/CookiesContext';
+import { useCookiesStore } from '../stores/cookiesStore';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, isProfileComplete, loading } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
-  const { setDialogOpen } = useContext(CookiesContext);
+  const { setDialogOpen } = useCookiesStore();
   const [loginLoading, setLoginLoading] = React.useState(false);
 
   React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);

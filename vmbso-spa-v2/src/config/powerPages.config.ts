@@ -12,16 +12,16 @@
  *                        the Entra External ID session (single sign-out)
  */
 
-const PORTAL_URL = process.env.REACT_APP_PORTAL_URL ?? '';
+const PORTAL_URL = import.meta.env.VITE_PORTAL_URL ?? '';
 
 console.log('[CONFIG DEBUG] PORTAL_URL:', PORTAL_URL);
-console.log('[CONFIG DEBUG] REACT_APP_DEV_MODE:', process.env.REACT_APP_DEV_MODE);
-console.log('[CONFIG DEBUG] devMode will be:', process.env.REACT_APP_DEV_MODE === 'true');
-console.log('[CONFIG DEBUG] REACT_APP_ENTRA_PROVIDER:', process.env.REACT_APP_ENTRA_PROVIDER);
+console.log('[CONFIG DEBUG] VITE_DEV_MODE:', import.meta.env.VITE_DEV_MODE);
+console.log('[CONFIG DEBUG] devMode will be:', import.meta.env.VITE_DEV_MODE === 'true');
+console.log('[CONFIG DEBUG] VITE_ENTRA_PROVIDER:', import.meta.env.VITE_ENTRA_PROVIDER);
 
 export const config = {
   /** Whether the app is running in local development mode. */
-  devMode: process.env.REACT_APP_DEV_MODE === 'true',
+  devMode: import.meta.env.VITE_DEV_MODE === 'true',
 
   /** Power Pages / Entra External ID redirect endpoints. */
   auth: {
@@ -40,9 +40,9 @@ export const config = {
      *   1. Open https://<your-portal>/signin
      *   2. Right-click the "Microsoft Entra External ID" button → Inspect
      *   3. Copy the `value` attribute (looks like https://vmbsodev.ciamlogin.com/<tenant>/)
-     *   4. Set it in REACT_APP_ENTRA_PROVIDER in .env.production
+     *   4. Set it in VITE_ENTRA_PROVIDER in .env.production
      */
-    providerScheme: process.env.REACT_APP_ENTRA_PROVIDER ?? '',
+    providerScheme: import.meta.env.VITE_ENTRA_PROVIDER ?? '',
     /** Where Power Pages should redirect after successful authentication. */
     returnUrl: '/login',
     /** Federated logout URL — clears both Power Pages and Entra sessions. */
@@ -80,7 +80,7 @@ export const config = {
     /**
      * Hero image shown on the login page right panel.
      * In production the file must exist in the Power Pages portal file system.
-     * Falls back to a relative path when REACT_APP_PORTAL_URL is not set.
+     * Falls back to a relative path when VITE_PORTAL_URL is not set.
      */
     loginHeroImage: PORTAL_URL
       ? `${PORTAL_URL}/building-hero.jpg`

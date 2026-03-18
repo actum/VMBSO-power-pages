@@ -3,6 +3,8 @@
  * Provides timeout, retry, error handling, and OData support
  */
 
+import { config } from "../config/powerPages.config";
+
 export class ApiError extends Error {
   constructor(message: string, public status: number, public details?: unknown) {
     super(message);
@@ -165,6 +167,46 @@ export const apiClient = {
    *  3. POST to the flow URL with application/x-www-form-urlencoded + token header
    */
   async flow<T = void>(url: string, eventData: Record<string, unknown>): Promise<T> {
+    if (config.devMode) {
+      console.log("[FLOW DEV] Mock flow call:", url);
+      // Mock fetch-documents flow
+      if (url.includes("a276b369-b11e-f111-8341-000d3a66f974")) {
+        return {
+          status: "200",
+          data: [
+            {
+              actum_productdocumentationid: "mock-doc-001",
+              actum_name: "VMZINC Standing Seam Installation Guide",
+              actum_filename: "vmzinc-standing-seam-guide.pdf",
+              actum_visible: true,
+              actum_unapprovedaccess: false,
+            },
+            {
+              actum_productdocumentationid: "mock-doc-002",
+              actum_name: "VMZINC Rainwater Systems Technical Manual",
+              actum_filename: "vmzinc-rainwater-technical.pdf",
+              actum_visible: true,
+              actum_unapprovedaccess: false,
+            },
+            {
+              actum_productdocumentationid: "mock-doc-003",
+              actum_name: "VM Building Solutions Product Catalogue 2026",
+              actum_filename: "vmbso-catalogue-2026.pdf",
+              actum_visible: true,
+              actum_unapprovedaccess: true,
+            },
+          ],
+          message: "Success",
+        } as T;
+      }
+      // Mock update-profile flow
+      if (url.includes("0bc41f4c-841c-f111-8341-000d3a66f792")) {
+        return { status: "200", message: "Profile updated successfully" } as T;
+      }
+      // Default mock for unknown flows
+      return { status: "200", message: "OK" } as T;
+    }
+
     // ── Step 1: obtain CSRF token ──────────────────────────────────────────
     const token = await getCsrfToken();
     console.log('[FLOW] CSRF token obtained:', token ? `${token.substring(0, 12)}…` : 'EMPTY');
@@ -201,6 +243,10 @@ export const apiClient = {
  *  - Falls back to fetching /_layout/tokenhtml and parsing the hidden <input> value
  */
 export async function getCsrfToken(): Promise<string> {
+  if (config.devMode) {
+    return "dev-mock-csrf-token";
+  }
+
   // Strategy A: window.shell.getTokenDeferred()
   const shell = (window as { shell?: { getTokenDeferred?: () => Promise<string> } }).shell;
   if (shell && typeof shell.getTokenDeferred === 'function') {

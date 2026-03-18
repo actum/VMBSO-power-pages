@@ -155,6 +155,17 @@ export const dataverseService = {
      * Returns the first match or null if none found.
      */
     async searchByVAT(vat: string): Promise<Account | null> {
+      if (config.devMode) {
+        return {
+          accountid: "mock-account-001",
+          name: "Actum Digital",
+          actum_vatregistrationnumber: vat,
+          telephone1: "+33 1 00 00 00 00",
+          address1_line1: "1 rue de la Paix, 75001 Paris",
+          _actum_primarycountryid_value: "mock-country-002",
+        };
+      }
+
       const escaped = vat.replace(/'/g, "''");
       const query = buildODataQuery({
         filter: `actum_vatregistrationnumber eq '${escaped}'`,
@@ -210,6 +221,35 @@ export const dataverseService = {
    */
   languages: {
     async getAll(): Promise<Language[]> {
+      if (config.devMode) {
+        return [
+          {
+            actum_languageid: "mock-lang-001",
+            actum_name: "Dutch",
+            actum_code: "nl-NL",
+            actum_iso6391: "nl",
+            actum_lcid: 1043,
+            actum_isdefault: false,
+          },
+          {
+            actum_languageid: "mock-lang-002",
+            actum_name: "French",
+            actum_code: "fr-FR",
+            actum_iso6391: "fr",
+            actum_lcid: 1036,
+            actum_isdefault: true,
+          },
+          {
+            actum_languageid: "mock-lang-003",
+            actum_name: "English",
+            actum_code: "en-GB",
+            actum_iso6391: "en",
+            actum_lcid: 2057,
+            actum_isdefault: false,
+          },
+        ];
+      }
+
       try {
         const query = buildODataQuery({
           select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
@@ -231,6 +271,53 @@ export const dataverseService = {
      * actum_country_actum_language_actum_language.
      */
     async getByCountry(countryId: string): Promise<Language[]> {
+      if (config.devMode) {
+        const mockLanguagesByCountry: Record<string, Language[]> = {
+          "mock-country-001": [
+            // Belgium
+            {
+              actum_languageid: "mock-lang-001",
+              actum_name: "Dutch",
+              actum_code: "nl-NL",
+              actum_iso6391: "nl",
+              actum_lcid: 1043,
+              actum_isdefault: false,
+            },
+            {
+              actum_languageid: "mock-lang-002",
+              actum_name: "French",
+              actum_code: "fr-FR",
+              actum_iso6391: "fr",
+              actum_lcid: 1036,
+              actum_isdefault: false,
+            },
+          ],
+          "mock-country-002": [
+            // France
+            {
+              actum_languageid: "mock-lang-002",
+              actum_name: "French",
+              actum_code: "fr-FR",
+              actum_iso6391: "fr",
+              actum_lcid: 1036,
+              actum_isdefault: true,
+            },
+          ],
+          "mock-country-003": [
+            // Netherlands
+            {
+              actum_languageid: "mock-lang-001",
+              actum_name: "Dutch",
+              actum_code: "nl-NL",
+              actum_iso6391: "nl",
+              actum_lcid: 1043,
+              actum_isdefault: true,
+            },
+          ],
+        };
+        return mockLanguagesByCountry[countryId] ?? [];
+      }
+
       try {
         const query = buildODataQuery({
           select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
@@ -254,6 +341,13 @@ export const dataverseService = {
    */
   brands: {
     async getAll(): Promise<Brand[]> {
+      if (config.devMode) {
+        return [
+          { actum_brandid: "mock-brand-001", actum_name: "VMZINC" },
+          { actum_brandid: "mock-brand-002", actum_name: "VM Building Solutions" },
+        ];
+      }
+
       try {
         const query = buildODataQuery({
           select: ['actum_brandid', 'actum_name'],
@@ -275,6 +369,13 @@ export const dataverseService = {
    */
   roles: {
     async getAll(): Promise<Role[]> {
+      if (config.devMode) {
+        return [
+          { actum_roleid: "mock-role-001", actum_name: "Distributor" },
+          { actum_roleid: "mock-role-002", actum_name: "Contractor" },
+        ];
+      }
+
       try {
         const query = buildODataQuery({
           select: ['actum_roleid', 'actum_name'],
@@ -296,6 +397,14 @@ export const dataverseService = {
    */
   countries: {
     async getAll(): Promise<Country[]> {
+      if (config.devMode) {
+        return [
+          { actum_countryid: "mock-country-001", actum_name: "Belgium" },
+          { actum_countryid: "mock-country-002", actum_name: "France" },
+          { actum_countryid: "mock-country-003", actum_name: "Netherlands" },
+        ];
+      }
+
       try {
         const query = buildODataQuery({
           select: ['actum_countryid', 'actum_name'],
@@ -321,6 +430,10 @@ export const dataverseService = {
      * Backend flow will populate actum_sastoken field
      */
     async create(contactId: string, documentId: string): Promise<{ actum_downloadlogid: string }> {
+      if (config.devMode) {
+        return { actum_downloadlogid: `mock-dl-${Date.now()}` };
+      }
+
       // Use special handling for POST that may return 204
       const headers = new Headers({
         'Content-Type': 'application/json',
@@ -381,6 +494,12 @@ export const dataverseService = {
      * (Records updated outside portal don't automatically break cache)
      */
     async getById(downloadLogId: string): Promise<{ actum_sastoken: string | null }> {
+      if (config.devMode) {
+        return {
+          actum_sastoken: "https://example.com/mock-download.pdf?mock-sas-token",
+        };
+      }
+
       // Create a filter that's always true but changes each request to break cache
       // Use modifiedon field (datetime) compared with a future timestamp
       const futureTimestamp = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(); // 1 year in future

@@ -3,7 +3,7 @@ import { config } from '../config/powerPages.config';
 import { dataverseService } from './dataverseService';
 
 /**
- * Mock user used in local development (REACT_APP_DEV_MODE=true).
+ * Mock user used in local development (VITE_DEV_MODE=true).
  * All required profile fields are populated so the app lands on /documents
  * instead of /update-profile.
  */

@@ -4,7 +4,7 @@ import { DownloadOutlined } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { Layout } from '../components/Layout';
 import { useDocuments } from '../hooks/useDocuments';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 

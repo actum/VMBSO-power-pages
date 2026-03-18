@@ -1,59 +1,44 @@
 {
   "name": "vmbso-portal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "proxy": "https://vmbso-spa.powerappsportals.com/",
+  "overrides": {
+    "react-is": "18.3.1"
+  },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.15.10",
-    "@mui/material": "^5.15.10",
-    "@mui/x-data-grid": "^6.19.4",
-    "@types/node": "^20.11.16",
-    "date-fns": "^3.3.1",
-    "i18next": "^23.8.2",
-    "i18next-browser-languagedetector": "^7.2.0",
-    "js-cookie": "^3.0.5",
-    "react": "^18.2.0",
-    "react-country-flag": "^3.1.0",
-    "react-dom": "^18.2.0",
-    "react-ga": "^3.3.1",
-    "react-i18next": "^14.0.5",
-    "react-router-dom": "^6.22.0",
-    "react-scripts": "5.0.1",
-    "react-toastify": "^10.0.4",
-    "typescript": "^4.9.5"
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@mui/icons-material": "7.3.9",
+    "@mui/material": "7.3.9",
+    "@tanstack/react-query": "5.90.21",
+    "date-fns": "4.1.0",
+    "i18next": "25.8.18",
+    "i18next-browser-languagedetector": "8.2.1",
+    "js-cookie": "3.0.5",
+    "react": "18.3.1",
+    "react-country-flag": "3.1.0",
+    "react-dom": "18.3.1",
+    "react-ga": "3.3.1",
+    "react-i18next": "16.5.8",
+    "react-router-dom": "6.30.3",
+    "react-toastify": "11.0.5",
+    "zustand": "5.0.12"
   },
   "devDependencies": {
-    "@types/js-cookie": "^3.0.6",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "@types/react-router-dom": "^5.3.3",
-    "http-proxy-middleware": "^3.0.5"
+    "@tanstack/react-query-devtools": "^5.91.3",
+    "@types/js-cookie": "3.0.6",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "5.1.4",
+    "typescript": "5.8.3",
+    "vite": "7.3.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "npm run build && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal v2\"",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && pac pages upload-code-site --rootPath ./ --compiledPath ./dist --siteName \"VMBSO Customer Portal v2\"",
     "download": "pac pages download-code-site --path ./ --webSiteId ac923a79-af52-4a68-8d8f-9f947a0d5821 --overwrite"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

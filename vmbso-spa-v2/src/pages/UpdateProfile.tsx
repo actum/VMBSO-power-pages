@@ -15,16 +15,12 @@ import {
 } from "@mui/material";
 import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { type Contact } from "../types/contact";
 import { type Account } from "../types/account";
-import { type Brand } from "../types/brand";
-import { type Country } from "../types/country";
-import { type Language } from "../types/language";
-import { type Role } from "../types/role";
-import { dataverseService } from "../services/dataverseService";
-import { apiClient } from "../services/apiClient";
-import { config } from "../config/powerPages.config";
+import { useBrands, useCountries, useRoles, useLanguagesByCountry } from "../hooks/useProfileData";
+import { useVatSearch } from "../hooks/useVatSearch";
+import { useUpdateProfile } from "../hooks/useUpdateProfile";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -38,7 +34,6 @@ export const UpdateProfile: React.FC = () => {
   const { currentUser, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
-  const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation(["updateProfilePage"]);
   const theme = useTheme();
@@ -49,15 +44,28 @@ export const UpdateProfile: React.FC = () => {
   const [vatSearchState, setVatSearchState] = useState<VatSearchState>("idle");
   const [foundAccount, setFoundAccount] = useState<Account | null>(null);
 
-  // Dynamic lookup data
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [brandsLoading, setBrandsLoading] = useState(true);
-  const [countriesLoading, setCountriesLoading] = useState(true);
-  const [languagesLoading, setLanguagesLoading] = useState(false);
-  const [rolesLoading, setRolesLoading] = useState(true);
+  // Dynamic lookup data via TanStack Query
+  const { data: brands = [], isLoading: brandsLoading } = useBrands();
+  const { data: countries = [], isLoading: countriesLoading } = useCountries();
+  const { data: roles = [], isLoading: rolesLoading } = useRoles();
+  const { data: languages = [], isLoading: languagesLoading } =
+    useLanguagesByCountry(values.actum_primarycountry);
+
+  // VAT search mutation
+  const vatSearch = useVatSearch();
+
+  // Profile update mutation
+  const updateProfile = useUpdateProfile();
+
+  // Clear language if it no longer belongs to the newly selected country
+  // This is local form logic, NOT data fetching — stays as useEffect
+  useEffect(() => {
+    if (!values.actum_primarycountry || languagesLoading || languages.length === 0) return;
+    setValues(prev => {
+      const stillValid = languages.some(l => l.actum_languageid === prev.actum_language);
+      return stillValid ? prev : { ...prev, actum_language: undefined };
+    });
+  }, [languages, languagesLoading, values.actum_primarycountry]);
 
   useEffect(() => {
     if (currentUser) {
@@ -92,135 +100,95 @@ export const UpdateProfile: React.FC = () => {
     }
   }, [currentUser]);
 
-  // Fetch brands and countries on mount
-  useEffect(() => {
-    dataverseService.brands.getAll().then(data => {
-      setBrands(data);
-      setBrandsLoading(false);
-    }).catch(() => setBrandsLoading(false));
-
-    dataverseService.countries.getAll().then(data => {
-      setCountries(data);
-      setCountriesLoading(false);
-    }).catch(() => setCountriesLoading(false));
-
-    dataverseService.roles.getAll().then(data => {
-      setRoles(data);
-      setRolesLoading(false);
-    }).catch(() => setRolesLoading(false));
-  }, [currentUser]);
-
-  // Fetch languages filtered by selected country
-  useEffect(() => {
-    const countryId = values.actum_primarycountry;
-    if (!countryId) {
-      setLanguages([]);
-      return;
-    }
-    setLanguagesLoading(true);
-    dataverseService.languages.getByCountry(countryId).then(data => {
-      setLanguages(data);
-      // Clear language if it no longer belongs to the newly selected country
-      setValues(prev => {
-        const stillValid = data.some(l => l.actum_languageid === prev.actum_language);
-        return stillValid ? prev : { ...prev, actum_language: undefined };
-      });
-      setLanguagesLoading(false);
-    }).catch(() => setLanguagesLoading(false));
-  }, [values.actum_primarycountry]);
-
   const handleChange = (field: keyof Contact) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setValues(prev => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleVatSearch = async () => {
+  const handleVatSearch = () => {
     if (!vatInput.trim()) return;
     setVatSearchState("searching");
     setError(null);
-    try {
-      const account = await dataverseService.accounts.searchByVAT(vatInput.trim());
-      if (account) {
-        setFoundAccount(account);
-        setValues(v => ({
-          ...v,
-          actum_companyname: account.name,
-          // Pre-fill country from account so the language dropdown loads
-          actum_primarycountry: account._actum_primarycountryid_value ?? v.actum_primarycountry,
-        }));
-        setVatSearchState("found");
-      } else {
+    vatSearch.mutate(vatInput.trim(), {
+      onSuccess: (account) => {
+        if (account) {
+          setFoundAccount(account);
+          setValues(v => ({
+            ...v,
+            actum_companyname: account.name,
+            // Pre-fill country from account so the language dropdown loads
+            actum_primarycountry: account._actum_primarycountryid_value ?? v.actum_primarycountry,
+          }));
+          setVatSearchState("found");
+        } else {
+          setFoundAccount(null);
+          setVatSearchState("notFound");
+        }
+      },
+      onError: (err) => {
         setFoundAccount(null);
-        setVatSearchState("notFound");
-      }
-    } catch (err) {
-      setFoundAccount(null);
-      setVatSearchState("idle");
-      setError(err instanceof Error ? err.message : "VAT search failed.");
-    }
+        setVatSearchState("idle");
+        setError(err instanceof Error ? err.message : "VAT search failed.");
+      },
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    try {
-      setUpdating(true);
+    updateProfile.mutate(
+      {
+        hasAccount: vatSearchState === "found" ? "YES" : "NO",
+        contactId: currentUser?.contactid,
+        phone: values.telephone1,
+        languageId: values.actum_language,
+        // found-only
+        accountId: foundAccount?.accountid,
+        // notFound-only (empty string when account was found)
+        vatNumber: vatInput.trim(),
+        companyName: values.actum_companyname ?? "",
+        countryId: values.actum_primarycountry ?? "",
+        companyPhone: values.actum_companyphone ?? "",
+        address: values.address1_line1 ?? "",
+        city: values.address1_city ?? "",
+        zipCode: values.address1_postalcode ?? "",
+        companyEmail: values.actum_companyemail ?? "",
+        brandIds: (values.actum_brand ?? []).join(","),
+        roleId: values.actum_role ?? "",
+      },
+      {
+        onSuccess: async (response) => {
+          if (response?.status === "200") {
+            toast.success(response.message || "Profile updated successfully!");
 
-      const response = await apiClient.flow<{ status: string; message: string }>(
-        config.flows.updateProfile,
-        {
-          hasAccount: vatSearchState === "found" ? "YES" : "NO",
-          contactId: currentUser?.contactid,
-          phone: values.telephone1,
-          languageId: values.actum_language,
-          // found-only
-          accountId: foundAccount?.accountid,
-          // notFound-only (empty string when account was found)
-          vatNumber: vatInput.trim(),
-          companyName: values.actum_companyname ?? "",
-          countryId: values.actum_primarycountry ?? "",
-          companyPhone: values.actum_companyphone ?? "",
-          address: values.address1_line1 ?? "",
-          city: values.address1_city ?? "",
-          zipCode: values.address1_postalcode ?? "",
-          companyEmail: values.actum_companyemail ?? "",
-          brandIds: (values.actum_brand ?? []).join(","),
-          roleId: values.actum_role ?? "",
-        }
-      );
+            // Wait a moment for Dataverse to commit the changes
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Handle flow response
-      if (response?.status === "200") {
-        // Success: show message and redirect after refreshing user data
-        toast.success(response.message || "Profile updated successfully!");
-        
-        // Wait a moment for Dataverse to commit the changes
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Refresh user data to get updated profile
-        await refreshUser();
-        
-        // Redirect to documents
-        setTimeout(() => {
-          navigate("/documents");
-        }, 1000);
-      } else if (response?.status === "500") {
-        // Error: show error message
-        setError(response.message || "An error occurred while updating your profile.");
-      } else {
-        // Unexpected response format
-        setError("Unexpected response from server. Please try again.");
+            // Refresh user data to get updated profile
+            await refreshUser();
+
+            // Redirect to documents
+            setTimeout(() => {
+              navigate("/documents");
+            }, 1000);
+          } else if (response?.status === "500") {
+            setError(response.message || "An error occurred while updating your profile.");
+          } else {
+            setError("Unexpected response from server. Please try again.");
+          }
+        },
+        onError: (err) => {
+          setError(err instanceof Error ? err.message : "Updating profile information failed.");
+        },
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Updating profile information failed.");
-    } finally {
-      setUpdating(false);
-    }
+    );
   };
 
   // ── Save button guard ─────────────────────────────────────────────────────
+  const updating = updateProfile.isPending;
+
   const contactFieldsValid =
     !!values.actum_language?.toString().trim() &&
     !!values.telephone1?.toString().trim();
@@ -262,7 +230,7 @@ export const UpdateProfile: React.FC = () => {
           noValidate={true}
           onSubmit={handleSubmit}
         >
-          {/* â”€â”€ Contact Details â”€â”€ */}
+          {/* ── Contact Details ── */}
           <Typography variant="h6" sx={{ mt: 2 }}>
             {t("title.completeDetails")}
           </Typography>
@@ -294,7 +262,7 @@ export const UpdateProfile: React.FC = () => {
             </Grid>
           </Grid>
 
-          {/* â”€â”€ Company Section â”€â”€ */}
+          {/* ── Company Section ── */}
           <Typography margin="2rem 0" variant="h6">
             {t("section.company_details")}
           </Typography>
@@ -344,7 +312,7 @@ export const UpdateProfile: React.FC = () => {
               />
             </Grid>
 
-            {/* Company Name â€” always visible, conditionally editable */}
+            {/* Company Name — always visible, conditionally editable */}
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.companyName.label")}
@@ -375,7 +343,7 @@ export const UpdateProfile: React.FC = () => {
               </Grid>
             )}
 
-            {/* Remaining company fields â€” visible only after search */}
+            {/* Remaining company fields — visible only after search */}
             {companyFieldsVisible && (
               <>
                 <Grid item xs={12} sm={6}>

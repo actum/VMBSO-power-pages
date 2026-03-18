@@ -1,66 +1,60 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+
+const SUPPORTED_LANGS = ["en-GB", "fr-FR", "be-NL"];
+
+const LANG_DISPLAY_NAMES: Record<string, string> = {
+  "en-GB": "English",
+  "fr-FR": "French",
+  "be-NL": "Dutch",
+};
 
 const LangHandler = () => {
+  const { i18n } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { t, i18n } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const languages = t("languages:options", { returnObjects: true }) as Record<string, string>;
+  const langParam = searchParams.get("lang");
+  const currentLang = i18n.language;
 
-  const fetchAndAddTranslations = async (langKey: string) => {
-
-    let lang = i18n.languages[0];
-
-    i18n.languages.forEach(language => {
-      if (languages[language]) {
-        lang = languages[language];
-        return;
-      }
-    });
-
-    const response = await fetch(
-      `/_api/actum_translations?$filter=actum_translationname eq '${lang}'`
-    );
-    const data = await response.json();
-    const translations = JSON.parse(data.value[0].actum_content);
-    console.log(`translations for ${lang}`, translations);
-
-    i18n.addResourceBundle(langKey, 'translation', translations, true, true);
-  };
-
-  // set the language if langParam changes
   useEffect(() => {
-    const langParam = searchParams.get("lang");
-
-    // default en-GB
-    let language = i18n.languages[0];
-
-    if (langParam) {
-
-      if (languages[langParam]) {
-        language = langParam;
+    if (langParam && SUPPORTED_LANGS.includes(langParam)) {
+      if (langParam !== currentLang) {
+        i18n.changeLanguage(langParam);
       }
-
-    } else {
-      language = i18n.language;
+      return;
     }
 
-    if (langParam !== i18n.language) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("lang", currentLang);
+      return next;
+    }, { replace: true });
+  }, [langParam, currentLang, i18n, setSearchParams]);
 
-      const newSearchParams = new URLSearchParams(searchParams);
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      try {
+        const displayName = LANG_DISPLAY_NAMES[currentLang] ?? currentLang;
+        const response = await fetch(
+          `/_api/actum_translations?$filter=actum_translationname eq '${displayName}'`
+        );
+        if (!response.ok) return;
 
-      newSearchParams.set("lang", language);
+        const data = await response.json();
+        if (!data.value?.[0]?.actum_content) return;
 
-      i18n.changeLanguage(language);
+        const translations = JSON.parse(data.value[0].actum_content);
+        console.log(`translations for ${displayName}`, translations);
 
-      navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
-    }
+        i18n.addResourceBundle(currentLang, "translation", translations, true, true);
+      } catch {
+        // Bundled translations serve as fallback when Dataverse is unreachable
+      }
+    };
 
-    fetchAndAddTranslations(language);
-
-  }, [searchParams, i18n, navigate, fetchAndAddTranslations]);
+    fetchTranslations();
+  }, [currentLang, i18n]);
 
   return null;
 };

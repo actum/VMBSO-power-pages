@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 // Mock data - will be replaced with actual Dataverse data later
 const countries = [

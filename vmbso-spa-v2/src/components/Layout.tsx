@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -20,10 +20,10 @@ import {
   Description as DocumentsIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from './common/LanguagePicker';
-import { CookiesContext } from '../contexts/CookiesContext';
+import { useCookiesStore } from '../stores/cookiesStore';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { setDialogOpen } = useContext(CookiesContext);
+  const { setDialogOpen } = useCookiesStore();
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
