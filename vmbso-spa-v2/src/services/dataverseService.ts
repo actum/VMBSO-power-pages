@@ -189,6 +189,25 @@ export const dataverseService = {
     },
 
     /**
+     * Get an account record by ID.
+     * Fetches only the fields needed for the UpdateProfile edit mode.
+     */
+    async getById(accountId: string): Promise<Account | null> {
+      try {
+        const query = buildODataQuery({
+          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value'],
+        });
+        const response = await apiClient.odata<Account>(`/accounts(${accountId})${query}`);
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return null;
+        }
+        throw error;
+      }
+    },
+
+    /**
      * Create a new Account record.
      * Uses Prefer: return=representation to get the created record back.
      */

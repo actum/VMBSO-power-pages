@@ -63,34 +63,27 @@ export const UpdateProfile: React.FC = () => {
   const [rolesLoading, setRolesLoading] = useState(true);
 
   useEffect(() => {
-    if (currentUser) {
-      setValues({
-        ...currentUser,
-        // Map the standard OData lookup ID to the field the form uses
-        actum_language: currentUser._actum_languageid_value ?? currentUser.actum_language,
-      });
+    if (!currentUser) return;
 
-      // Pre-fill VAT input from existing contact data
-      if (currentUser.actum_vat) {
-        setVatInput(currentUser.actum_vat);
-      }
+    setValues({
+      ...currentUser,
+      // Map the standard OData lookup ID to the field the form uses
+      actum_language: currentUser._actum_languageid_value ?? currentUser.actum_language,
+    });
 
-      // If the user already has a linked account, restore the "found" state
-      // so company fields are read-only and the form is immediately saveable
-      if (currentUser._parentcustomerid_value) {
-        setFoundAccount({
-          accountid: currentUser._parentcustomerid_value,
-          name: currentUser.actum_companyname ?? "",
-          _actum_primarycountryid_value: currentUser.actum_primarycountry,
-        });
-        setVatSearchState("found");
-      }
+    if (currentUser._parentcustomerid_value) {
+      setVatSearchState("found");
 
-      console.log("[UpdateProfile] user from Entra:", {
-        firstName: currentUser.firstname,
-        lastName: currentUser.lastname,
-        hasAccount: !!currentUser._parentcustomerid_value,
-        language: currentUser._actum_languageid_value,
+      // Fetch account to get VAT, company name, and country (needed for language filtering)
+      dataverseService.accounts.getById(currentUser._parentcustomerid_value).then(account => {
+        if (!account) return;
+        setFoundAccount(account);
+        setVatInput(account.actum_vatregistrationnumber ?? "");
+        setValues(prev => ({
+          ...prev,
+          actum_companyname: account.name,
+          actum_primarycountry: account._actum_primarycountryid_value,
+        }));
       });
     }
   }, [currentUser]);
