@@ -9,14 +9,16 @@ import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 
 export const Documents: React.FC = () => {
-  React.useEffect(() => { document.title = 'Documents | VMBSO Customer Portal'; }, []);
-
   const [searchText, setSearchText] = useState('');
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
   const { documents, loading, error, refetch } = useDocuments();
   const { currentUser } = useAuth();
   const { t } = useTranslation("documentsPage");
+  
+  React.useEffect(() => { 
+    document.title = t('pageTitle');
+  }, [t]);
 
   // Client-side filtering
   const filteredDocuments = useMemo(() => {

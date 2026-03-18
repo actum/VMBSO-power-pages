@@ -1,5 +1,0 @@
-description: Defines which attributes can be read or modified. Use * to allow all. Mandatory.
-id: 2fa60b26-141c-f111-8341-000d3a688605
-name: Webapi/contact/fields
-source: 0
-value: '*'

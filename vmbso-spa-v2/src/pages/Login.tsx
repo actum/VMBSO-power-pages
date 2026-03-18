@@ -19,35 +19,31 @@ import { Cookie as CookieIcon } from '@mui/icons-material'
 import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   const { setDialogOpen } = useContext(CookiesContext);
   const [loginLoading, setLoginLoading] = React.useState(false);
 
-  React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);
+  React.useEffect(() => { 
+    document.title = t('loginPage:pageTitle');
+  }, [t]);
 
   // Auto-redirect authenticated users
+  // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
   React.useEffect(() => {
-    console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
-
-    if (loading) {
-      console.log('[LOGIN DEBUG] Still loading, waiting...');
-      return; // Wait for session check to complete
-    }
-
-    if (isAuthenticated) {
-      console.log('[LOGIN DEBUG] User is authenticated, redirecting...');
-      // User is already logged in, redirect appropriately
-      if (!isProfileComplete) {
-        console.log('[LOGIN DEBUG] Profile incomplete, redirecting to /update-profile');
+    if (!loading && isAuthenticated) {
+      if (config.devMode) {
+        console.log(
+          '[LOGIN] User already authenticated, redirecting to',
+          isProfileComplete === false ? '/update-profile' : '/documents'
+        );
+      }
+      if (isProfileComplete === false) {
         navigate('/update-profile', { replace: true });
       } else {
-        console.log('[LOGIN DEBUG] Profile complete, redirecting to /documents');
         navigate('/documents', { replace: true });
       }
-    } else {
-      console.log('[LOGIN DEBUG] User NOT authenticated, staying on /login');
     }
   }, [isAuthenticated, isProfileComplete, loading, navigate]);
 
