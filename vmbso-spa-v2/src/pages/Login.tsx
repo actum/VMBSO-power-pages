@@ -19,7 +19,7 @@ import { Cookie as CookieIcon } from '@mui/icons-material'
 import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   const { setDialogOpen } = useContext(CookiesContext);
@@ -29,14 +29,23 @@ export const Login: React.FC = () => {
     document.title = t('loginPage:pageTitle');
   }, [t]);
 
-  // Auto-redirect authenticated users to documents page
-  // ProtectedRoute will handle profile completion check and redirect to /update-profile if needed
+  // Auto-redirect authenticated users
+  // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
   React.useEffect(() => {
     if (!loading && isAuthenticated) {
-      console.log('[LOGIN] User already authenticated, redirecting to /documents');
-      navigate('/documents', { replace: true });
+      if (config.devMode) {
+        console.log(
+          '[LOGIN] User already authenticated, redirecting to',
+          isProfileComplete === false ? '/update-profile' : '/documents'
+        );
+      }
+      if (isProfileComplete === false) {
+        navigate('/update-profile', { replace: true });
+      } else {
+        navigate('/documents', { replace: true });
+      }
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, isProfileComplete, loading, navigate]);
 
   /**
    * Initiate Entra External ID authentication via a hidden form POST to
