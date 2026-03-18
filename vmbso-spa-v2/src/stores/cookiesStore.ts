@@ -28,9 +28,10 @@ function saveConsent(analyticsEnabled: boolean) {
   );
 
   if (!analyticsEnabled) {
-    Cookie.remove("_ga");
-    Cookie.remove("_gat");
-    Cookie.remove("_gid");
+    // GA cookies are set with path: '/' — must pass the same attribute to remove them
+    Cookie.remove("_ga", { path: "/" });
+    Cookie.remove("_gat", { path: "/" });
+    Cookie.remove("_gid", { path: "/" });
   }
 }
 

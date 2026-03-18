@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import ReactGA from "react-ga4";
 import { useCookiesStore } from "../stores/cookiesStore";
@@ -6,18 +6,21 @@ import { useCookiesStore } from "../stores/cookiesStore";
 export const AnalyticsTracker = () => {
   const location = useLocation();
   const analyticsEnabled = useCookiesStore((s) => s.analyticsEnabled);
+  const gaMeasurementId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID;
+  const isGAInitialized = useRef(false);
 
   useEffect(() => {
-    if (analyticsEnabled && import.meta.env.VITE_GOOGLE_ANALYTICS_ID) {
-      ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_ID);
+    if (analyticsEnabled && gaMeasurementId && !isGAInitialized.current) {
+      ReactGA.initialize(gaMeasurementId);
+      isGAInitialized.current = true;
     }
-  }, [analyticsEnabled]);
+  }, [analyticsEnabled, gaMeasurementId]);
 
   useEffect(() => {
-    if (analyticsEnabled) {
+    if (analyticsEnabled && gaMeasurementId && isGAInitialized.current) {
       ReactGA.send({ hitType: "pageview", page: location.pathname });
     }
-  }, [location, analyticsEnabled]);
+  }, [location, analyticsEnabled, gaMeasurementId]);
 
   return null;
 };

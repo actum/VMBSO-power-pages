@@ -60,8 +60,13 @@ export const UpdateProfile: React.FC = () => {
   // Clear language if it no longer belongs to the newly selected country
   // This is local form logic, NOT data fetching — stays as useEffect
   useEffect(() => {
-    if (!values.actum_primarycountry || languagesLoading || languages.length === 0) return;
+    if (!values.actum_primarycountry || languagesLoading) return;
+
     setValues(prev => {
+      // If the country has no languages, clear the selection
+      if (languages.length === 0) {
+        return prev.actum_language ? { ...prev, actum_language: undefined } : prev;
+      }
       const stillValid = languages.some(l => l.actum_languageid === prev.actum_language);
       return stillValid ? prev : { ...prev, actum_language: undefined };
     });
