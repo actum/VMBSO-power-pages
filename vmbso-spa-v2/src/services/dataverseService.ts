@@ -10,6 +10,7 @@ import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
+import type { HomePageData } from '../types/homePage';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -418,6 +419,70 @@ export const dataverseService = {
         }
         throw error;
       }
+    },
+  },
+
+  /**
+   * Homepage content operations
+   */
+  homePage: {
+    /**
+     * Fetch homepage content (hero + banner sections) from Dataverse.
+     *
+     * TODO: Replace the two unknowns once confirmed with the backend team:
+     *   1. The Dataverse table logical name (e.g. `actum_homepagecontents`)
+     *   2. The field names for heroSection / bannerSection JSON columns
+     *
+     * The real call will look like:
+     *   apiClient.odata<{ value: Array<{ actum_content: string }> }>(
+     *     `/actum_homepagecontents?$top=1&$select=actum_content`
+     *   )
+     * …and `actum_content` will be a JSON string that maps to `HomePageData`.
+     */
+    async get(): Promise<HomePageData> {
+      if (config.devMode) {
+        return {
+          heroSection: {
+            greetingsText: 'Bienvenue Valérie Briban!',
+            title: 'Cher client,',
+            introText: 'Welcome on the portal',
+            heroImage: {
+              url: 'image-url.com/500x300',
+              alt: 'Image alt text',
+            },
+            ctas: [
+              { url: 'google.com', text: 'Click this button', target: '_self' },
+              { url: 'twitter.com', text: 'Click this second button', target: '_blank' },
+            ],
+          },
+          bannerSection: {
+            title: 'Banner title',
+            image: {
+              url: 'image-url.com/500x300',
+              alt: 'Image alt text',
+            },
+            ctas: [
+              { url: 'google.com', text: 'Click this button', target: '_self' },
+              { url: 'twitter.com', text: 'Click this second button', target: '_blank' },
+            ],
+          },
+        };
+      }
+
+      // TODO: Replace `actum_homepagecontents` with the real table logical name.
+      // TODO: Replace `actum_content` with the real field name(s) for the JSON payload.
+      //
+      // const response = await apiClient.odata<{ value: Array<{ actum_content: string }> }>(
+      //   `/actum_homepagecontents?$top=1&$select=actum_content`
+      // );
+      // const row = response.value?.[0];
+      // if (!row?.actum_content) throw new Error('Homepage content not found in Dataverse');
+      // return JSON.parse(row.actum_content) as HomePageData;
+
+      throw new Error(
+        'Homepage Dataverse integration not yet configured. ' +
+        'Provide the table name and field names to complete the real fetch.'
+      );
     },
   },
 

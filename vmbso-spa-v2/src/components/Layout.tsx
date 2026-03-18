@@ -81,7 +81,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               height: "auto",
               cursor: 'pointer',
             }}
-            onClick={() => navigate('/documents')}
+            onClick={() => navigate('/')}
           />
 
           {/* Navigation Links */}

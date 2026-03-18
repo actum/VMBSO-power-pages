@@ -191,6 +191,12 @@
     }
   },
 
+  "homePage": {
+    "pageTitle": "Home | VMBSO Customer Portal",
+    "greeting": "Welcome, {{name}}!",
+    "moreInfo": "More info"
+  },
+
   "updateProfilePage": {
     "title": {
       "completeProfile": "Complete your profile",

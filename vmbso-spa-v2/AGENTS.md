@@ -65,6 +65,7 @@ project-root/
     │
     ├── pages/
     │   ├── Login.tsx                   ← Entra redirect login page
+    │   ├── Home.tsx                   ← Homepage: greeting + hero section + banner section (mock data)
     │   ├── Documents.tsx              ← Document list + search + download (SAS token polling)
     │   ├── UpdateProfile.tsx          ← Profile completion form (personal + company via VAT search)
     │   ├── NotFound.tsx               ← 404 page
@@ -90,9 +91,9 @@ project-root/
 ## Routing
 
 - `/login` → `Login` (public) — Entra External ID redirect. Auto-redirects if already authenticated.
+- `/` → `Home` (protected) — Homepage with greeting, hero section, and promotional banner. Mock data from `Home.tsx`; will come from Dataverse later.
 - `/documents` → `Documents` (protected) — Document list with text search and download.
 - `/update-profile` → `UpdateProfile` (protected) — Profile completion form (phone, language, company via VAT search).
-- `/` → Redirect (protected) — Redirects to `/documents`.
 - `*` → `NotFound` (public) — 404 page.
 
 `ProtectedRoute` checks:

@@ -189,6 +189,12 @@
     }
   },
 
+  "homePage": {
+    "pageTitle": "Startpagina | VMBSO Customer Portal",
+    "greeting": "Welkom, {{name}}!",
+    "moreInfo": "Meer info"
+  },
+
   "updateProfilePage": {
     "title": {
       "completeProfile": "Voltooi uw profiel",
