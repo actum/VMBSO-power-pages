@@ -20,6 +20,8 @@
   },
 
   "documentsPage": {
+    "pageTitle": "Documents | VMBSO Customer Portal",
+    
     "documentsSearch": {
       "label": "Documents",
       "placeholder": "Search documents..."
@@ -75,6 +77,10 @@
     }
   },
 
+  "layout": {
+    "pendingApprovalBanner": "Your account is pending approval. You will be notified once it has been reviewed."
+  },
+
   "languages": {
     "options": {
       "en-GB": "English",
@@ -84,6 +90,8 @@
   },
 
   "loginPage": {
+    "pageTitle": "Login | VMBSO Customer Portal",
+    
     "title": "Log in",
     "subtitle": "Welcome! Please log in to access your documents.",
 
@@ -115,6 +123,8 @@
   },
 
   "notFoundPage": {
+    "pageTitle": "Page Not Found | VMBSO Customer Portal",
+    
     "code": "404",
     "title": "Page Not Found",
     "description": "The page you are looking for doesn't exist or has been moved.",
@@ -192,10 +202,21 @@
   },
 
   "updateProfilePage": {
+    "pageTitle": "Complete Your Profile | VMBSO Customer Portal",
+    
     "title": {
       "completeProfile": "Complete your profile",
       "completeDetails": "Contact details",
       "completeCompanyDetails": "Company details"
+    },
+    
+    "messages": {
+      "profileLockedInfo": "You can update your phone number and language preference. Company information is locked and cannot be modified.",
+      "updateSuccess": "Profile updated successfully!",
+      "updateError": "An error occurred while updating your profile.",
+      "unexpectedError": "Unexpected response from server. Please try again.",
+      "vatSearchError": "VAT search failed.",
+      "updateFailed": "Updating profile information failed."
     },
 
     "fields": {

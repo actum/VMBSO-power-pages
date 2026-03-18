@@ -25,7 +25,9 @@ export const Login: React.FC = () => {
   const { setDialogOpen } = useContext(CookiesContext);
   const [loginLoading, setLoginLoading] = React.useState(false);
 
-  React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);
+  React.useEffect(() => { 
+    document.title = t('loginPage:pageTitle');
+  }, [t]);
 
   // Auto-redirect authenticated users to documents page
   // ProtectedRoute will handle profile completion check and redirect to /update-profile if needed

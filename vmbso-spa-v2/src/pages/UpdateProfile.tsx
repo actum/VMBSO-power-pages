@@ -33,8 +33,6 @@ import InputLabelField from "../components/common/ui/InputLabelField";
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
 export const UpdateProfile: React.FC = () => {
-  useEffect(() => { document.title = 'Complete Your Profile | VMBSO Customer Portal'; }, []);
-
   const { currentUser, refreshUser, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
@@ -43,6 +41,11 @@ export const UpdateProfile: React.FC = () => {
   const { t } = useTranslation(["updateProfilePage"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Set page title from translation
+  useEffect(() => { 
+    document.title = t('updateProfilePage:pageTitle');
+  }, [t]);
 
   // VAT search state
   const [vatInput, setVatInput] = useState("");
@@ -157,7 +160,7 @@ export const UpdateProfile: React.FC = () => {
     } catch (err) {
       setFoundAccount(null);
       setVatSearchState("idle");
-      setError(err instanceof Error ? err.message : "VAT search failed.");
+      setError(err instanceof Error ? err.message : t("updateProfilePage:messages.vatSearchError"));
     }
   };
 
@@ -194,7 +197,7 @@ export const UpdateProfile: React.FC = () => {
       // Handle flow response
       if (response?.status === "200") {
         // Success: show message and redirect after refreshing user data
-        toast.success(response.message || "Profile updated successfully!");
+        toast.success(response.message || t("updateProfilePage:messages.updateSuccess"));
         
         // Wait a moment for Dataverse to commit the changes
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -208,13 +211,13 @@ export const UpdateProfile: React.FC = () => {
         }, 1000);
       } else if (response?.status === "500") {
         // Error: show error message
-        setError(response.message || "An error occurred while updating your profile.");
+        setError(response.message || t("updateProfilePage:messages.updateError"));
       } else {
         // Unexpected response format
-        setError("Unexpected response from server. Please try again.");
+        setError(t("updateProfilePage:messages.unexpectedError"));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Updating profile information failed.");
+      setError(err instanceof Error ? err.message : t("updateProfilePage:messages.updateFailed"));
     } finally {
       setUpdating(false);
     }
@@ -261,7 +264,7 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
           {isProfileComplete && (
             <Alert severity="info" sx={{ mt: 2 }}>
-              You can update your phone number and language preference. Company information is locked and cannot be modified.
+              {t("updateProfilePage:messages.profileLockedInfo")}
             </Alert>
           )}
           <Grid container spacing={3} sx={{ mt: 1 }}>

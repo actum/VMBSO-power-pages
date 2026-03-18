@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export const NotFound: React.FC = () => {
-  React.useEffect(() => { document.title = 'Page Not Found | VMBSO Customer Portal'; }, []);
-
   const navigate = useNavigate();
   const { t } = useTranslation("notFoundPage");
+  
+  React.useEffect(() => { 
+    document.title = t('pageTitle');
+  }, [t]);
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
