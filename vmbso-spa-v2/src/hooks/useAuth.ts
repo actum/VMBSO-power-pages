@@ -6,8 +6,10 @@ import { queryKeys } from "../queries/queryKeys";
 
 // Required personal profile fields — the contact must be linked to an Account
 // (_parentcustomerid_value) for the company portion to be considered complete.
+// NOTE: Use the actual Dataverse column name (_actum_languageid_value) — NOT
+// the convenience field (actum_language) which only exists locally in the form.
 const requiredPersonalFields: Array<keyof Contact> = [
-  "actum_language",
+  "_actum_languageid_value",
   "telephone1",
 ];
 

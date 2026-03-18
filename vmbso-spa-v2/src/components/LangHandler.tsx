@@ -25,13 +25,20 @@ const LangHandler = () => {
       return;
     }
 
+    const fallbackLang = SUPPORTED_LANGS.includes(currentLang)
+      ? currentLang
+      : SUPPORTED_LANGS[0];
+
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      next.set("lang", currentLang);
+      next.set("lang", fallbackLang);
       return next;
     }, { replace: true });
-  }, [langParam, currentLang, i18n, setSearchParams]);
 
+    if (fallbackLang !== currentLang) {
+      i18n.changeLanguage(fallbackLang);
+    }
+  }, [langParam, currentLang, i18n, setSearchParams]);
   useEffect(() => {
     const fetchTranslations = async () => {
       try {

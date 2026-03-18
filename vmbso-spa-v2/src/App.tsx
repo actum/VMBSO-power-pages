@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import theme from './theme/theme';
 import { CookieConsentDialog } from './components/CookieConsentDialog';
 import { AnalyticsTracker } from './components/AnalyticsTracker';
@@ -16,6 +15,12 @@ import { UpdateProfile } from './pages/UpdateProfile';
 import { NotFound } from './pages/NotFound';
 import { Home } from './pages/Home';
 import LangHandler from './components/LangHandler';
+
+const ReactQueryDevtoolsLazy = React.lazy(() =>
+  import('@tanstack/react-query-devtools').then((mod) => ({
+    default: mod.ReactQueryDevtools,
+  })),
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,7 +101,11 @@ function App() {
               </Routes>
         </Router>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {import.meta.env.DEV && (
+        <React.Suspense fallback={null}>
+          <ReactQueryDevtoolsLazy initialIsOpen={false} />
+        </React.Suspense>
+      )}
     </QueryClientProvider>
   );
 }

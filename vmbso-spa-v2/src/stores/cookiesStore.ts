@@ -23,7 +23,7 @@ function saveConsent(analyticsEnabled: boolean) {
       expires: 90,
       path: "/",
       sameSite: "strict",
-      secure: true,
+      secure: location.protocol === "https:",
     }
   );
 

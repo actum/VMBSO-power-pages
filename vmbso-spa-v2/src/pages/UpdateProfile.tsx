@@ -138,10 +138,15 @@ export const UpdateProfile: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+    if (!currentUser?.contactid) {
+      setError("User session not found. Please refresh and try again.");
+      return;
+    }
+
     updateProfile.mutate(
       {
         hasAccount: vatSearchState === "found" ? "YES" : "NO",
-        contactId: currentUser?.contactid,
+        contactId: currentUser.contactid,
         phone: values.telephone1,
         languageId: values.actum_language,
         // found-only
@@ -200,13 +205,13 @@ export const UpdateProfile: React.FC = () => {
       ? true
       : vatSearchState === "notFound"
         ? !!values.actum_companyname?.toString().trim() &&
-          !!values.actum_primarycountry?.toString().trim() &&
-          !!values.actum_companyphone?.toString().trim() &&
-          !!values.address1_line1?.toString().trim() &&
-          !!values.address1_city?.toString().trim() &&
-          !!values.address1_postalcode?.toString().trim() &&
-          (values.actum_brand?.length ?? 0) > 0 &&
-          !!values.actum_role?.toString().trim()
+        !!values.actum_primarycountry?.toString().trim() &&
+        !!values.actum_companyphone?.toString().trim() &&
+        !!values.address1_line1?.toString().trim() &&
+        !!values.address1_city?.toString().trim() &&
+        !!values.address1_postalcode?.toString().trim() &&
+        (values.actum_brand?.length ?? 0) > 0 &&
+        !!values.actum_role?.toString().trim()
         : false;
 
   const canSave = contactFieldsValid && vatSearchDone && companyFieldsValid;
@@ -219,7 +224,7 @@ export const UpdateProfile: React.FC = () => {
         <Typography
           variant="h2"
           textAlign={isMobile ? "center" : "start"}
-          margin={{ xs: "1rem 1rem 2rem", md: "2rem 0 3rem 3rem"}}
+          margin={{ xs: "1rem 1rem 2rem", md: "2rem 0 3rem 3rem" }}
         >
           {t("title.completeProfile")}
         </Typography>
@@ -236,7 +241,7 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
 
           <Grid container spacing={3} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
                 label={t("fields.email.label")}
                 placeholder={t("fields.email.placeholder")}
@@ -248,7 +253,7 @@ export const UpdateProfile: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
                 label={t("fields.phoneNumber.label")}
                 placeholder={t("fields.phoneNumber.placeholder")}
@@ -269,7 +274,7 @@ export const UpdateProfile: React.FC = () => {
 
           <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mt: 1 }}>
             {/* VAT + Search */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
                 label={t("fields.vat.label")}
                 ariaLabel={t("fields.vat.aria")}
@@ -313,7 +318,7 @@ export const UpdateProfile: React.FC = () => {
             </Grid>
 
             {/* Company Name — always visible, conditionally editable */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
                 label={t("fields.companyName.label")}
                 placeholder={t("fields.companyName.placeholder")}
@@ -329,14 +334,14 @@ export const UpdateProfile: React.FC = () => {
 
             {/* VAT search result message */}
             {vatSearchState === "found" && foundAccount && (
-              <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+              <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="success" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.found", { name: foundAccount.name })}
                 </Alert>
               </Grid>
             )}
             {vatSearchState === "notFound" && (
-              <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+              <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="info" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.notFound")}
                 </Alert>
@@ -346,7 +351,7 @@ export const UpdateProfile: React.FC = () => {
             {/* Remaining company fields — visible only after search */}
             {companyFieldsVisible && (
               <>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     select
                     label={t("fields.primaryCountry.label")}
@@ -361,14 +366,14 @@ export const UpdateProfile: React.FC = () => {
                     {countriesLoading
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : countries.map(c => (
-                          <MenuItem key={c.actum_countryid} value={c.actum_countryid}>
-                            {c.actum_name}
-                          </MenuItem>
-                        ))}
+                        <MenuItem key={c.actum_countryid} value={c.actum_countryid}>
+                          {c.actum_name}
+                        </MenuItem>
+                      ))}
                   </InputLabelField>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     label={t("fields.companyPhone.label")}
                     ariaLabel={t("fields.companyPhone.aria")}
@@ -381,7 +386,7 @@ export const UpdateProfile: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <InputLabelField
                     label={t("fields.address.label")}
                     ariaLabel={t("fields.address.aria")}
@@ -393,7 +398,7 @@ export const UpdateProfile: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     label={t("fields.city.label")}
                     ariaLabel={t("fields.city.aria")}
@@ -405,7 +410,7 @@ export const UpdateProfile: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     label={t("fields.zipCode.label")}
                     ariaLabel={t("fields.zipCode.aria")}
@@ -417,7 +422,7 @@ export const UpdateProfile: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     label={t("fields.companyEmail.label")}
                     ariaLabel={t("fields.companyEmail.aria")}
@@ -428,7 +433,7 @@ export const UpdateProfile: React.FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     select
                     label={t("fields.companyBrand.label")}
@@ -456,14 +461,14 @@ export const UpdateProfile: React.FC = () => {
                     {brandsLoading
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : brands.map(b => (
-                          <MenuItem key={b.actum_brandid} value={b.actum_brandid}>
-                            {b.actum_name}
-                          </MenuItem>
-                        ))}
+                        <MenuItem key={b.actum_brandid} value={b.actum_brandid}>
+                          {b.actum_name}
+                        </MenuItem>
+                      ))}
                   </InputLabelField>
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputLabelField
                     select
                     label={t("fields.companyRole.label")}
@@ -478,17 +483,17 @@ export const UpdateProfile: React.FC = () => {
                     {rolesLoading
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : roles.map(r => (
-                          <MenuItem key={r.actum_roleid} value={r.actum_roleid}>
-                            {r.actum_name}
-                          </MenuItem>
-                        ))}
+                        <MenuItem key={r.actum_roleid} value={r.actum_roleid}>
+                          {r.actum_name}
+                        </MenuItem>
+                      ))}
                   </InputLabelField>
                 </Grid>
               </>
             )}
 
             {/* Language — filtered by selected country, saved on Contact */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
                 select
                 label={t("fields.language.label")}
@@ -505,10 +510,10 @@ export const UpdateProfile: React.FC = () => {
                   : languages.length === 0
                     ? <MenuItem value="" disabled>{t("fields.language.noOptions")}</MenuItem>
                     : languages.map(lang => (
-                        <MenuItem key={lang.actum_languageid} value={lang.actum_languageid}>
-                          {lang.actum_name}
-                        </MenuItem>
-                      ))}
+                      <MenuItem key={lang.actum_languageid} value={lang.actum_languageid}>
+                        {lang.actum_name}
+                      </MenuItem>
+                    ))}
               </InputLabelField>
             </Grid>
           </Grid>

@@ -19,7 +19,7 @@ export const useDocuments = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: queryKeys.documents(contactId!),
+    queryKey: queryKeys.documents(contactId ?? ""),
     queryFn: async (): Promise<ProductDocument[]> => {
       const response = await apiClient.flow<{
         status: string;

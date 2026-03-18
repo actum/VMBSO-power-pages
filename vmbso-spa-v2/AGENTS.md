@@ -17,7 +17,7 @@ A React SPA client portal for **VMBSO/VMZINC distributors**. Runs inside **Micro
 - **Dates**: date-fns 4 (in deps, minimally used)
 - **Styling**: MUI `sx` prop + minimal global CSS. No CSS modules, no styled-components.
 - **Fonts**: Ulm Grotesk (headings), Rubik (body), Inter (fallback). Custom font files in `src/fonts/`.
-- **Analytics**: react-ga 3 (Google Analytics). Uses GA4 Measurement ID but `react-ga` is the UA library. Should be replaced with `react-ga4` — see Known Issues.
+- **Analytics**: react-ga4 2.1 (Google Analytics 4). GA4 Measurement ID in `.env.production`.
 - **Tests**: None
 
 ## Project Structure
@@ -207,7 +207,6 @@ The `actum_translation` table stores dynamic translations. The primary Name colu
 
 ## Known Issues
 
-- **`react-ga` vs GA4**: The project uses `react-ga` (Universal Analytics library) but the Measurement ID in `.env.production` is a GA4 ID (`G-...`). Should replace with `react-ga4`.
 - **Debug logging**: `console.log('[DEBUG]...')` statements throughout auth, config, flow, and download code.
 - **Dead code**: `Register.tsx` (not routed), `src/types/auth.ts` (unused type).
 

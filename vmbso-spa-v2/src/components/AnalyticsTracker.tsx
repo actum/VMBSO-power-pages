@@ -1,29 +1,23 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import * as ReactGA from "react-ga";
+import ReactGA from "react-ga4";
 import { useCookiesStore } from "../stores/cookiesStore";
 
-/**
- * Initializes Google Analytics (if configured) and sends a pageview
- * on every route change when analytics is enabled.
- */
-export const AnalyticsTracker: React.FC = () => {
+export const AnalyticsTracker = () => {
   const location = useLocation();
   const analyticsEnabled = useCookiesStore((s) => s.analyticsEnabled);
 
-  if (!analyticsEnabled) return null;
-
-  // Initialize GA once
   useEffect(() => {
-    if (import.meta.env.VITE_GOOGLE_ANALYTICS_ID) {
+    if (analyticsEnabled && import.meta.env.VITE_GOOGLE_ANALYTICS_ID) {
       ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_ID);
     }
-  }, []);
+  }, [analyticsEnabled]);
 
-  // Send pageview on route change
   useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: location.pathname });
-  }, [location]);
+    if (analyticsEnabled) {
+      ReactGA.send({ hitType: "pageview", page: location.pathname });
+    }
+  }, [location, analyticsEnabled]);
 
   return null;
 };
