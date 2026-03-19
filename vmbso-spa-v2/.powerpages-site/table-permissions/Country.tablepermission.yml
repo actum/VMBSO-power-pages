@@ -1,0 +1,16 @@
+accountrelationship: 
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: true
+appendto: true
+contactrelationship: 
+create: false
+delete: false
+entitylogicalname: actum_country
+entityname: Country
+id: af359f3c-89fe-4f50-bcad-94c69f06fb30
+parententitypermission: 
+parentrelationship: 
+read: true
+scope: 756150000
+write: false
