@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    build: {
+      sourcemap: false,
+    },
     server: {
       proxy: {
         "/_api": {
