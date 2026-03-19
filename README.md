@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# VMBSO Customer Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React SPA client portal for VMBSO/VMZINC distributors, hosted on Microsoft Power Pages. Distributors log in via Microsoft Entra External ID, complete their company profile, and browse/download product documentation.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+React 18, TypeScript, Vite 7, MUI v7, TanStack Query 5, Zustand 5, i18next, react-router-dom 6, react-toastify, react-ga4.
 
-## React Compiler
+Backend: Microsoft Dataverse (OData Web API) + Power Automate cloud flows.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env.development.local` file with `VITE_DEV_MODE=true` to run locally with mock data (no Power Pages connection needed).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Vite dev server (port 5173) |
+| `npm run build` | Production build to `./dist/` |
+| `npm run preview` | Preview production build locally |
+| `npm run cleanup` | Remove old build artifacts from `.powerpages-site/web-files/` |
+| `npm run deploy` | Build + cleanup + upload to Power Pages via `pac` CLI |
+| `npm run download` | Download Power Pages site definition |
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_DEV_MODE` | `true` enables mock auth + mock API data for local dev |
+| `VITE_PORTAL_URL` | Power Pages portal base URL |
+| `VITE_ENTRA_PROVIDER` | Entra authority URL for login |
+| `VITE_GOOGLE_ANALYTICS_ID` | GA4 Measurement ID |
+
+## Documentation
+
+- [`AGENTS.md`](AGENTS.md) — Full project context (architecture, patterns, gotchas)
+- [`docs/DATAVERSE-SCHEMA.md`](docs/DATAVERSE-SCHEMA.md) — Dataverse entity/field reference
+- [`docs/POWER-PAGES.md`](docs/POWER-PAGES.md) — Power Pages integration, auth, flows, deployment
+- [`docs/IMPROVEMENTS.md`](docs/IMPROVEMENTS.md) — Planned improvements
+- [`docs/MIGRATION-LOG.md`](docs/MIGRATION-LOG.md) — Migration decisions and fixes

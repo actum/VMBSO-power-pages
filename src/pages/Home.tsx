@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Button, Grid, CircularProgress, Alert } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ export const Home: React.FC = () => {
   const { t } = useTranslation('homePage');
   const { homePageData, loading, error } = useHomePage();
 
-  React.useEffect(() => { document.title = t('pageTitle'); }, [t]);
+  useEffect(() => { document.title = t('pageTitle'); }, [t]);
 
   return (
     <Layout>

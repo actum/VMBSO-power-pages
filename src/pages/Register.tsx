@@ -123,7 +123,7 @@ export const Register: React.FC = () => {
 
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -156,7 +156,7 @@ export const Register: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -188,7 +188,7 @@ export const Register: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -222,7 +222,7 @@ export const Register: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -256,7 +256,7 @@ export const Register: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -289,7 +289,7 @@ export const Register: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -327,7 +327,7 @@ export const Register: React.FC = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography
                   variant="caption"
                   sx={{

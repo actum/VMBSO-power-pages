@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Paper,
@@ -23,13 +23,13 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   const { setDialogOpen } = useCookiesStore();
-  const [loginLoading, setLoginLoading] = React.useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  React.useEffect(() => { document.title = t('loginPage:pageTitle'); }, [t]);
+  useEffect(() => { document.title = t('loginPage:pageTitle'); }, [t]);
 
   // Auto-redirect authenticated users
   // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
-  React.useEffect(() => {
+  useEffect(() => {
     if (!loading && isAuthenticated) {
       if (config.devMode) {
         console.log(
@@ -136,12 +136,12 @@ export const Login: React.FC = () => {
                 />
               </Box>
 
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
-                  {t("loginPage:title")}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                  {t("loginPage:subtitle")}
-                </Typography>
+              <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+                {t("loginPage:title")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                {t("loginPage:subtitle")}
+              </Typography>
               <Button
                 fullWidth
                 variant="contained"
@@ -194,7 +194,7 @@ export const Login: React.FC = () => {
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
+                  backgroundImage: `url(${config.assets.loginHeroImage})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: '0.4rem',
@@ -217,7 +217,7 @@ export const Login: React.FC = () => {
             height: "4rem"
           }}
         >
-          <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
+          <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }} />
         </IconButton>
       </Tooltip>
     </Box>

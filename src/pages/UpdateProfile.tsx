@@ -30,8 +30,6 @@ import InputLabelField from "../components/common/ui/InputLabelField";
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
 export const UpdateProfile: React.FC = () => {
-  useEffect(() => { document.title = t('updateProfilePage:pageTitle'); }, [t]);
-
   const { currentUser, refreshUser, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
@@ -57,6 +55,8 @@ export const UpdateProfile: React.FC = () => {
 
   // Profile update mutation
   const updateProfile = useUpdateProfile();
+
+  useEffect(() => { document.title = t('updateProfilePage:pageTitle'); }, [t]);
 
   // Clear language if it no longer belongs to the newly selected country
   // This is local form logic, NOT data fetching — stays as useEffect

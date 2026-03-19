@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Typography, Box, TextField, CircularProgress, Alert, Button, IconButton, Modal, Backdrop } from '@mui/material';
 import { DownloadOutlined } from '@mui/icons-material';
 import { toast } from 'react-toastify';
@@ -9,20 +9,22 @@ import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 
 export const Documents: React.FC = () => {
-  React.useEffect(() => { document.title = t('pageTitle'); }, [t]);
+  const { t } = useTranslation("documentsPage");
+
 
   const [searchText, setSearchText] = useState('');
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
   const { documents, loading, error, refetch } = useDocuments();
   const { currentUser } = useAuth();
-  const { t } = useTranslation("documentsPage");
+
+  useEffect(() => { document.title = t('pageTitle'); }, [t]);
 
   // Client-side filtering
   const filteredDocuments = useMemo(() => {
     if (!searchText.trim()) return documents;
     const search = searchText.toLowerCase();
-    return documents.filter(doc => 
+    return documents.filter(doc =>
       doc.actum_name?.toLowerCase().includes(search) ||
       doc.actum_filename?.toLowerCase().includes(search)
     );
@@ -68,9 +70,9 @@ export const Documents: React.FC = () => {
       const poll = (): void => {
         pollAttempt++;
         const elapsed = Date.now() - startTime;
-        
+
         console.log(`[DOWNLOAD] Polling attempt ${pollAttempt} (elapsed: ${Math.round(elapsed / 1000)}s)`);
-        
+
         if (elapsed > timeout) {
           console.error('[DOWNLOAD] Timeout reached after', pollAttempt, 'attempts');
           setDownloadingDocId(null);
@@ -81,17 +83,17 @@ export const Documents: React.FC = () => {
 
         dataverseService.downloadLogs.getById(downloadLog.actum_downloadlogid)
           .then((log) => {
-            console.log('[DOWNLOAD] Poll response:', { 
-              hasSasToken: !!log.actum_sastoken, 
-              tokenPreview: log.actum_sastoken ? log.actum_sastoken.substring(0, 50) + '...' : null 
+            console.log('[DOWNLOAD] Poll response:', {
+              hasSasToken: !!log.actum_sastoken,
+              tokenPreview: log.actum_sastoken ? log.actum_sastoken.substring(0, 50) + '...' : null
             });
-            
+
             if (log.actum_sastoken) {
               // SAS token available - trigger download
               console.log('[DOWNLOAD] SAS token ready, triggering download');
               setDownloadingDocId(null);
               setIsPreparingDownload(false);
-              
+
               // Force browser download
               const link = document.createElement('a');
               link.href = log.actum_sastoken;
@@ -205,7 +207,7 @@ export const Documents: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {t("documentsList.results", { count: filteredDocuments.length })}
             </Typography>
-            
+
             {filteredDocuments.length === 0 ? (
               <Alert severity="info">
                 {t("validation.noDocumentsFound")}
@@ -233,7 +235,7 @@ export const Documents: React.FC = () => {
                         {t("documentDetails.fileName")}: {doc.actum_filename}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                        {t("documentDetails.visible")}: {doc.actum_visible ? t("documentDetails.yes") : t("documentDetails.no")} | 
+                        {t("documentDetails.visible")}: {doc.actum_visible ? t("documentDetails.yes") : t("documentDetails.no")} |
                         {t("documentDetails.unapprovedAccess")}: {doc.actum_unapprovedaccess ? t("documentDetails.yes") : t("documentDetails.no")}
                       </Typography>
                     </Box>
@@ -241,7 +243,7 @@ export const Documents: React.FC = () => {
                       onClick={() => handleDownload(doc)}
                       aria-label={t("download.buttonAriaLabel", { documentName: doc.actum_name })}
                       disabled={downloadingDocId === doc.actum_productdocumentationid}
-                      sx={{ 
+                      sx={{
                         ml: 2,
                         width: 56,
                         height: 56,

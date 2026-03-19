@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Paper, Typography, Button, Box } from '@mui/material';
 import { ErrorOutline as ErrorIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export const NotFound: React.FC = () => {
-  React.useEffect(() => { document.title = t('pageTitle'); }, [t]);
-
   const navigate = useNavigate();
   const { t } = useTranslation("notFoundPage");
+
+  useEffect(() => { document.title = t('pageTitle'); }, [t]);
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>

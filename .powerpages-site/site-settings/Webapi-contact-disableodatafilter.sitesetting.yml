@@ -1,0 +1,5 @@
+description: Enables or disables OData filtering for the table (optional).
+id: ef8792e2-131c-f111-8341-000d3a688605
+name: Webapi/contact/disableodatafilter
+source: 0
+value: false

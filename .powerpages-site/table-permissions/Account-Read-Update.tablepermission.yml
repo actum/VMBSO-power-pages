@@ -1,0 +1,16 @@
+accountrelationship: 
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: true
+contactrelationship: contact_customer_accounts
+create: false
+delete: false
+entitylogicalname: account
+entityname: Account Read Update
+id: d91f14bb-2694-4f2f-a6f1-d300478a6f28
+parententitypermission: 
+parentrelationship: 
+read: true
+scope: 756150001
+write: false
