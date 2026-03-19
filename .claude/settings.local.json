@@ -1,21 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(pac powerpages download --path .powerpages-site --overwrite)",
-      "Bash(uuidgen)",
-      "Bash(ls c:/https/VMBS-powerpages/vmbso-spa-v2/.env*)",
-      "Bash(ls c:/https/VMBS-powerpages/vmbso-spa-v2/.env.*)",
-      "Bash(for f:*)",
-      "Bash(do echo:*)",
-      "Read(//c/https/VMBS-powerpages/**)",
-      "Bash(done)",
-      "Bash(find C:httpsVMBS-powerpagesvmbso-spa-v2 -type f -name .env* -o -name *config*)",
-      "Bash(find C:httpsVMBS-powerpagesvmbso-spa-v2 -type f \\\\\\(-name .env* -o -name *.config.* \\\\\\))",
-      "Bash(find C:httpsVMBS-powerpagesvmbso-spa-v2src -type f \\\\\\(-name *.ts -o -name *.tsx -o -name *.js \\\\\\))",
-      "Bash(grep -r \"G-T2PJKHCEPX\\\\|ciamlogin\\\\|site-alfw4\\\\|site-spa\" C:httpsVMBS-powerpagesvmbso-spa-v2 --include=*.ts --include=*.tsx --include=*.js --include=*.json)",
-      "Bash(find C:httpsVMBS-powerpagesvmbso-spa-v2src -type f -name *.ts -o -name *.tsx -o -name *.js)",
-      "Bash(pac pages:*)"
-    ],
+    "allow": [],
     "deny": [],
     "ask": []
   }
