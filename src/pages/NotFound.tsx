@@ -7,6 +7,10 @@ import { useTranslation } from 'react-i18next';
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation("notFoundPage");
+  
+  React.useEffect(() => { 
+    document.title = t('pageTitle');
+  }, [t]);
 
   useEffect(() => { document.title = t('pageTitle'); }, [t]);
 

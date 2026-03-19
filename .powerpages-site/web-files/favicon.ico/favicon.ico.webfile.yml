@@ -1,15 +1,19 @@
+<<<<<<<< HEAD:.powerpages-site/web-files/favicon.ico/favicon.ico.webfile.yml
 annotationid: 87a64480-0923-f111-8341-7ced8d47a8e8
+========
+annotationid: ea0beb3f-2f3f-42fd-8112-61c5983b718d
+>>>>>>>> main:.powerpages-site/web-files/index_BCA388EA.html/index_BCA388EA.html.webfile.yml
 contentdisposition: 756150000
 enabletracking: false
 excludefromsearch: false
-filename: favicon.ico
+filename: index.html
 hiddenfromsitemap: false
-id: 9cc60ebf-7f89-4b00-b4ad-7ad7bb83ac63
+id: 3746ba93-507b-4aa0-95c1-00cedea45271
 isdocument: true
-mimetype: image/x-icon
-name: favicon.ico
-objectid: 9cc60ebf-7f89-4b00-b4ad-7ad7bb83ac63
+mimetype: text/html
+name: index.html
+objectid: 3746ba93-507b-4aa0-95c1-00cedea45271
 objecttypecode: adx_webfile
 parentpageid: 245eb1b6-cf15-43f2-8aeb-334084a7fdd6
-partialurl: favicon.ico
+partialurl: index.html
 publishingstateid: 7ea4f823-e902-453b-8188-4acd2218fe6b

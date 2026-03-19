@@ -19,7 +19,7 @@ import { Cookie as CookieIcon } from '@mui/icons-material'
 import { useCookiesStore } from '../stores/cookiesStore';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, isProfileComplete, loading } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   const { setDialogOpen } = useCookiesStore();

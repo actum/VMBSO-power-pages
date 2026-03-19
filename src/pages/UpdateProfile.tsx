@@ -38,6 +38,11 @@ export const UpdateProfile: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Set page title from translation
+  useEffect(() => { 
+    document.title = t('updateProfilePage:pageTitle');
+  }, [t]);
+
   // VAT search state
   const [vatInput, setVatInput] = useState("");
   const [vatSearchState, setVatSearchState] = useState<VatSearchState>("idle");
@@ -127,19 +132,84 @@ export const UpdateProfile: React.FC = () => {
       },
       onError: (err) => {
         setFoundAccount(null);
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
         setVatSearchState("idle");
         setError(err instanceof Error ? err.message : t("updateProfilePage:messages.vatSearchError"));
       },
     });
+=======
+        setVatSearchState("notFound");
+      }
+    } catch (err) {
+      setFoundAccount(null);
+      setVatSearchState("idle");
+      setError(err instanceof Error ? err.message : t("updateProfilePage:messages.vatSearchError"));
+    }
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
     if (!currentUser?.contactid) {
       setError("User session not found. Please refresh and try again.");
       return;
+=======
+    try {
+      setUpdating(true);
+
+      const response = await apiClient.flow<{ status: string; message: string }>(
+        config.flows.updateProfile,
+        {
+          hasAccount: vatSearchState === "found" ? "YES" : "NO",
+          contactId: currentUser?.contactid,
+          phone: values.telephone1,
+          languageId: values.actum_language,
+          // found-only
+          accountId: foundAccount?.accountid,
+          // notFound-only (empty string when account was found)
+          vatNumber: vatInput.trim(),
+          companyName: values.actum_companyname ?? "",
+          countryId: values.actum_primarycountry ?? "",
+          companyPhone: values.actum_companyphone ?? "",
+          address: values.address1_line1 ?? "",
+          city: values.address1_city ?? "",
+          zipCode: values.address1_postalcode ?? "",
+          companyEmail: values.actum_companyemail ?? "",
+          brandIds: (values.actum_brand ?? []).join(","),
+          roleId: values.actum_role ?? "",
+        }
+      );
+
+      // Handle flow response
+      if (response?.status === "200") {
+        // Success: show message and redirect after refreshing user data
+        toast.success(response.message || t("updateProfilePage:messages.updateSuccess"));
+        
+        // Wait a moment for Dataverse to commit the changes
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Refresh user data to get updated profile
+        await refreshUser();
+        
+        // Redirect to documents
+        setTimeout(() => {
+          navigate("/documents");
+        }, 1000);
+      } else if (response?.status === "500") {
+        // Error: show error message
+        setError(response.message || t("updateProfilePage:messages.updateError"));
+      } else {
+        // Unexpected response format
+        setError(t("updateProfilePage:messages.unexpectedError"));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("updateProfilePage:messages.updateFailed"));
+    } finally {
+      setUpdating(false);
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
     }
 
     updateProfile.mutate(
@@ -204,7 +274,11 @@ export const UpdateProfile: React.FC = () => {
   const companyFieldsValid = vatSearchDone;
 
   // When profile is complete, only validate language and phone
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
   const canSave = isProfileComplete
+=======
+  const canSave = isProfileComplete 
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
     ? contactFieldsValid
     : contactFieldsValid && companyFieldsValid;
 
@@ -236,7 +310,10 @@ export const UpdateProfile: React.FC = () => {
               {t("updateProfilePage:messages.profileLockedInfo")}
             </Alert>
           )}
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
 
+=======
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
           <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
               <InputLabelField
@@ -332,14 +409,22 @@ export const UpdateProfile: React.FC = () => {
 
             {/* VAT search result message */}
             {!isProfileComplete && vatSearchState === "found" && foundAccount && (
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
               <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+=======
+              <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
                 <Alert severity="success" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.found", { name: foundAccount.name })}
                 </Alert>
               </Grid>
             )}
             {!isProfileComplete && vatSearchState === "notFound" && (
+<<<<<<< HEAD:src/pages/UpdateProfile.tsx
               <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+=======
+              <Grid item xs={12} sx={{ display: "flex", alignItems: "center", py: 1 }}>
+>>>>>>> main:vmbso-spa-v2/src/pages/UpdateProfile.tsx
                 <Alert severity="info" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.notFound")}
                 </Alert>

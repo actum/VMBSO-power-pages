@@ -11,8 +11,5 @@
     "main.e630eb1c.css.map": "/static/css/main.e630eb1c.css.map",
     "main.059cc521.js.map": "/static/js/main.059cc521.js.map"
   },
-  "entrypoints": [
-    "static/css/main.e630eb1c.css",
-    "static/js/main.059cc521.js"
-  ]
+  "entrypoints": ["static/css/main.e630eb1c.css", "static/js/main.059cc521.js"]
 }

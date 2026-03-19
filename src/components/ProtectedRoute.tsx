@@ -5,12 +5,28 @@ import { useAuth } from "../hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  /**
+   * Whether the route requires a complete user profile.
+   * - true (default): Redirects to /update-profile if profile is incomplete
+   * - false: Allows access even with incomplete profile (e.g., /update-profile page itself)
+   */
   requireCompleteProfile?: boolean;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireCompleteProfile = true }) => {
+/**
+ * Central authentication and profile completion guard.
+ * Handles all redirect logic in one place:
+ * 1. Not authenticated → /login
+ * 2. Authenticated but incomplete profile (if required) → /update-profile
+ * 3. Otherwise → allow access
+ */
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requireCompleteProfile = true
+}) => {
   const { isAuthenticated, loading, isProfileComplete } = useAuth();
 
+  // Show loading spinner while checking authentication
   if (loading) {
     return (
       <Box
@@ -26,13 +42,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
     );
   }
 
+  // Rule 1: Must be authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
+  // Rule 2: If profile completion is required and profile is incomplete, redirect to complete it
   if (requireCompleteProfile && !isProfileComplete) {
     return <Navigate to="/update-profile" replace />;
   }
 
+  // All checks passed - render the protected content
   return <>{children}</>;
 };
