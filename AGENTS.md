@@ -23,8 +23,9 @@ A React SPA client portal for **VMBSO/VMZINC distributors**. Runs inside **Micro
 ## Project Structure
 
 ```
-project-root/
+project-root/                          ← Repo root (project files live directly here, no nesting)
 ├── AGENTS.md                          ← This file
+├── PLAN-UpdateProfile-VAT.md          ← Planning doc for UpdateProfile VAT search feature
 ├── docs/
 │   ├── DATAVERSE-SCHEMA.md            ← Dataverse entity/field reference
 │   ├── POWER-PAGES.md                 ← Power Pages, auth, flows, deployment
@@ -34,6 +35,7 @@ project-root/
 ├── .env.production                    ← Prod env vars (portal URL, Entra provider, GA ID)
 ├── .env.development.local             ← Dev env vars (VITE_DEV_MODE=true). Gitignored.
 ├── package.json
+├── cleanup-old-builds.ps1             ← Removes old hashed build artifacts from .powerpages-site/web-files/
 ├── vite.config.ts                     ← Vite config with dev proxy for /_api and /_services
 ├── tsconfig.json                      ← References tsconfig.app.json + tsconfig.node.json
 ├── index.html                         ← Vite HTML entry point
@@ -216,7 +218,8 @@ The `actum_translation` table stores dynamic translations. The primary Name colu
 npm run dev            # Vite dev server (port 5173)
 npm run build          # Production build → ./dist/
 npm run preview        # Preview production build locally
-npm run deploy         # Build + upload to Power Pages via pac CLI
+npm run cleanup        # Remove old hashed build artifacts from .powerpages-site/web-files/
+npm run deploy         # Build + cleanup + upload to Power Pages via pac CLI
 npm run download       # Download Power Pages site definition
 ```
 
