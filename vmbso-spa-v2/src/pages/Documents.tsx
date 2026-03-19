@@ -9,7 +9,7 @@ import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 
 export const Documents: React.FC = () => {
-  React.useEffect(() => { document.title = 'Documents | VMBSO Customer Portal'; }, []);
+  React.useEffect(() => { document.title = t('pageTitle'); }, [t]);
 
   const [searchText, setSearchText] = useState('');
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);

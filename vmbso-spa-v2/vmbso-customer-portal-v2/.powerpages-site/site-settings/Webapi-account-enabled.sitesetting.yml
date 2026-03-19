@@ -1,5 +1,0 @@
-description: Enables or disables Web API access for the account table.
-id: 23271eb0-131c-f111-8341-000d3a688605
-name: Webapi/account/enabled
-source: 0
-value: true

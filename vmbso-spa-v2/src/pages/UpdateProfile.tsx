@@ -21,6 +21,7 @@ import { type Account } from "../types/account";
 import { useBrands, useCountries, useRoles, useLanguagesByCountry } from "../hooks/useProfileData";
 import { useVatSearch } from "../hooks/useVatSearch";
 import { useUpdateProfile } from "../hooks/useUpdateProfile";
+import { dataverseService } from "../services/dataverseService";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -29,9 +30,9 @@ import InputLabelField from "../components/common/ui/InputLabelField";
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
 export const UpdateProfile: React.FC = () => {
-  useEffect(() => { document.title = 'Complete Your Profile | VMBSO Customer Portal'; }, []);
+  useEffect(() => { document.title = t('updateProfilePage:pageTitle'); }, [t]);
 
-  const { currentUser, refreshUser } = useAuth();
+  const { currentUser, refreshUser, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [error, setError] = useState<string | null>(null);
@@ -73,34 +74,27 @@ export const UpdateProfile: React.FC = () => {
   }, [languages, languagesLoading, values.actum_primarycountry]);
 
   useEffect(() => {
-    if (currentUser) {
-      setValues({
-        ...currentUser,
-        // Map the standard OData lookup ID to the field the form uses
-        actum_language: currentUser._actum_languageid_value ?? currentUser.actum_language,
-      });
+    if (!currentUser) return;
 
-      // Pre-fill VAT input from existing contact data
-      if (currentUser.actum_vat) {
-        setVatInput(currentUser.actum_vat);
-      }
+    setValues({
+      ...currentUser,
+      // Map the standard OData lookup ID to the field the form uses
+      actum_language: currentUser._actum_languageid_value ?? currentUser.actum_language,
+    });
 
-      // If the user already has a linked account, restore the "found" state
-      // so company fields are read-only and the form is immediately saveable
-      if (currentUser._parentcustomerid_value) {
-        setFoundAccount({
-          accountid: currentUser._parentcustomerid_value,
-          name: currentUser.actum_companyname ?? "",
-          _actum_primarycountryid_value: currentUser.actum_primarycountry,
-        });
-        setVatSearchState("found");
-      }
+    if (currentUser._parentcustomerid_value) {
+      setVatSearchState("found");
 
-      console.log("[UpdateProfile] user from Entra:", {
-        firstName: currentUser.firstname,
-        lastName: currentUser.lastname,
-        hasAccount: !!currentUser._parentcustomerid_value,
-        language: currentUser._actum_languageid_value,
+      // Fetch account to get VAT, company name, and country (needed for language filtering)
+      dataverseService.accounts.getById(currentUser._parentcustomerid_value).then(account => {
+        if (!account) return;
+        setFoundAccount(account);
+        setVatInput(account.actum_vatregistrationnumber ?? "");
+        setValues(prev => ({
+          ...prev,
+          actum_companyname: account.name,
+          actum_primarycountry: account._actum_primarycountryid_value,
+        }));
       });
     }
   }, [currentUser]);
@@ -134,7 +128,7 @@ export const UpdateProfile: React.FC = () => {
       onError: (err) => {
         setFoundAccount(null);
         setVatSearchState("idle");
-        setError(err instanceof Error ? err.message : "VAT search failed.");
+        setError(err instanceof Error ? err.message : t("updateProfilePage:messages.vatSearchError"));
       },
     });
   };
@@ -171,7 +165,7 @@ export const UpdateProfile: React.FC = () => {
       {
         onSuccess: async (response) => {
           if (response?.status === "200") {
-            toast.success(response.message || "Profile updated successfully!");
+            toast.success(response.message || t("updateProfilePage:messages.updateSuccess"));
 
             // Wait a moment for Dataverse to commit the changes
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -184,13 +178,13 @@ export const UpdateProfile: React.FC = () => {
               navigate("/documents");
             }, 1000);
           } else if (response?.status === "500") {
-            setError(response.message || "An error occurred while updating your profile.");
+            setError(response.message || t("updateProfilePage:messages.updateError"));
           } else {
-            setError("Unexpected response from server. Please try again.");
+            setError(t("updateProfilePage:messages.unexpectedError"));
           }
         },
         onError: (err) => {
-          setError(err instanceof Error ? err.message : "Updating profile information failed.");
+          setError(err instanceof Error ? err.message : t("updateProfilePage:messages.updateFailed"));
         },
       }
     );
@@ -205,23 +199,16 @@ export const UpdateProfile: React.FC = () => {
 
   const vatSearchDone = vatSearchState === "found" || vatSearchState === "notFound";
 
-  const companyFieldsValid =
-    vatSearchState === "found"
-      ? true
-      : vatSearchState === "notFound"
-        ? !!values.actum_companyname?.toString().trim() &&
-        !!values.actum_primarycountry?.toString().trim() &&
-        !!values.actum_companyphone?.toString().trim() &&
-        !!values.address1_line1?.toString().trim() &&
-        !!values.address1_city?.toString().trim() &&
-        !!values.address1_postalcode?.toString().trim() &&
-        (values.actum_brand?.length ?? 0) > 0 &&
-        !!values.actum_role?.toString().trim()
-        : false;
+  // Simplified: only require VAT search completion
+  // The flow will handle creating/linking the account and validate required fields
+  const companyFieldsValid = vatSearchDone;
 
-  const canSave = contactFieldsValid && vatSearchDone && companyFieldsValid;
+  // When profile is complete, only validate language and phone
+  const canSave = isProfileComplete
+    ? contactFieldsValid
+    : contactFieldsValid && companyFieldsValid;
 
-  const companyFieldsVisible = vatSearchState === "notFound";
+  const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
 
   return (
     <Layout>
@@ -244,6 +231,11 @@ export const UpdateProfile: React.FC = () => {
           <Typography variant="h6" sx={{ mt: 2 }}>
             {t("title.completeDetails")}
           </Typography>
+          {isProfileComplete && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              {t("updateProfilePage:messages.profileLockedInfo")}
+            </Alert>
+          )}
 
           <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -285,7 +277,8 @@ export const UpdateProfile: React.FC = () => {
                 ariaLabel={t("fields.vat.aria")}
                 value={vatInput}
                 fullWidth
-                required
+                required={!isProfileComplete}
+                disabled={isProfileComplete}
                 onChange={e => {
                   setVatInput(e.target.value);
                   // Reset search state if user edits the VAT after searching
@@ -302,7 +295,7 @@ export const UpdateProfile: React.FC = () => {
                 error={t("validation.vat")}
                 hideHelperText
                 InputProps={{
-                  endAdornment: (
+                  endAdornment: !isProfileComplete ? (
                     <InputAdornment position="end">
                       <IconButton
                         aria-label={t("fields.vat.searchButton")}
@@ -317,7 +310,7 @@ export const UpdateProfile: React.FC = () => {
                           : <SearchIcon />}
                       </IconButton>
                     </InputAdornment>
-                  ),
+                  ) : undefined,
                 }}
               />
             </Grid>
@@ -330,22 +323,22 @@ export const UpdateProfile: React.FC = () => {
                 ariaLabel={t("fields.companyName.aria")}
                 value={values.actum_companyname || ""}
                 fullWidth
-                required={vatSearchState === "notFound"}
-                disabled={vatSearchState === "found"}
+                required={vatSearchState === "notFound" && !isProfileComplete}
+                disabled={vatSearchState === "found" || isProfileComplete}
                 onChange={handleChange("actum_companyname")}
                 error={t("validation.companyName")}
               />
             </Grid>
 
             {/* VAT search result message */}
-            {vatSearchState === "found" && foundAccount && (
+            {!isProfileComplete && vatSearchState === "found" && foundAccount && (
               <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="success" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.found", { name: foundAccount.name })}
                 </Alert>
               </Grid>
             )}
-            {vatSearchState === "notFound" && (
+            {!isProfileComplete && vatSearchState === "notFound" && (
               <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center", py: 1 }}>
                 <Alert severity="info" sx={{ py: 0.5, width: "100%" }}>
                   {t("fields.vat.notFound")}

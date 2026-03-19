@@ -1,8 +1,0 @@
-adx_contentsnippetlanguageid: null
-adx_createdby: null
-adx_modifiedby: null
-adx_modifiedon: null
-adx_name: Webapi/enabled
-adx_value: true
-adx_websiteid:
-  '@odata.bind': websites(b53a6581-bda2-4b72-b3bc-a40512bb57cf)

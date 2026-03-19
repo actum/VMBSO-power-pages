@@ -37,7 +37,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && pac pages upload-code-site --rootPath ./ --compiledPath ./dist --siteName \"VMBSO Customer Portal v2\"",
+    "deploy": "npm run build && npm run cleanup && pac pages upload-code-site --rootPath ./ --compiledPath ./dist --siteName \"VMBSO Customer Portal v2\"",
+    "cleanup": "pwsh -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1 || powershell -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1",
     "download": "pac pages download-code-site --path ./ --webSiteId ac923a79-af52-4a68-8d8f-9f947a0d5821 --overwrite"
   },
   "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"

@@ -25,29 +25,23 @@ export const Login: React.FC = () => {
   const { setDialogOpen } = useCookiesStore();
   const [loginLoading, setLoginLoading] = React.useState(false);
 
-  React.useEffect(() => { document.title = 'Login | VMBSO Customer Portal'; }, []);
+  React.useEffect(() => { document.title = t('loginPage:pageTitle'); }, [t]);
 
   // Auto-redirect authenticated users
+  // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
   React.useEffect(() => {
-    console.log('[LOGIN DEBUG] Auto-redirect effect:', { loading, isAuthenticated, isProfileComplete });
-
-    if (loading) {
-      console.log('[LOGIN DEBUG] Still loading, waiting...');
-      return; // Wait for session check to complete
-    }
-
-    if (isAuthenticated) {
-      console.log('[LOGIN DEBUG] User is authenticated, redirecting...');
-      // User is already logged in, redirect appropriately
-      if (!isProfileComplete) {
-        console.log('[LOGIN DEBUG] Profile incomplete, redirecting to /update-profile');
+    if (!loading && isAuthenticated) {
+      if (config.devMode) {
+        console.log(
+          '[LOGIN] User already authenticated, redirecting to',
+          isProfileComplete === false ? '/update-profile' : '/documents'
+        );
+      }
+      if (isProfileComplete === false) {
         navigate('/update-profile', { replace: true });
       } else {
-        console.log('[LOGIN DEBUG] Profile complete, redirecting to /documents');
         navigate('/documents', { replace: true });
       }
-    } else {
-      console.log('[LOGIN DEBUG] User NOT authenticated, staying on /login');
     }
   }, [isAuthenticated, isProfileComplete, loading, navigate]);
 
@@ -58,7 +52,7 @@ export const Login: React.FC = () => {
    */
   const submitExternalLogin = async () => {
     if (config.devMode) {
-      console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /documents');
+      console.log('[LOGIN] DEV MODE: Redirecting to /documents');
       window.location.href = '/documents';
       return;
     }
@@ -88,7 +82,7 @@ export const Login: React.FC = () => {
       document.body.appendChild(form);
       form.submit();
     } catch (err) {
-      console.error('[LOGIN DEBUG] ExternalLogin form POST failed:', err);
+      console.error('[LOGIN] ExternalLogin form POST failed:', err);
       setLoginLoading(false);
       // Fallback: redirect to /SignIn so the user is not stuck
       window.location.href = '/SignIn';
@@ -122,7 +116,7 @@ export const Login: React.FC = () => {
       <Container maxWidth="lg" sx={{ my: 'auto' }}>
         <Grid container spacing={0} sx={{ minHeight: '60rem' }}>
           {/* Left side - Actions */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper
               sx={{
                 p: 6,
@@ -184,7 +178,7 @@ export const Login: React.FC = () => {
           </Grid>
 
           {/* Right side - Image */}
-          <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <Box
               sx={{
                 height: '100%',

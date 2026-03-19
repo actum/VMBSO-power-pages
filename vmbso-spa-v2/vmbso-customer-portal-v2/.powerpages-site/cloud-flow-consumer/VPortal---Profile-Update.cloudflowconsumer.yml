@@ -1,8 +1,0 @@
-adx_CloudFlowConsumer_adx_webrole:
-- 7cd9bdff-1527-405b-bb88-611db94d307c
-flowapiurl: /_api/cloudflow/v1.0/trigger/0bc41f4c-841c-f111-8341-000d3a66f792
-flowtriggerurl: ''
-id: 8ea8dfe0-921c-f111-8341-000d3a68813d
-metadata: ''
-name: VPortal - Profile Update
-processid: 0bc41f4c-841c-f111-8341-000d3a66f792

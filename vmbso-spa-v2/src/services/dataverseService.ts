@@ -76,6 +76,9 @@ export const dataverseService = {
           "adx_identity_emailaddress1confirmed",
         ];
 
+        // Add cache-busting filter with current datetime (always false condition)
+        const cacheBuster = new Date().toISOString();
+
         const query = buildODataQuery({
           select: fields,
           // Temporarily disable $expand to avoid 400 errors
@@ -83,6 +86,7 @@ export const dataverseService = {
           //   'actum_languageid($select=actum_languageid,actum_name)',
           //   'parentcustomerid($select=accountid,name)'  // Expand Account for Company Name
           // ],
+          filter: `createdon ne ${cacheBuster}`, // Cache-busting: always unique, never affects results
           top: 1,
         });
 
@@ -158,8 +162,8 @@ export const dataverseService = {
    */
   accounts: {
     /**
-     * Search for an account by VAT registration number.
-     * Returns the first match or null if none found.
+     * Search for an account by VAT registration number using a flow.
+     * Returns the account if found, or null if not found.
      */
     async searchByVAT(vat: string): Promise<Account | null> {
       if (config.devMode) {
@@ -173,22 +177,57 @@ export const dataverseService = {
         };
       }
 
-      const escaped = vat.replace(/'/g, "''");
-      const query = buildODataQuery({
-        filter: `actum_vatregistrationnumber eq '${escaped}'`,
-        select: ["accountid", "name", "_actum_primarycountryid_value"],
-        top: 1,
-      });
       try {
-        const response = await apiClient.odata<{ value: Account[] }>(
-          `/accounts${query}`,
+        const response = await apiClient.flow<{ status: string; data: string }>(
+          '/_api/cloudflow/v1.0/trigger/b71ed49e-0022-f111-8341-000d3a688605',
+          { vatNumber: vat }
         );
-        return response.value?.[0] ?? null;
+
+        // Handle error status from flow
+        if (response?.status === '500') {
+          throw new Error(response.data || 'VAT search failed');
+        }
+
+        // Handle success with no data (VAT not found)
+        if (!response?.data || response.data === '') {
+          return null;
+        }
+
+        // Parse the JSON string data and return the account
+        const account = JSON.parse(response.data) as Account;
+        return account;
       } catch (error) {
-        if (
-          error instanceof ApiError &&
-          [401, 403, 404].includes(error.status)
-        ) {
+        // If it's already an Error with a message, rethrow it
+        if (error instanceof Error) {
+          throw error;
+        }
+        // Otherwise wrap it
+        throw new Error('VAT search failed');
+      }
+    },
+
+    /**
+     * Get an account record by ID.
+     * Fetches only the fields needed for the UpdateProfile edit mode.
+     */
+    async getById(accountId: string): Promise<Account | null> {
+      if (config.devMode) {
+        return {
+          accountid: accountId,
+          name: "Actum Digital",
+          actum_vatregistrationnumber: "BE0123456789",
+          _actum_primarycountryid_value: "mock-country-002",
+        };
+      }
+
+      try {
+        const query = buildODataQuery({
+          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value'],
+        });
+        const response = await apiClient.odata<Account>(`/accounts(${accountId})${query}`);
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
           return null;
         }
         throw error;

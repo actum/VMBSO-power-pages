@@ -20,6 +20,8 @@
   },
 
   "documentsPage": {
+    "pageTitle": "Documenten | VMBSO Klantenportaal",
+    
     "documentsSearch": {
       "label": "Documenten",
       "placeholder": "Documenten zoeken..."
@@ -73,6 +75,10 @@
     }
   },
 
+  "layout": {
+    "pendingApprovalBanner": "Uw account wacht op goedkeuring. U wordt op de hoogte gebracht zodra deze is beoordeeld."
+  },
+
   "languages": {
     "options": {
       "en-GB": "Engels",
@@ -82,6 +88,8 @@
   },
 
   "loginPage": {
+    "pageTitle": "Inloggen | VMBSO Klantenportaal",
+    
     "title": "Inloggen",
     "subtitle": "Welkom! Log in om uw documenten te bekijken.",
 
@@ -113,6 +121,8 @@
   },
 
   "notFoundPage": {
+    "pageTitle": "Pagina niet gevonden | VMBSO Klantenportaal",
+    
     "code": "404",
     "title": "Pagina niet gevonden",
     "description": "De pagina die u zoekt bestaat niet of is verplaatst.",
@@ -196,10 +206,21 @@
   },
 
   "updateProfilePage": {
+    "pageTitle": "Vul uw profiel aan | VMBSO Klantenportaal",
+    
     "title": {
-      "completeProfile": "Voltooi uw profiel",
+      "completeProfile": "Vul uw profiel aan",
       "completeDetails": "Contactgegevens",
       "completeCompanyDetails": "Bedrijfsgegevens"
+    },
+    
+    "messages": {
+      "profileLockedInfo": "U kunt uw telefoonnummer en taalvoorkeur bijwerken. Bedrijfsinformatie is vergrendeld en kan niet worden gewijzigd.",
+      "updateSuccess": "Profiel succesvol bijgewerkt!",
+      "updateError": "Er is een fout opgetreden bij het bijwerken van uw profiel.",
+      "unexpectedError": "Onverwacht antwoord van de server. Probeer het opnieuw.",
+      "vatSearchError": "BTW-zoekopdracht mislukt.",
+      "updateFailed": "Bijwerken van profielinformatie mislukt."
     },
 
     "fields": {

@@ -80,7 +80,7 @@ function App() {
                 <Route
                   path="/update-profile"
                   element={
-                    <ProtectedRoute>
+                    <ProtectedRoute requireCompleteProfile={false}>
                       <UpdateProfile />
                     </ProtectedRoute>
                   }

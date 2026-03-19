@@ -20,6 +20,8 @@
   },
 
   "documentsPage": {
+    "pageTitle": "Documents | Portail client VMBSO",
+    
     "documentsSearch": {
       "label": "Documents",
       "placeholder": "Rechercher des documents..."
@@ -73,6 +75,10 @@
     }
   },
 
+  "layout": {
+    "pendingApprovalBanner": "Votre compte est en attente d'approbation. Vous serez notifié une fois qu'il aura été examiné."
+  },
+
   "languages": {
     "options": {
       "en-GB": "Anglais",
@@ -82,6 +88,8 @@
   },
 
   "loginPage": {
+    "pageTitle": "Connexion | Portail client VMBSO",
+    
     "title": "Connexion",
     "subtitle": "Bienvenue ! Connectez-vous pour accéder à vos documents.",
 
@@ -113,6 +121,8 @@
   },
 
   "notFoundPage": {
+    "pageTitle": "Page non trouvée | Portail client VMBSO",
+    
     "code": "404",
     "title": "Page non trouvée",
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
@@ -196,10 +206,21 @@
   },
 
   "updateProfilePage": {
+    "pageTitle": "Complétez votre profil | Portail client VMBSO",
+    
     "title": {
       "completeProfile": "Complétez votre profil",
       "completeDetails": "Coordonnées",
-      "completeCompanyDetails": "Détails de l'entreprise"
+      "completeCompanyDetails": "Informations sur l'entreprise"
+    },
+    
+    "messages": {
+      "profileLockedInfo": "Vous pouvez mettre à jour votre numéro de téléphone et votre préférence linguistique. Les informations de l'entreprise sont verrouillées et ne peuvent pas être modifiées.",
+      "updateSuccess": "Profil mis à jour avec succès !",
+      "updateError": "Une erreur s'est produite lors de la mise à jour de votre profil.",
+      "unexpectedError": "Réponse inattendue du serveur. Veuillez réessayer.",
+      "vatSearchError": "La recherche de TVA a échoué.",
+      "updateFailed": "La mise à jour des informations du profil a échoué."
     },
 
     "fields": {
