@@ -196,7 +196,7 @@ export const Login: React.FC = () => {
                 sx={{
                   width: '100%',
                   height: '100%',
-                  backgroundImage: 'url(https://site-alfw4.powerappsportals.com/building-hero.jpg)',
+                  backgroundImage: `url(${config.assets.loginHeroImage})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: '0.4rem',

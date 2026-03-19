@@ -1,0 +1,5 @@
+description: Defines which attributes can be read or modified. Use * to allow all. Mandatory.
+id: f1d742cf-131c-f111-8341-000d3a688605
+name: Webapi/account/fields
+source: 0
+value: accountid,_actum_primarycountryid_value,actum_vatregistrationnumber,name

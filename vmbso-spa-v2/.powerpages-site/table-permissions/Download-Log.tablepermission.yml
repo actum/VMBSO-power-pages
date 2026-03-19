@@ -1,0 +1,16 @@
+accountrelationship: 
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: true
+appendto: true
+contactrelationship: actum_contact_downloadlogs
+create: true
+delete: false
+entitylogicalname: actum_downloadlog
+entityname: Download Log
+id: f3d9f9da-31af-4024-9b84-e14a4375ea9f
+parententitypermission: 
+parentrelationship: 
+read: true
+scope: 756150001
+write: true
