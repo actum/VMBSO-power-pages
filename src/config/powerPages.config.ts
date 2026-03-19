@@ -14,11 +14,6 @@
 
 const PORTAL_URL = import.meta.env.VITE_PORTAL_URL ?? '';
 
-console.log('[CONFIG DEBUG] PORTAL_URL:', PORTAL_URL);
-console.log('[CONFIG DEBUG] VITE_DEV_MODE:', import.meta.env.VITE_DEV_MODE);
-console.log('[CONFIG DEBUG] devMode will be:', import.meta.env.VITE_DEV_MODE === 'true');
-console.log('[CONFIG DEBUG] VITE_ENTRA_PROVIDER:', import.meta.env.VITE_ENTRA_PROVIDER);
-
 export const config = {
   /** Whether the app is running in local development mode. */
   devMode: import.meta.env.VITE_DEV_MODE === 'true',

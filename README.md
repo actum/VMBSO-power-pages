@@ -33,7 +33,7 @@ Create a `.env.development.local` file with `VITE_DEV_MODE=true` to run locally 
 | Variable | Description |
 |----------|-------------|
 | `VITE_DEV_MODE` | `true` enables mock auth + mock API data for local dev |
-| `VITE_PORTAL_URL` | Power Pages portal base URL |
+| `VITE_PORTAL_URL` | (dev only) Portal base URL for dev proxy & hero image |
 | `VITE_ENTRA_PROVIDER` | Entra authority URL for login |
 | `VITE_GOOGLE_ANALYTICS_ID` | GA4 Measurement ID |
 

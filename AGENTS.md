@@ -226,7 +226,7 @@ npm run download       # Download Power Pages site definition
 ## Environment Variables
 
 - `VITE_DEV_MODE` — `true` enables mock auth + mock API data for local development
-- `VITE_PORTAL_URL` — Power Pages portal base URL
+- `VITE_PORTAL_URL` — (dev only, optional) Power Pages portal base URL for dev proxy and hero image. Set in `.env.development.local`, not needed in production.
 - `VITE_ENTRA_PROVIDER` — Entra authority URL for login form POST
 - `VITE_GOOGLE_ANALYTICS_ID` — GA4 Measurement ID
 

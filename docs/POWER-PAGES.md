@@ -226,8 +226,8 @@ The Vite dev proxy in `vite.config.ts` forwards `/_api` and `/_services` request
 | Variable                     | Purpose                                    | Example                                    |
 | ---------------------------- | ------------------------------------------ | ------------------------------------------ |
 | `VITE_DEV_MODE`              | Enable mock auth & localStorage user       | `true` / `false`                           |
-| `VITE_PORTAL_URL`            | Power Pages portal base URL                | `https://site-spa.powerappsportals.com`    |
-| `VITE_ENTRA_PROVIDER`        | Entra authority URL for ExternalLogin form | `https://vmbsodev.ciamlogin.com/{tenant}/` |
+| `VITE_PORTAL_URL`            | (dev only) Portal base URL for dev proxy & hero image | Set in `.env.development.local`     |
+| `VITE_ENTRA_PROVIDER`        | Entra authority URL for ExternalLogin form | `https://vmbsocustomerportaluat.ciamlogin.com/{tenant}/` |
 | `VITE_GOOGLE_ANALYTICS_ID`   | GA4 Measurement ID                         | `G-T2PJKHCEPX`                             |
 
 Env vars use `VITE_*` prefix and are accessed via `import.meta.env.VITE_*` in code.
