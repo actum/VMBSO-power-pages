@@ -36,13 +36,13 @@ export const Login: React.FC = () => {
       if (config.devMode) {
         console.log(
           '[LOGIN] User already authenticated, redirecting to',
-          isProfileComplete === false ? '/update-profile' : '/documents'
+          isProfileComplete === false ? '/update-profile' : '/'
         );
       }
       if (isProfileComplete === false) {
         navigate('/update-profile', { replace: true });
       } else {
-        navigate('/documents', { replace: true });
+        navigate('/', { replace: true });
       }
     }
   }, [isAuthenticated, isProfileComplete, loading, navigate]);
@@ -54,8 +54,8 @@ export const Login: React.FC = () => {
    */
   const submitExternalLogin = async () => {
     if (config.devMode) {
-      console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /documents');
-      window.location.href = '/documents';
+      console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /');
+      window.location.href = '/';
       return;
     }
 

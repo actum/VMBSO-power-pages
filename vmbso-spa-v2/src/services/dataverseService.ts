@@ -10,6 +10,7 @@ import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
+import type { LandingPageContent } from '../types/homePage';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -342,6 +343,86 @@ export const dataverseService = {
         if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
           return [];
         }
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Landing page content (CMS) — one row per language
+   */
+  landingPageContent: {
+    /**
+     * Dev-only mock when REACT_APP_DEV_MODE=true (no Dataverse session).
+     */
+    getMock(): LandingPageContent {
+      return {
+        actum_landingpagecontentid: '00000000-0000-0000-0000-000000000001',
+        actum_name: 'Default landing (dev)',
+        actum_greetingstext: 'Hello, {name}!',
+        actum_title: 'Welcome to the VMBSO Customer Portal',
+        actum_introductiontext:
+          'Access your product documentation and resources in one place.',
+        actum_heroimageurl: config.assets.loginHeroImage,
+        actum_imagealt: 'Building',
+        actum_bannerimageurl: config.assets.loginHeroImage,
+        actum_bannerimagetext: 'Products',
+        actum_bannertitle: 'Explore your documents',
+        _actum_languageid_value: undefined,
+        statecode: 0,
+      };
+    },
+
+    /**
+     * Fetch landing page row for the contact's preferred language lookup.
+     */
+    async getByLanguage(languageId: string | undefined): Promise<LandingPageContent | null> {
+      if (config.devMode) {
+        return this.getMock();
+      }
+
+      if (!languageId) {
+        console.warn('[landingPageContent] No language id on contact; cannot load CMS row');
+        return null;
+      }
+
+      try {
+        const guid = languageId.replace(/[{}]/g, '');
+        const filter = `_actum_languageid_value eq '${guid}' and statecode eq 0`;
+        const query = buildODataQuery({
+          select: [
+            'actum_landingpagecontentid',
+            'actum_name',
+            'actum_greetingstext',
+            'actum_title',
+            'actum_introductiontext',
+            'actum_heroimageurl',
+            'actum_imagealt',
+            'actum_bannerimageurl',
+            'actum_bannerimagetext',
+            'actum_bannertitle',
+            '_actum_languageid_value',
+            'statecode',
+          ],
+          filter,
+          top: 1,
+        });
+
+        const response = await apiClient.odata<{ value: LandingPageContent[] }>(
+          `/actum_landingpagecontents${query}`
+        );
+
+        if (!response.value?.length) {
+          console.warn('No landing page content found for language', languageId);
+          return null;
+        }
+
+        return response.value[0];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return null;
+        }
+        console.error('Error fetching landing page content:', error);
         throw error;
       }
     },

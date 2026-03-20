@@ -60,6 +60,17 @@
     }
   },
 
+  "homePage": {
+    "pageTitle": "Home | VMBSO Klantenportaal",
+    "actions": {
+      "goToDocuments": "Naar documenten"
+    },
+    "errors": {
+      "noContent": "Er kon geen startpagina-inhoud worden geladen voor uw taal.",
+      "loadFailed": "Laden van de startpagina-inhoud is mislukt."
+    }
+  },
+
   "footer": {
     "copyright": "© {{year}} VM Building Solutions. Alle rechten voorbehouden.",
     "cookieSettings": "Cookie-instellingen"
