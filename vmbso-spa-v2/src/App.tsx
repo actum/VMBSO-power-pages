@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
@@ -12,6 +12,7 @@ import { Login } from './pages/Login';
 import { Documents } from './pages/Documents';
 import { UpdateProfile } from './pages/UpdateProfile';
 import { NotFound } from './pages/NotFound';
+import { Home } from './pages/Home';
 import LangHandler from './components/LangHandler';
 
 function App() {
@@ -68,12 +69,12 @@ function App() {
                 }
               />
 
-              {/* Default redirect - protected to ensure auth and profile completion */}
+              {/* Home (landing) — protected to ensure auth and profile completion */}
               <Route
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <Navigate to="/documents" replace />
+                    <Home />
                   </ProtectedRoute>
                 }
               />

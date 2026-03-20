@@ -65,6 +65,8 @@ export const config = {
     brands: '/_api/actum_brands',
     /** Country lookup table. */
     countries: '/_api/actum_countries',
+    /** Landing page CMS rows (per language). */
+    landingPageContents: '/_api/actum_landingpagecontents',
   },
 
   /** Power Automate cloud flow endpoints. */

@@ -60,6 +60,17 @@
     }
   },
 
+  "homePage": {
+    "pageTitle": "Accueil | Portail client VMBSO",
+    "actions": {
+      "goToDocuments": "Aller aux documents"
+    },
+    "errors": {
+      "noContent": "Aucun contenu de page d'accueil n'a pu être chargé pour votre langue.",
+      "loadFailed": "Échec du chargement du contenu de la page d'accueil."
+    }
+  },
+
   "footer": {
     "copyright": "© {{year}} VM Building Solutions. Tous droits réservés.",
     "cookieSettings": "Paramètres des cookies"

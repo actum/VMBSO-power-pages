@@ -62,6 +62,17 @@
     }
   },
 
+  "homePage": {
+    "pageTitle": "Home | VMBSO Customer Portal",
+    "actions": {
+      "goToDocuments": "Go to documents"
+    },
+    "errors": {
+      "noContent": "No landing page content could be loaded for your language.",
+      "loadFailed": "Failed to load home page content."
+    }
+  },
+
   "footer": {
     "copyright": "© {{year}} VM Building Solutions. All rights reserved.",
     "cookieSettings": "Cookie settings"
