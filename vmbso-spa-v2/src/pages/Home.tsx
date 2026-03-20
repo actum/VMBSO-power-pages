@@ -53,6 +53,7 @@ export const Home: React.FC = () => {
                         <Box sx={{ width: '100%', flex: { md: '0 0 58.333333%' } }}>
                             <Typography
                                 variant="h2"
+                                component="h1"
                                 sx={{ mb: { xs: 3, md: 4 }, lineHeight: 1.2 }}
                             >
                                 {homePageData.heroSection.title}
