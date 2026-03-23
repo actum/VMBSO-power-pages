@@ -52,7 +52,7 @@ export const Login: React.FC = () => {
    * /Account/Login/ExternalLogin. Power Pages then issues a 302 redirect
    * directly to Entra External ID — no intermediate sign-in page.
    */
-  const submitExternalLogin = async () => {
+  const submitExternalLogin = async (extraParams?: Record<string, string>) => {
     if (config.devMode) {
       console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /');
       window.location.href = '/';
@@ -65,7 +65,11 @@ export const Login: React.FC = () => {
 
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = config.auth.externalLoginUrl;
+      // Extra params (e.g. prompt=create) go in the query string of the action URL.
+      // Power Pages reads these from the URL and forwards them to the Entra authorization request.
+      form.action = extraParams
+        ? `${config.auth.externalLoginUrl}?${new URLSearchParams(extraParams).toString()}`
+        : config.auth.externalLoginUrl;
 
       const fields: Record<string, string> = {
         provider: config.auth.providerScheme,
@@ -148,7 +152,7 @@ export const Login: React.FC = () => {
                 fullWidth
                 variant="contained"
                 size="large"
-                onClick={submitExternalLogin}
+                onClick={() => submitExternalLogin()}
                 disabled={loginLoading}
                 sx={{
                   textTransform: 'none',
@@ -167,7 +171,7 @@ export const Login: React.FC = () => {
                 </Typography>
                 <Button
                   variant="outlined"
-                  onClick={submitExternalLogin}
+                  onClick={() => submitExternalLogin({ prompt: 'create' })}
                   sx={{
                     textTransform: 'none',
                     fontWeight: 500,
