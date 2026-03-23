@@ -1,3 +1,5 @@
 id: 5c8bfa27-2714-4d29-a36d-8b8e06901311
 name: Authentication/OpenIdConnect/EntraExternalID_1/ClientId
-value: f0ef507f-2e56-42cf-8050-2dd8b531bd96
+statecode: 1
+statuscode: 2
+value: ''

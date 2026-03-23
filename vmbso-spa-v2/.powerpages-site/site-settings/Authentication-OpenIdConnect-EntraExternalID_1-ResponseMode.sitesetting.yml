@@ -1,3 +1,5 @@
 id: 474b3bb3-161a-4371-94f1-901703aabc77
 name: Authentication/OpenIdConnect/EntraExternalID_1/ResponseMode
-value: form_post
+statecode: 1
+statuscode: 2
+value: ''

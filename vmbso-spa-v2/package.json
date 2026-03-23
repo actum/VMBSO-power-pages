@@ -38,7 +38,7 @@
     "eject": "react-scripts eject",
     "cleanup": "pwsh -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1 || powershell -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1",
     "deploy": "npm run build && npm run cleanup && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal v2\"",
-    "download": "pac pages download-code-site --path ./ --webSiteId ac923a79-af52-4a68-8d8f-9f947a0d5821 --overwrite"
+    "download": "pwsh -Command \"pac pages download-code-site --path ./ --webSiteId ac923a79-af52-4a68-8d8f-9f947a0d5821 --overwrite; Copy-Item -Path ./vmbso-customer-portal-v2/.powerpages-site/* -Destination ./.powerpages-site/ -Recurse -Force; Remove-Item -Path ./vmbso-customer-portal-v2, ./.paportal -Recurse -Force -ErrorAction SilentlyContinue\""
   },
   "eslintConfig": {
     "extends": [

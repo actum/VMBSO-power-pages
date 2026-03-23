@@ -1,18 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.e630eb1c.css",
-    "main.js": "/static/js/main.059cc521.js",
+    "main.css": "/static/css/main.eeb10c5e.css",
+    "main.js": "/static/js/main.2a8d1e09.js",
     "static/media/UlmGrotesk-Regular.woff2": "/static/media/UlmGrotesk-Regular.13798099e106882a871f.woff2",
     "static/media/UlmGrotesk-Bold.woff2": "/static/media/UlmGrotesk-Bold.db5fe127536df185d67d.woff2",
     "static/media/UlmGrotesk-Medium.woff2": "/static/media/UlmGrotesk-Medium.ada4f4fcd9d1c5b9b560.woff2",
     "static/media/UlmGrotesk-Extrabold.woff2": "/static/media/UlmGrotesk-Extrabold.6c52de564d2f8b33a504.woff2",
     "static/media/UlmGrotesk-Light.woff2": "/static/media/UlmGrotesk-Light.703bfab77fdf48dfad7d.woff2",
-    "index.html": "/index.html",
-    "main.e630eb1c.css.map": "/static/css/main.e630eb1c.css.map",
-    "main.059cc521.js.map": "/static/js/main.059cc521.js.map"
+    "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.e630eb1c.css",
-    "static/js/main.059cc521.js"
+    "static/css/main.eeb10c5e.css",
+    "static/js/main.2a8d1e09.js"
   ]
 }

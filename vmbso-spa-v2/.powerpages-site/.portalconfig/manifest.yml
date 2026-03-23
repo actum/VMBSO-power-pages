@@ -1,10 +1,34 @@
 adx_webfile:
-- RecordId: 948817d6-2dcc-468e-8af1-ec59ed30659c
-  DisplayName: main.e630eb1c.css
+- RecordId: 7706b0ee-376d-4cb5-899f-98d9198206ed
+  DisplayName: main.ad97f687.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 7e700ee6-4c28-4763-8ee4-bb1574dfc437
+  DisplayName: main.eeb10c5e.css
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 8edc1270-cf66-4137-b06e-971a9f59be01
+  DisplayName: main.20e56d09.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
+  DisplayName: main.eeb10c5e.css
   CheckSum: 
   IsDeleted: true
 annotation:
-- RecordId: 948817d6-2dcc-468e-8af1-ec59ed30659c
-  DisplayName: main.e630eb1c.css
+- RecordId: 7706b0ee-376d-4cb5-899f-98d9198206ed
+  DisplayName: main.ad97f687.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 7e700ee6-4c28-4763-8ee4-bb1574dfc437
+  DisplayName: main.eeb10c5e.css
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 8edc1270-cf66-4137-b06e-971a9f59be01
+  DisplayName: main.20e56d09.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
+  DisplayName: main.eeb10c5e.css
   CheckSum: 
   IsDeleted: true
