@@ -1,4 +1,8 @@
 adx_webfile:
+- RecordId: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
+  DisplayName: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
+  CheckSum: 
+  IsDeleted: true
 - RecordId: 7706b0ee-376d-4cb5-899f-98d9198206ed
   DisplayName: main.ad97f687.js
   CheckSum: 
@@ -9,6 +13,18 @@ adx_webfile:
   IsDeleted: true
 - RecordId: 8edc1270-cf66-4137-b06e-971a9f59be01
   DisplayName: main.20e56d09.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 8f4aa4ad-b0be-4b99-aaa3-d09f55c6e9db
+  DisplayName: 8f4aa4ad-b0be-4b99-aaa3-d09f55c6e9db
+  CheckSum: 
+  IsDeleted: true
+- RecordId: ac2c1a47-54ce-478a-9d33-4a9265272172
+  DisplayName: ac2c1a47-54ce-478a-9d33-4a9265272172
+  CheckSum: 
+  IsDeleted: true
+- RecordId: b08f1d62-30c7-453a-b210-ee4c9e3838ce
+  DisplayName: main.2a8d1e09.js
   CheckSum: 
   IsDeleted: true
 - RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
@@ -16,6 +32,10 @@ adx_webfile:
   CheckSum: 
   IsDeleted: true
 annotation:
+- RecordId: 6044c461-cf83-4530-b9e7-d96c63b3c0d2
+  DisplayName: main.e630eb1c.css.map
+  CheckSum: 
+  IsDeleted: true
 - RecordId: 7706b0ee-376d-4cb5-899f-98d9198206ed
   DisplayName: main.ad97f687.js
   CheckSum: 
@@ -26,6 +46,14 @@ annotation:
   IsDeleted: true
 - RecordId: 8edc1270-cf66-4137-b06e-971a9f59be01
   DisplayName: main.20e56d09.js
+  CheckSum: 
+  IsDeleted: true
+- RecordId: 8f4aa4ad-b0be-4b99-aaa3-d09f55c6e9db
+  DisplayName: main.20e56d09.js.LICENSE.txt
+  CheckSum: 
+  IsDeleted: true
+- RecordId: ac2c1a47-54ce-478a-9d33-4a9265272172
+  DisplayName: main.ad97f687.js.LICENSE.txt
   CheckSum: 
   IsDeleted: true
 - RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
