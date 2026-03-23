@@ -136,6 +136,9 @@
       "login": "Log in",
       "forgotPassword": "Forgot your password?",
       "createAccount": "Create an account"
+    },
+    "rejected": {
+      "message": "Your account access request has been rejected. Please contact our support team if you believe this is an error."
     }
   },
 
@@ -147,7 +150,7 @@
     "description": "The page you are looking for doesn't exist or has been moved.",
 
     "actions": {
-      "goToDocuments": "Go to Documents",
+      "goHome": "Go to Home",
       "back": "Go back"
     }
   },

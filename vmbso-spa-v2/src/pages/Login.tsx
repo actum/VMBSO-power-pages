@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
@@ -7,6 +7,7 @@ import {
   Box,
   Grid,
   CircularProgress,
+  Alert,
   // Tooltip,
   // IconButton,
 } from '@mui/material';
@@ -15,11 +16,12 @@ import { config } from '../config/powerPages.config';
 import { getCsrfToken } from '../services/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import LanguagePicker from '../components/common/LanguagePicker';
 // import { Cookie as CookieIcon } from '@mui/icons-material'
 // import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, loading, isProfileComplete } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
   //const { setDialogOpen } = useContext(CookiesContext);
@@ -29,10 +31,9 @@ export const Login: React.FC = () => {
     document.title = t('loginPage:pageTitle');
   }, [t]);
 
-  // Auto-redirect authenticated users
-  // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
+  // Auto-redirect authenticated users (rejected users stay on login to see the error)
   React.useEffect(() => {
-    if (!loading && isAuthenticated) {
+    if (!loading && isAuthenticated && !isRejected) {
       if (config.devMode) {
         console.log(
           '[LOGIN] User already authenticated, redirecting to',
@@ -45,7 +46,7 @@ export const Login: React.FC = () => {
         navigate('/', { replace: true });
       }
     }
-  }, [isAuthenticated, isProfileComplete, loading, navigate]);
+  }, [isAuthenticated, isProfileComplete, isRejected, loading, navigate]);
 
   /**
    * Initiate Entra External ID authentication via a hidden form POST to
@@ -133,6 +134,11 @@ export const Login: React.FC = () => {
                 borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
               }}
             >
+              {/* Language picker */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <LanguagePicker />
+              </Box>
+
               {/* Logo */}
               <Box sx={{ mb: 4 }}>
                 <img
@@ -141,6 +147,13 @@ export const Login: React.FC = () => {
                   style={{ height: "2.6rem" }}
                 />
               </Box>
+
+              {/* Rejected account alert */}
+              {isRejected && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                  {t("loginPage:rejected.message")}
+                </Alert>
+              )}
 
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
                   {t("loginPage:title")}

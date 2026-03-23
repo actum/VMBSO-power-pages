@@ -134,6 +134,9 @@
       "login": "Inloggen",
       "forgotPassword": "Wachtwoord vergeten?",
       "createAccount": "Account aanmaken"
+    },
+    "rejected": {
+      "message": "Uw toegangsverzoek is afgewezen. Neem contact op met ons ondersteuningsteam als u denkt dat dit een fout is."
     }
   },
 
@@ -145,7 +148,7 @@
     "description": "De pagina die u zoekt bestaat niet of is verplaatst.",
 
     "actions": {
-      "goToDocuments": "Naar documenten",
+      "goHome": "Naar startpagina",
       "back": "Terug"
     }
   },

@@ -368,15 +368,16 @@ export const Documents: React.FC = () => {
         </Box>
 
         {/* Main content */}
-        <Box sx={{ flex: 1, px: { xs: 0, md: 4 }, py: 1 }}>
+        <Box sx={{ flex: 1, px: { xs: 6, md: 4 }, py: 1 }}>
 
           {/* Mobile: filters button */}
-          <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 2 }}>
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end', mb: 2 }}>
             <Button
               variant="outlined"
-              size="small"
+              size="medium"
               startIcon={<FilterListIcon />}
               onClick={() => setDrawerOpen(true)}
+              sx={{ fontSize: '14px', textTransform: 'none' }}
             >
               {t('filters.button')}
             </Button>

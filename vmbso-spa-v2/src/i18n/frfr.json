@@ -134,6 +134,9 @@
       "login": "Se connecter",
       "forgotPassword": "Mot de passe oublié ?",
       "createAccount": "Créer un compte"
+    },
+    "rejected": {
+      "message": "Votre demande d'accès a été rejetée. Veuillez contacter notre équipe d'assistance si vous pensez qu'il s'agit d'une erreur."
     }
   },
 
@@ -145,7 +148,7 @@
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
 
     "actions": {
-      "goToDocuments": "Aller aux documents",
+      "goHome": "Aller à l'accueil",
       "back": "Retour"
     }
   },

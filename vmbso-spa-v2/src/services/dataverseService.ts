@@ -388,7 +388,7 @@ export const dataverseService = {
 
       try {
         const guid = languageId.replace(/[{}]/g, '');
-        const filter = `_actum_languageid_value eq '${guid}' and statecode eq 0`;
+        const filter = `_actum_languageid_value eq ${guid} and statecode eq 0`;
         const query = buildODataQuery({
           select: [
             'actum_landingpagecontentid',
@@ -401,7 +401,6 @@ export const dataverseService = {
             'actum_bannerimageurl',
             'actum_bannerimagetext',
             'actum_bannertitle',
-            '_actum_languageid_value',
             'statecode',
           ],
           filter,

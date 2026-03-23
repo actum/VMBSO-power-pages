@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
@@ -14,6 +14,19 @@ import { UpdateProfile } from './pages/UpdateProfile';
 import { NotFound } from './pages/NotFound';
 import { Home } from './pages/Home';
 import LangHandler from './components/LangHandler';
+
+/**
+ * Catches Entra External ID cancel/error redirects (e.g. /signin-entraexternalid_2?error=...)
+ * which vary per environment. Redirects silently to /login instead of showing a 404.
+ * All other unknown paths show the normal NotFound page.
+ */
+const CatchAll: React.FC = () => {
+  const location = useLocation();
+  const isEntraCallback =
+    location.pathname.startsWith('/signin-') ||
+    new URLSearchParams(location.search).has('error');
+  return isEntraCallback ? <Navigate to="/login" replace /> : <NotFound />;
+};
 
 function App() {
 
@@ -79,8 +92,8 @@ function App() {
                 }
               />
 
-              {/* 404 Not Found */}
-              <Route path="*" element={<NotFound />} />
+              {/* 404 Not Found — also catches Entra cancel redirects */}
+              <Route path="*" element={<CatchAll />} />
             </Routes>
           </AuthProvider>
         {/* </CookiesProvider> */}
