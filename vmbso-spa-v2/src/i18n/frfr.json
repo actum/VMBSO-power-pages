@@ -36,9 +36,15 @@
     "validation": {
       "noDocumentsFound": "Aucun document trouvé."
     },
+    "filters": {
+      "brand": "Marque",
+      "fileType": "Type de fichier",
+      "button": "Filtres"
+    },
     "actions": {
       "search": "Rechercher",
-      "clear": "Effacer"
+      "clear": "Effacer",
+      "download": "Télécharger"
     },
     "download": {
       "preparing": "Nous préparons votre téléchargement",

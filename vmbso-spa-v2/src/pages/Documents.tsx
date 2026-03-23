@@ -1,46 +1,170 @@
 import React, { useState, useMemo } from 'react';
-import { Typography, Box, TextField, CircularProgress, Alert, Button, IconButton, Modal, Backdrop } from '@mui/material';
-import { DownloadOutlined } from '@mui/icons-material';
+import {
+  Typography,
+  Box,
+  TextField,
+  CircularProgress,
+  Alert,
+  Button,
+  IconButton,
+  Modal,
+  Backdrop,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  Drawer,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Divider,
+} from '@mui/material';
+import {
+  DownloadOutlined,
+  FilterList as FilterListIcon,
+  Search as SearchIcon,
+  Close as CloseIcon,
+} from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { Layout } from '../components/Layout';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
+import { DocumentWithBrands } from '../types/document';
+
+// Rotating palette for brand chips (cycles if more than 4 distinct brands)
+const BRAND_CHIP_COLORS = [
+  { bg: '#eeedfe', color: '#534ab7' },
+  { bg: '#e6f1fb', color: '#185fa5' },
+  { bg: '#e1f5ee', color: '#0f6e56' },
+  { bg: '#fef3e2', color: '#8a5c00' },
+];
 
 export const Documents: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
+  const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
+  const [selectedExtensions, setSelectedExtensions] = useState<Set<string>>(new Set());
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { documents, loading, error, refetch } = useDocuments();
   const { currentUser } = useAuth();
-  const { t } = useTranslation("documentsPage");
-  
-  React.useEffect(() => { 
+  const { t } = useTranslation('documentsPage');
+
+  React.useEffect(() => {
     document.title = t('pageTitle');
   }, [t]);
 
+  // Derive unique brands with stable color assignments
+  const allBrands = useMemo(() => {
+    const map = new Map<string, string>();
+    documents.forEach(doc => {
+      doc.brands.forEach(b => { if (b.id) map.set(b.id, b.name); });
+    });
+    return Array.from(map.entries()).map(([id, name], i) => ({
+      id,
+      name,
+      colors: BRAND_CHIP_COLORS[i % BRAND_CHIP_COLORS.length],
+    }));
+  }, [documents]);
+
+  // Derive unique file extensions
+  const allExtensions = useMemo(() => {
+    const set = new Set<string>();
+    documents.forEach(doc => {
+      if (doc.actum_fileextension) set.add(doc.actum_fileextension.toLowerCase());
+    });
+    return Array.from(set);
+  }, [documents]);
+
+  // Color lookup by brand ID
+  const brandColorMap = useMemo(() => {
+    const map = new Map<string, typeof BRAND_CHIP_COLORS[0]>();
+    allBrands.forEach(b => map.set(b.id, b.colors));
+    return map;
+  }, [allBrands]);
+
+  const isBrandChecked = (brandId: string) =>
+    selectedBrands.size === 0 || selectedBrands.has(brandId);
+
+  const isExtChecked = (ext: string) =>
+    selectedExtensions.size === 0 || selectedExtensions.has(ext);
+
+  const toggleBrand = (brandId: string) => {
+    setSelectedBrands(prev => {
+      if (prev.size === 0) {
+        // Transition from "all" to "all except this one"
+        const next = new Set(allBrands.map(b => b.id));
+        next.delete(brandId);
+        return next;
+      }
+      const next = new Set(prev);
+      if (next.has(brandId)) {
+        next.delete(brandId);
+      } else {
+        next.add(brandId);
+        if (next.size === allBrands.length) return new Set(); // back to "all"
+      }
+      return next;
+    });
+  };
+
+  const toggleExtension = (ext: string) => {
+    setSelectedExtensions(prev => {
+      if (prev.size === 0) {
+        const next = new Set(allExtensions);
+        next.delete(ext);
+        return next;
+      }
+      const next = new Set(prev);
+      if (next.has(ext)) {
+        next.delete(ext);
+      } else {
+        next.add(ext);
+        if (next.size === allExtensions.length) return new Set();
+      }
+      return next;
+    });
+  };
+
   // Client-side filtering
   const filteredDocuments = useMemo(() => {
-    if (!searchText.trim()) return documents;
-    const search = searchText.toLowerCase();
-    return documents.filter(doc => 
-      doc.actum_name?.toLowerCase().includes(search) ||
-      doc.actum_filename?.toLowerCase().includes(search)
-    );
-  }, [documents, searchText]);
+    return documents.filter(doc => {
+      // Brand filter
+      if (selectedBrands.size > 0 && !doc.brands.some(b => selectedBrands.has(b.id))) return false;
+      // Extension filter
+      if (
+        selectedExtensions.size > 0 &&
+        !selectedExtensions.has(doc.actum_fileextension?.toLowerCase() ?? '')
+      ) return false;
+      // Search
+      if (searchText.trim()) {
+        const s = searchText.toLowerCase();
+        if (
+          !doc.actum_name?.toLowerCase().includes(s) &&
+          !doc.actum_filename?.toLowerCase().includes(s) &&
+          !doc.actum_description?.toLowerCase().includes(s)
+        ) return false;
+      }
+      return true;
+    });
+  }, [documents, selectedBrands, selectedExtensions, searchText]);
 
-  const handleSearch = () => {
-    // Search is now handled by filteredDocuments memo
+  const formatDate = (isoDate: string) => {
+    try {
+      return new Date(isoDate).toLocaleDateString(undefined, {
+        day: 'numeric', month: 'short', year: 'numeric',
+      });
+    } catch {
+      return isoDate;
+    }
   };
 
-  const handleClearSearch = () => {
-    setSearchText('');
-  };
-
-  const handleDownload = async (doc: typeof documents[0]) => {
+  const handleDownload = async (doc: DocumentWithBrands) => {
     if (!currentUser?.contactid) {
-      toast.error(t("errors.notAuthenticated"));
+      toast.error(t('errors.notAuthenticated'));
       return;
     }
 
@@ -48,11 +172,10 @@ export const Documents: React.FC = () => {
       setDownloadingDocId(doc.actum_productdocumentationid);
       setIsPreparingDownload(true);
 
-      // Create download log record
       console.log('[DOWNLOAD] Creating download log for document:', doc.actum_productdocumentationid);
       const downloadLog = await dataverseService.downloadLogs.create(
         currentUser.contactid,
-        doc.actum_productdocumentationid
+        doc.actum_productdocumentationid,
       );
       console.log('[DOWNLOAD] Download log created - Full response:', downloadLog);
       console.log('[DOWNLOAD] Download log ID:', downloadLog.actum_downloadlogid);
@@ -61,40 +184,36 @@ export const Documents: React.FC = () => {
         throw new Error('Download log created but no ID returned');
       }
 
-      // Poll for SAS token (check every 3 seconds, timeout after 60 seconds)
       const startTime = Date.now();
-      const pollInterval = 3000; // 3 seconds
-      const timeout = 60000; // 60 seconds
+      const pollInterval = 3000;
+      const timeout = 60000;
       let pollAttempt = 0;
 
       const poll = (): void => {
         pollAttempt++;
         const elapsed = Date.now() - startTime;
-        
         console.log(`[DOWNLOAD] Polling attempt ${pollAttempt} (elapsed: ${Math.round(elapsed / 1000)}s)`);
-        
+
         if (elapsed > timeout) {
           console.error('[DOWNLOAD] Timeout reached after', pollAttempt, 'attempts');
           setDownloadingDocId(null);
           setIsPreparingDownload(false);
-          toast.error(t("errors.timeout"));
+          toast.error(t('errors.timeout'));
           return;
         }
 
         dataverseService.downloadLogs.getById(downloadLog.actum_downloadlogid)
-          .then((log) => {
-            console.log('[DOWNLOAD] Poll response:', { 
-              hasSasToken: !!log.actum_sastoken, 
-              tokenPreview: log.actum_sastoken ? log.actum_sastoken.substring(0, 50) + '...' : null 
+          .then(log => {
+            console.log('[DOWNLOAD] Poll response:', {
+              hasSasToken: !!log.actum_sastoken,
+              tokenPreview: log.actum_sastoken ? log.actum_sastoken.substring(0, 50) + '...' : null,
             });
-            
+
             if (log.actum_sastoken) {
-              // SAS token available - trigger download
               console.log('[DOWNLOAD] SAS token ready, triggering download');
               setDownloadingDocId(null);
               setIsPreparingDownload(false);
-              
-              // Force browser download
+
               const link = document.createElement('a');
               link.href = log.actum_sastoken;
               link.download = doc.actum_filename || 'download';
@@ -103,39 +222,103 @@ export const Documents: React.FC = () => {
               document.body.removeChild(link);
               console.log('[DOWNLOAD] Download triggered successfully');
             } else {
-              // Not ready yet - poll again after interval
               console.log(`[DOWNLOAD] No SAS token yet, will poll again in ${pollInterval / 1000}s`);
               setTimeout(() => poll(), pollInterval);
             }
           })
-          .catch((pollError) => {
+          .catch(pollError => {
             console.error('[DOWNLOAD] Error during polling:', pollError);
-            // Continue polling even if there's an error (might be transient)
             if (elapsed < timeout) {
               console.log('[DOWNLOAD] Will retry polling despite error');
               setTimeout(() => poll(), pollInterval);
             } else {
               setDownloadingDocId(null);
               setIsPreparingDownload(false);
-              toast.error(t("errors.statusCheck"));
+              toast.error(t('errors.statusCheck'));
             }
           });
       };
 
-      // Start polling
       console.log('[DOWNLOAD] Starting polling...');
       poll();
     } catch (error) {
       setDownloadingDocId(null);
       setIsPreparingDownload(false);
       console.error('Download error:', error);
-      toast.error(t("errors.downloadFailed"));
+      toast.error(t('errors.downloadFailed'));
     }
   };
 
+  // Shared filter panel JSX used in both sidebar and mobile drawer
+  const renderFilterPanel = () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box>
+        <Typography
+          variant="overline"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.08em', display: 'block', mb: 1, fontSize: '10px' }}
+        >
+          {t('filters.brand')}
+        </Typography>
+        <FormGroup>
+          {allBrands.map(brand => (
+            <FormControlLabel
+              key={brand.id}
+              sx={{ m: 0, py: '2px' }}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={isBrandChecked(brand.id)}
+                  onChange={() => toggleBrand(brand.id)}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2" sx={{ color: '#444' }}>
+                  {brand.name}
+                </Typography>
+              }
+            />
+          ))}
+        </FormGroup>
+      </Box>
+
+      <Divider />
+
+      <Box>
+        <Typography
+          variant="overline"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.08em', display: 'block', mb: 1, fontSize: '10px' }}
+        >
+          {t('filters.fileType')}
+        </Typography>
+        <FormGroup>
+          {allExtensions.map(ext => (
+            <FormControlLabel
+              key={ext}
+              sx={{ m: 0, py: '2px' }}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={isExtChecked(ext)}
+                  onChange={() => toggleExtension(ext)}
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body2" sx={{ color: '#444' }}>
+                  {ext.toUpperCase()}
+                </Typography>
+              }
+            />
+          ))}
+        </FormGroup>
+      </Box>
+    </Box>
+  );
+
   return (
     <Layout>
-      {/* Full-screen loading overlay */}
+      {/* Full-screen download preparing overlay */}
       <Modal
         open={isPreparingDownload}
         closeAfterTransition
@@ -156,119 +339,269 @@ export const Documents: React.FC = () => {
         >
           <CircularProgress size={60} sx={{ color: 'primary.main', mb: 3 }} />
           <Typography variant="h5" sx={{ fontWeight: 500, color: 'primary.main' }}>
-            {t("download.preparing")}
+            {t('download.preparing')}
           </Typography>
           <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-            {t("download.preparingSubtext")}
+            {t('download.preparingSubtext')}
           </Typography>
         </Box>
       </Modal>
 
-      <Box>
-        <Typography variant="h4" gutterBottom>
-          {t("documentsSearch.label")}
-        </Typography>
+      {/* Page layout: sidebar + main */}
+      <Box sx={{ display: 'flex', minHeight: '60vh', mx: -3 }}>
 
-        {/* Search Controls */}
-        <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
-          <TextField
-            placeholder={t("documentsSearch.placeholder")}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            size="small"
-            fullWidth
-          />
-          <Button variant="contained" onClick={handleSearch} disabled={loading}>
-            {t("actions.search")}
-          </Button>
-          <Button variant="outlined" onClick={handleClearSearch} disabled={loading}>
-            {t("actions.clear")}
-          </Button>
+        {/* Desktop sidebar */}
+        <Box
+          sx={{
+            width: 220,
+            flexShrink: 0,
+            display: { xs: 'none', md: 'flex' },
+            flexDirection: 'column',
+            borderRight: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'grey.50',
+            px: 3,
+            py: 3,
+          }}
+        >
+          {renderFilterPanel()}
         </Box>
 
-        {/* Loading State */}
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
+        {/* Main content */}
+        <Box sx={{ flex: 1, px: { xs: 0, md: 4 }, py: 1 }}>
+
+          {/* Mobile: filters button */}
+          <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 2 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<FilterListIcon />}
+              onClick={() => setDrawerOpen(true)}
+            >
+              {t('filters.button')}
+            </Button>
           </Box>
-        )}
 
-        {/* Error State */}
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => refetch()}>
-            {error}
-          </Alert>
-        )}
+          {/* Mobile: filters drawer */}
+          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+            <Box sx={{ width: 280, p: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6">{t('filters.button')}</Typography>
+                <IconButton size="small" onClick={() => setDrawerOpen(false)}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              {renderFilterPanel()}
+            </Box>
+          </Drawer>
 
-        {/* Documents List */}
-        {!loading && !error && (
-          <Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {t("documentsList.results", { count: filteredDocuments.length })}
+          {/* Page title */}
+          <Typography variant="h4" gutterBottom>
+            {t('documentsSearch.label')}
+          </Typography>
+
+          {/* Results bar: count + search */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 2,
+              mb: 3,
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              {t('documentsList.results', { count: filteredDocuments.length })}
             </Typography>
-            
-            {filteredDocuments.length === 0 ? (
-              <Alert severity="info">
-                {t("validation.noDocumentsFound")}
-              </Alert>
-            ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {filteredDocuments.map((doc) => (
-                  <Box
-                    key={doc.actum_productdocumentationid}
+            <TextField
+              placeholder={t('documentsSearch.placeholder')}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              size="small"
+              sx={{ width: { xs: '100%', sm: 260 } }}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ color: 'text.disabled', mr: 1, fontSize: 18 }} />,
+                endAdornment: searchText ? (
+                  <IconButton size="small" onClick={() => setSearchText('')} edge="end">
+                    <CloseIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                ) : null,
+              }}
+            />
+          </Box>
+
+          {/* Loading state */}
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }} onClose={() => refetch()}>
+              {error}
+            </Alert>
+          )}
+
+          {/* Empty state */}
+          {!loading && !error && filteredDocuments.length === 0 && (
+            <Alert severity="info">{t('validation.noDocumentsFound')}</Alert>
+          )}
+
+          {/* Document cards */}
+          {!loading && !error && filteredDocuments.length > 0 && (
+            <Grid container spacing={2}>
+              {filteredDocuments.map(doc => (
+                <Grid item xs={12} sm={6} md={4} key={doc.actum_productdocumentationid}>
+                  <Card
+                    variant="outlined"
                     sx={{
-                      p: 2,
-                      border: '1px solid #e0e0e0',
-                      borderRadius: 1,
+                      height: '100%',
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                      flexDirection: 'column',
+                      transition: 'border-color 0.15s, box-shadow 0.15s',
                       '&:hover': {
-                        backgroundColor: '#f5f5f5',
+                        borderColor: 'primary.main',
+                        boxShadow: '0 2px 12px rgba(0, 144, 178, 0.1)',
                       },
                     }}
                   >
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6">{doc.actum_name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t("documentDetails.fileName")}: {doc.actum_filename}
+                    <CardContent sx={{ flex: 1, pb: 0, px: 2.5, pt: 2.5 }}>
+                      {/* Extension badge + brand chips */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          justifyContent: 'space-between',
+                          gap: 1,
+                          flexWrap: 'wrap',
+                          mb: 2,
+                        }}
+                      >
+                        {doc.actum_fileextension && (
+                          <Chip
+                            label={doc.actum_fileextension.toUpperCase()}
+                            variant="outlined"
+                            size="small"
+                            sx={{ fontSize: '10px', height: 22, borderRadius: '4px', flexShrink: 0 }}
+                          />
+                        )}
+                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                          {doc.brands.map(brand => {
+                            const colors = brandColorMap.get(brand.id) ?? BRAND_CHIP_COLORS[0];
+                            return (
+                              <Chip
+                                key={brand.id}
+                                label={brand.name}
+                                size="small"
+                                sx={{
+                                  fontSize: '10px',
+                                  height: 22,
+                                  borderRadius: '10px',
+                                  fontWeight: 600,
+                                  bgcolor: colors.bg,
+                                  color: colors.color,
+                                  border: 'none',
+                                }}
+                              />
+                            );
+                          })}
+                        </Box>
+                      </Box>
+
+                      {/* Document name */}
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 700,
+                          lineHeight: 1.4,
+                          mb: 1,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {doc.actum_name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                        {t("documentDetails.visible")}: {doc.actum_visible ? t("documentDetails.yes") : t("documentDetails.no")} | 
-                        {t("documentDetails.unapprovedAccess")}: {doc.actum_unapprovedaccess ? t("documentDetails.yes") : t("documentDetails.no")}
-                      </Typography>
-                    </Box>
-                    <IconButton
-                      onClick={() => handleDownload(doc)}
-                      aria-label={t("download.buttonAriaLabel", { documentName: doc.actum_name })}
-                      disabled={downloadingDocId === doc.actum_productdocumentationid}
-                      sx={{ 
-                        ml: 2,
-                        width: 56,
-                        height: 56,
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: 'primary.dark',
-                        },
-                        '&:disabled': {
-                          backgroundColor: 'action.disabledBackground',
-                        },
+
+                      {/* Description */}
+                      {doc.actum_description && (
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            lineHeight: 1.5,
+                            mb: '20px',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {doc.actum_description}
+                        </Typography>
+                      )}
+                    </CardContent>
+
+                    {/* Footer: language + date (left) | download (right) */}
+                    <CardActions
+                      sx={{
+                        px: 2.5,
+                        pb: 2.5,
+                        pt: 2,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
-                      {downloadingDocId === doc.actum_productdocumentationid ? (
-                        <CircularProgress size={28} sx={{ color: 'white' }} />
-                      ) : (
-                        <DownloadOutlined sx={{ fontSize: 28 }} />
-                      )}
-                    </IconButton>
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </Box>
-        )}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {doc.actum_language && (
+                          <Box
+                            sx={{
+                              border: '1px solid',
+                              borderColor: 'divider',
+                              borderRadius: '3px',
+                              px: 0.75,
+                              py: 0.25,
+                              lineHeight: 1,
+                              fontSize: '10px',
+                              fontWeight: 700,
+                              color: 'text.secondary',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            {doc.actum_language.toUpperCase()}
+                          </Box>
+                        )}
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '10px' }}>
+                          {formatDate(doc.createdon)}
+                        </Typography>
+                      </Box>
+                      <Button
+                        size="medium"
+                        variant="contained"
+                        onClick={() => handleDownload(doc)}
+                        disabled={downloadingDocId === doc.actum_productdocumentationid}
+                        startIcon={
+                          downloadingDocId === doc.actum_productdocumentationid
+                            ? <CircularProgress size={16} color="inherit" />
+                            : <DownloadOutlined />
+                        }
+                        aria-label={t('download.buttonAriaLabel', { documentName: doc.actum_name })}
+                        sx={{ textTransform: 'none', flexShrink: 0 }}
+                      >
+                        {t('actions.download')}
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
       </Box>
     </Layout>
   );

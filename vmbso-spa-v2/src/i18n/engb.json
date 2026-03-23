@@ -38,9 +38,15 @@
       "noDocumentsFound": "No documents found."
     },
 
+    "filters": {
+      "brand": "Brand",
+      "fileType": "File type",
+      "button": "Filters"
+    },
     "actions": {
       "search": "Search",
-      "clear": "Clear"
+      "clear": "Clear",
+      "download": "Download"
     },
     "download": {
       "preparing": "We're preparing your download",

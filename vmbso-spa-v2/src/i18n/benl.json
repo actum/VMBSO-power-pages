@@ -36,9 +36,15 @@
     "validation": {
       "noDocumentsFound": "Geen documenten gevonden."
     },
+    "filters": {
+      "brand": "Merk",
+      "fileType": "Bestandstype",
+      "button": "Filters"
+    },
     "actions": {
       "search": "Zoeken",
-      "clear": "Wissen"
+      "clear": "Wissen",
+      "download": "Download"
     },
     "download": {
       "preparing": "We bereiden uw download voor",
