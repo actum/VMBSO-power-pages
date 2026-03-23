@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import theme from './theme/theme';
 import { AuthProvider } from './contexts/AuthContext';
-import { CookiesProvider } from './contexts/CookiesContext';
+// import { CookiesProvider } from './contexts/CookiesContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Documents } from './pages/Documents';
@@ -44,7 +44,7 @@ function App() {
         pauseOnHover
       />
       <Router>
-        <CookiesProvider>
+        {/* <CookiesProvider> */}
           <AuthProvider>
             <LangHandler />
             <Routes>
@@ -83,7 +83,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
-        </CookiesProvider>
+        {/* </CookiesProvider> */}
       </Router>
     </ThemeProvider>
   );

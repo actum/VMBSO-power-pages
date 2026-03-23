@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -13,7 +13,7 @@ import {
   useTheme,
   useMediaQuery,
   Alert,
-  Link,
+  // Link,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from './common/LanguagePicker';
-import { CookiesContext } from '../contexts/CookiesContext';
+// import { CookiesContext } from '../contexts/CookiesContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { setDialogOpen } = useContext(CookiesContext);
+  // const { setDialogOpen } = useContext(CookiesContext);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -212,7 +212,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Typography variant="body2" color="white">
             {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
-          <Link
+          {/* <Link
             color="primary.contrastText"
             component="a"
             variant="caption"
@@ -221,7 +221,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             sx={{ cursor: "pointer" }}
           >
             {t('footer:cookieSettings')}
-          </Link>
+          </Link> */}
         </Container>
       </Box>
     </Box>

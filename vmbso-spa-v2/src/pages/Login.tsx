@@ -7,22 +7,22 @@ import {
   Box,
   Grid,
   CircularProgress,
-  Tooltip,
-  IconButton,
+  // Tooltip,
+  // IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { getCsrfToken } from '../services/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { Cookie as CookieIcon } from '@mui/icons-material'
-import { CookiesContext } from '../contexts/CookiesContext';
+// import { Cookie as CookieIcon } from '@mui/icons-material'
+// import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, loading, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
-  const { setDialogOpen } = useContext(CookiesContext);
+  //const { setDialogOpen } = useContext(CookiesContext);
   const [loginLoading, setLoginLoading] = React.useState(false);
 
   React.useEffect(() => { 
@@ -212,7 +212,7 @@ export const Login: React.FC = () => {
         </Grid>
       </Container>
 
-      <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
+      {/* <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
         <IconButton
           onClick={() => setDialogOpen(prev => !prev)}
           sx={{
@@ -225,7 +225,7 @@ export const Login: React.FC = () => {
         >
           <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
     </Box>
   );
 };
