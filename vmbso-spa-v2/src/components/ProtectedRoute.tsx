@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
+import { config } from "../config/powerPages.config";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -25,6 +26,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireCompleteProfile = true 
 }) => {
   const { isAuthenticated, loading, isProfileComplete } = useAuth();
+
+  // In local dev mode, bypass all auth and profile checks
+  if (config.devMode) {
+    return <>{children}</>;
+  }
 
   // Show loading spinner while checking authentication
   if (loading) {

@@ -15,13 +15,18 @@
 const PORTAL_URL = process.env.REACT_APP_PORTAL_URL ?? '';
 
 console.log('[CONFIG DEBUG] PORTAL_URL:', PORTAL_URL);
-console.log('[CONFIG DEBUG] REACT_APP_DEV_MODE:', process.env.REACT_APP_DEV_MODE);
-console.log('[CONFIG DEBUG] devMode will be:', process.env.REACT_APP_DEV_MODE === 'true');
+console.log('[CONFIG DEBUG] NODE_ENV:', process.env.NODE_ENV);
+console.log('[CONFIG DEBUG] devMode will be:', process.env.NODE_ENV === 'development');
 console.log('[CONFIG DEBUG] REACT_APP_ENTRA_PROVIDER:', process.env.REACT_APP_ENTRA_PROVIDER);
 
 export const config = {
-  /** Whether the app is running in local development mode. */
-  devMode: process.env.REACT_APP_DEV_MODE === 'true',
+  /**
+   * Whether the app is running in local development mode.
+   * Uses NODE_ENV which CRA sets automatically: 'development' for `npm start`,
+   * 'production' for `npm run build`. Cannot be overridden from .env files by design,
+   * so this can never accidentally be true in a production build.
+   */
+  devMode: process.env.NODE_ENV === 'development',
 
   /** Power Pages / Entra External ID redirect endpoints. */
   auth: {
