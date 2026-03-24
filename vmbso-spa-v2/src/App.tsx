@@ -13,6 +13,7 @@ import { Documents } from './pages/Documents';
 import { UpdateProfile } from './pages/UpdateProfile';
 import { NotFound } from './pages/NotFound';
 import { Home } from './pages/Home';
+import { News } from './pages/News';
 import LangHandler from './components/LangHandler';
 
 /**
@@ -78,6 +79,15 @@ function App() {
                 element={
                   <ProtectedRoute requireCompleteProfile={false}>
                     <UpdateProfile />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/news"
+                element={
+                  <ProtectedRoute>
+                    <News />
                   </ProtectedRoute>
                 }
               />

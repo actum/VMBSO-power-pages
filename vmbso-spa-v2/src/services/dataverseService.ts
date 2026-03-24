@@ -196,7 +196,7 @@ export const dataverseService = {
     async getById(accountId: string): Promise<Account | null> {
       try {
         const query = buildODataQuery({
-          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value'],
+          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value', '_actum_roleid_value'],
         });
         const response = await apiClient.odata<Account>(`/accounts(${accountId})${query}`);
         return response;

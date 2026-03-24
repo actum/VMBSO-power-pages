@@ -425,5 +425,62 @@ const languages = await dataverseService.languages.getByCountry(countryId);
 
 ---
 
+## News Article Table
+
+The **News Article** (`actum_newspagecontent`) table stores news, newsletters, and announcements displayed on the News page.
+
+### Fields
+```typescript
+actum_newspagecontentid: string     // Primary key (GUID)
+actum_title: string                 // Display title shown on card and modal
+actum_summary?: string              // Short excerpt shown on article card (plain text)
+actum_body?: string                 // Full article body (CKEditor rich HTML)
+actum_publishdate?: string          // ISO date — used for display and ordering
+actum_ctahint?: string              // Optional CTA hint text (shown in modal banner)
+actum_ctalabel?: string             // Optional CTA button label
+actum_ctaurl?: string               // Optional CTA button URL
+createdon: string                   // ISO date
+statecode: number                   // 0 = Active, 1 = Inactive
+```
+
+### Filtering / audience fields (all optional — null = show to all)
+```typescript
+_actum_languageid_value?: string    // Lookup → Language (FetchXML attr: actum_languageid)
+_actum_countryid_value?: string     // Lookup → Country  (FetchXML attr: actum_countryid)
+_actum_roleid_value?: string        // Lookup → Role     (FetchXML attr: actum_roleid)
+```
+
+### Brand relationship (M2M)
+Brands are linked via the intersect table `actum_newspagecontent_actum_brandset`:
+
+| Field | Description |
+|---|---|
+| `actum_newspagecontentid` | FK → News Article |
+| `actum_brandid` | FK → Brand |
+| `actum_newspagecontent_actum_brandid` | PK of intersect record |
+
+- OData collection: `/_api/actum_newspagecontent_actum_brandset`
+- FetchXML intersect entity name: `actum_newspagecontent_actum_brandset`
+
+### Fetching articles with brands (FetchXML)
+A single FetchXML query resolves the M2M via two chained `link-entity` elements:
+```xml
+<link-entity name="actum_newspagecontent_actum_brandset"
+             from="actum_newspagecontentid" to="actum_newspagecontentid"
+             link-type="outer" intersect="true">
+  <link-entity name="actum_brand"
+               from="actum_brandid" to="actum_brandid"
+               link-type="outer" alias="brand">
+    <attribute name="actum_brandid"/>
+    <attribute name="actum_name"/>
+  </link-entity>
+</link-entity>
+```
+Results contain one row per article × brand pair. Deduplicate client-side by `actum_newspagecontentid`.
+
+**Implementation**: See [useNews.ts](vmbso-spa-v2/src/hooks/useNews.ts)
+
+---
+
 ## Last Updated
-2026-03-12
+2026-03-24

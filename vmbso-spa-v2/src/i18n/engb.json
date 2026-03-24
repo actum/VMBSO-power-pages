@@ -84,9 +84,30 @@
     "cookieSettings": "Cookie settings"
   },
 
+  "newsPage": {
+    "pageTitle": "News | VMBSO Customer Portal",
+    "title": "News / Content page",
+    "subtitle": "Latest updates, newsletters and announcements",
+    "filters": {
+      "allBrands": "All brands"
+    },
+    "actions": {
+      "readMore": "Read more",
+      "close": "Close"
+    },
+    "modal": {
+      "published": "Published"
+    },
+    "validation": {
+      "noArticlesFound": "No articles found."
+    }
+  },
+
   "header": {
     "navigation": {
-      "documents": "Documents"
+      "home": "Home",
+      "documents": "Documents",
+      "news": "News"
     },
     "menu": {
       "profile": "Profile",

@@ -82,9 +82,30 @@
     "cookieSettings": "Cookie-instellingen"
   },
 
+  "newsPage": {
+    "pageTitle": "Nieuws | VMBSO Klantenportaal",
+    "title": "Nieuws / Inhoudspagina",
+    "subtitle": "Laatste updates, nieuwsbrieven en aankondigingen",
+    "filters": {
+      "allBrands": "Alle merken"
+    },
+    "actions": {
+      "readMore": "Lees meer",
+      "close": "Sluiten"
+    },
+    "modal": {
+      "published": "Gepubliceerd"
+    },
+    "validation": {
+      "noArticlesFound": "Geen artikelen gevonden."
+    }
+  },
+
   "header": {
     "navigation": {
-      "documents": "Documenten"
+      "home": "Home",
+      "documents": "Documenten",
+      "news": "Nieuws"
     },
     "menu": {
       "profile": "Profiel",

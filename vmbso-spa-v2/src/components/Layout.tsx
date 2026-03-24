@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
-  Description as DocumentsIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -84,32 +83,49 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             onClick={() => navigate('/')}
           />
 
-          {/* Navigation Links */}
-          <Box sx={{ ml: 4, display: 'flex', gap: 2 }}>
-            <Button
-              size={isMobile ? "small" : "medium"}
-              color="inherit"
-              startIcon={<DocumentsIcon />}
-              onClick={() => navigate('/documents')}
-              sx={{
-                fontSize: { xs: "1rem", md: "1.6rem" },
-                color: 'text.primary',
-                fontWeight: 500,
-                padding: { xs: "0.4rem 1.2rem", md: "0.8rem 2.4rem" },
-              }}
-            >
-              {t('header:navigation.documents')}
-            </Button>
-          </Box>
+          {/* Right side - Nav + Language + User Menu */}
+          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0 }}>
 
-          {/* Right side - Language and User Menu */}
-          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Navigation links — Home | Documents | News */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0 }}>
+              {[
+                { label: t('header:navigation.home'), path: '/' },
+                { label: t('header:navigation.documents'), path: '/documents' },
+                { label: t('header:navigation.news'), path: '/news' },
+              ].map(item => (
+                <Button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  sx={{
+                    fontSize: '1.4rem',
+                    color: 'primary.main',
+                    fontWeight: 400,
+                    textTransform: 'none',
+                    px: 2,
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+
+            {/* Pipe separator */}
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'block' },
+                width: '1px',
+                height: '2rem',
+                bgcolor: 'divider',
+                mx: 3,
+              }}
+            />
+
             {/* Language Switcher */}
             <LanguagePicker />
 
             {/* User name + avatar */}
             <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', ml: 2 }}
               onClick={handleUserMenuOpen}
             >
               {currentUser && (
