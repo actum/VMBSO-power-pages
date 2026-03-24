@@ -1,7 +1,16 @@
 /**
  * News / content article from actum_newspagecontents table.
- * brands is aggregated after fetch (M2M relationship resolved separately).
+ * brands resolved via M2M intersect (actum_newspagecontent_actum_brandset).
+ * ctas resolved via M2M intersect (actum_calltoactionbutton_actum_newspageset).
  */
+export interface NewsArticleCta {
+  id: string;
+  text: string;
+  url: string;
+  /** 182980000 = _self, 182980001 = _blank */
+  target: number;
+}
+
 export interface NewsArticle {
   actum_newspagecontentid: string;
   actum_name: string;
@@ -14,9 +23,6 @@ export interface NewsArticle {
   _actum_languageid_value?: string;
   _actum_countryid_value?: string;
   _actum_roleid_value?: string;
-  // Optional call-to-action shown in the modal footer area
-  actum_ctahint?: string;
-  actum_ctalabel?: string;
-  actum_ctaurl?: string;
   brands: { id: string; name: string }[];
+  ctas: NewsArticleCta[];
 }

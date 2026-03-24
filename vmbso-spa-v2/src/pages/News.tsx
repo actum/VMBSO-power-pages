@@ -301,38 +301,36 @@ export const News: React.FC = () => {
               )}
             </DialogContent>
 
-            {/* CTA section — only shown when article has a call to action */}
-            {openArticle.actum_ctahint && (
-              <>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 2,
-                    px: 4,
-                    py: 2.5,
-                    bgcolor: 'grey.50',
-                    borderTop: '1px solid',
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    {openArticle.actum_ctahint}
-                  </Typography>
-                  {openArticle.actum_ctalabel && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      href={openArticle.actum_ctaurl || '#'}
-                      sx={{ textTransform: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
-                    >
-                      {openArticle.actum_ctalabel}
-                    </Button>
-                  )}
-                </Box>
-              </>
+            {/* CTA buttons — only shown when article has linked CTAs */}
+            {openArticle.ctas.length > 0 && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: 1.5,
+                  px: 4,
+                  py: 2.5,
+                  bgcolor: 'grey.50',
+                  borderTop: '1px solid',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                }}
+              >
+                {openArticle.ctas.map(cta => (
+                  <Button
+                    key={cta.id}
+                    variant="contained"
+                    color="primary"
+                    href={cta.url}
+                    target={cta.target === 182980001 ? '_blank' : '_self'}
+                    rel={cta.target === 182980001 ? 'noopener noreferrer' : undefined}
+                    sx={{ textTransform: 'none', flexShrink: 0 }}
+                  >
+                    {cta.text}
+                  </Button>
+                ))}
+              </Box>
             )}
 
             <DialogActions sx={{ px: 4, py: 2.5, justifyContent: 'space-between' }}>
