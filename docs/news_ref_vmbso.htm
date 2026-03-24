@@ -1,0 +1,401 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VMPP-57 Portal Mockups — VM Building Solutions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0efea;padding:32px;display:flex;flex-direction:column;gap:40px}
+.screen-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.browser{border-radius:10px;overflow:hidden;border:1px solid #d4d2cc;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.browser-chrome{background:#f0efea;padding:8px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #dddbd3}
+.browser-dots{display:flex;gap:5px}
+.browser-dots span{width:10px;height:10px;border-radius:50%}
+.browser-dots span:nth-child(1){background:#ff5f57}
+.browser-dots span:nth-child(2){background:#febc2e}
+.browser-dots span:nth-child(3){background:#28c840}
+.browser-url{flex:1;background:#fff;border-radius:5px;padding:3px 10px;font-size:11px;color:#888;border:1px solid #dddbd3;max-width:440px;margin:0 auto}
+
+:root{--vm-teal:#00a3b4;--vm-navy:#0d2d4f;--vm-light:#f4f8f9}
+
+/* TOPBAR */
+.topbar{background:var(--vm-teal)}
+.topbar-top{background:rgba(0,0,0,0.15);padding:5px 40px;display:flex;align-items:center;justify-content:flex-end;gap:20px}
+.topbar-top a{color:rgba(255,255,255,0.8);font-size:11px;text-decoration:none}
+.topbar-top a.hl{background:rgba(255,255,255,0.2);padding:3px 12px;border-radius:3px;color:#fff}
+.topbar-main{padding:10px 40px;display:flex;align-items:center;justify-content:space-between}
+.topbar-logo{color:#fff;font-size:17px;font-weight:700;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.logo-vm{font-size:22px;font-weight:900}
+.topbar-nav{display:flex;gap:28px}
+.topbar-nav a{color:rgba(255,255,255,0.85);font-size:13px;text-decoration:none;padding:4px 0;cursor:pointer}
+.topbar-nav a.active{color:#fff;border-bottom:2px solid #fff}
+.topbar-nav a:hover{color:#fff}
+
+/* DOCUMENTS PAGE */
+.page-content{display:flex;min-height:520px}
+.sidebar{width:220px;flex-shrink:0;padding:24px 20px;border-right:1px solid #e8e8e8;background:#fafafa}
+.sidebar h4{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#999;margin-bottom:12px}
+.filter-group{margin-bottom:20px}
+.filter-item{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
+.filter-item input{accent-color:var(--vm-teal);width:13px;height:13px;cursor:pointer}
+.filter-item label{font-size:12px;color:#444;cursor:pointer}
+.filter-item input:checked + label{color:var(--vm-teal);font-weight:600}
+.main{flex:1;padding:24px 32px}
+.page-title{font-size:20px;font-weight:700;color:var(--vm-navy);margin-bottom:6px}
+.page-subtitle{font-size:13px;color:#777;margin-bottom:18px}
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.results-count{font-size:12px;color:#888;white-space:nowrap}
+
+/* SEARCH */
+.search-wrap{position:relative;width:260px}
+.search-wrap input{width:100%;border:1px solid #ddd;border-radius:6px;padding:7px 12px 7px 34px;font-size:12px;color:#333;outline:none;transition:border-color .15s}
+.search-wrap input:focus{border-color:var(--vm-teal)}
+.search-wrap .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#aaa;pointer-events:none}
+.search-wrap .clear-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;font-size:14px;display:none;line-height:1}
+.search-wrap input:not(:placeholder-shown) ~ .clear-btn{display:block}
+
+.no-results{text-align:center;padding:40px 0;color:#aaa;font-size:13px}
+
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.doc-card{background:#fff;border:1px solid #e4e4e4;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.doc-card:hover{border-color:var(--vm-teal);box-shadow:0 2px 12px rgba(0,163,180,.1)}
+.doc-card[data-hidden="true"]{display:none}
+.doc-info{padding:14px 14px 14px}
+.doc-brand-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.doc-type{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px}
+.doc-brand-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+.tag-r{background:#e1f5ee;color:#0f6e56}
+.tag-m{background:#e6f1fb;color:#185fa5}
+.tag-v{background:#eeedfe;color:#534ab7}
+.doc-name{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;line-height:1.4;min-height:36px}
+.doc-footer{display:flex;align-items:center;justify-content:space-between}
+.doc-lang{font-size:11px;color:#aaa}
+.btn-dl{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--vm-teal);color:#fff;border-radius:5px;font-size:11px;font-weight:600;border:none;cursor:pointer;transition:background .15s}
+.btn-dl:hover{background:#008a99}
+.btn-dl:active{transform:scale(0.97)}
+
+/* NEWS PAGE */
+.news-wrap{padding:28px 40px}
+.news-page-title{font-size:20px;font-weight:700;color:var(--vm-navy);margin-bottom:6px}
+.news-page-sub{font-size:13px;color:#888;margin-bottom:20px}
+.brand-filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.bchip{padding:5px 16px;border-radius:20px;font-size:12px;border:1px solid #ccc;background:#fff;color:#555;cursor:pointer;transition:all .15s;user-select:none}
+.bchip:hover{border-color:var(--vm-teal);color:var(--vm-teal)}
+.bchip.active{background:var(--vm-teal);color:#fff;border-color:var(--vm-teal)}
+.news-list{display:flex;flex-direction:column}
+.ni{padding:18px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;cursor:pointer}
+.ni:last-child{border-bottom:none}
+.ni[data-hidden="true"]{display:none}
+.ni:hover .ni-title{color:var(--vm-teal)}
+.ni-left{flex:1}
+.ni-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ni-brand{font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px}
+.nb-r{background:#e1f5ee;color:#0f6e56}
+.nb-v{background:#eeedfe;color:#534ab7}
+.nb-m{background:#e6f1fb;color:#185fa5}
+.nb-all{background:#f0efea;color:#666}
+.ni-date{font-size:11px;color:#aaa}
+.ni-title{font-size:14px;font-weight:700;color:var(--vm-navy);margin-bottom:5px;line-height:1.35;transition:color .15s}
+.ni-excerpt{font-size:12px;color:#777;line-height:1.6}
+.ni-right{flex-shrink:0;padding-top:2px}
+.read-more-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--vm-teal);font-weight:600;white-space:nowrap;background:none;border:none;cursor:pointer;padding:0}
+.read-more-btn:hover{text-decoration:underline}
+
+/* MODAL */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(13,45,79,0.5);z-index:1000;align-items:flex-start;justify-content:center;padding:48px 24px;overflow-y:auto}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:680px;overflow:hidden;border:1px solid #ddd;box-shadow:0 12px 48px rgba(0,0,0,0.22);animation:modalIn .18s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.modal-hd{padding:20px 24px 16px;border-bottom:1px solid #eee;display:flex;gap:12px;align-items:flex-start}
+.modal-hd-text{flex:1}
+.modal-hd-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.modal-hd-title{font-size:18px;font-weight:700;color:var(--vm-navy);line-height:1.3}
+.modal-x{width:28px;height:28px;border-radius:50%;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;background:#f8f8f8;line-height:1;transition:background .15s}
+.modal-x:hover{background:#eee;color:#555}
+.modal-bd{padding:20px 24px;max-height:320px;overflow-y:auto}
+.modal-bd p{font-size:13px;color:#444;line-height:1.75;margin-bottom:12px}
+.modal-bd h3{font-size:13px;font-weight:700;color:var(--vm-navy);margin:16px 0 5px}
+.modal-bd ul{padding-left:16px;margin-bottom:12px}
+.modal-bd li{font-size:13px;color:#444;line-height:1.75}
+.modal-cta-bar{padding:14px 24px;background:var(--vm-light);border-top:1px solid #e4ecee;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.cta-hint{font-size:12px;color:#666;line-height:1.4;flex:1}
+.btn-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:var(--vm-teal);color:#fff;border-radius:5px;font-size:13px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;transition:background .15s}
+.btn-cta:hover{background:#008a99}
+.modal-ft{padding:11px 24px;border-top:1px solid #eee;display:flex;align-items:center;justify-content:space-between}
+.modal-ft-date{font-size:11px;color:#aaa}
+.btn-close-modal{padding:6px 18px;border-radius:5px;border:1px solid #ccc;background:#f8f8f8;font-size:12px;color:#555;cursor:pointer;transition:background .15s}
+.btn-close-modal:hover{background:#eee}
+</style>
+</head>
+<body>
+
+<!-- MODAL (shared) -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-hd-text">
+        <div class="modal-hd-meta" id="modal-meta"></div>
+        <div class="modal-hd-title" id="modal-title"></div>
+      </div>
+      <div class="modal-x" onclick="closeModal()">×</div>
+    </div>
+    <div class="modal-bd" id="modal-body"></div>
+    <div class="modal-cta-bar" id="modal-cta" style="display:none">
+      <span class="cta-hint" id="modal-cta-hint"></span>
+      <button class="btn-cta" id="modal-cta-btn" onclick="handleCta()"></button>
+    </div>
+    <div class="modal-ft">
+      <span class="modal-ft-date" id="modal-date"></span>
+      <button class="btn-close-modal" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 1 — DOCUMENTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 2 — NEWS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen-label">2 — News</div>
+<div class="browser">
+  <div class="browser-chrome">
+    <div class="browser-dots"><span></span><span></span><span></span></div>
+    <div class="browser-url">portal.vmbuildingsolutions.com/news</div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-top"><a href="#">Contact</a><a href="#">FR</a><a href="#" class="hl">Documents</a></div>
+    <div class="topbar-main">
+      <div class="topbar-logo"><span class="logo-vm">VM</span> Building Solutions</div>
+      <div class="topbar-nav">
+        <a href="#">Documents</a>
+        <a href="#" class="active">News</a>
+        <a href="#">My account</a>
+      </div>
+    </div>
+  </div>
+  <div class="news-wrap">
+    <div class="news-page-title">News</div>
+    <div class="news-page-sub">Latest updates, newsletters and announcements</div>
+    <div class="brand-filters">
+      <span class="bchip active" data-brand="all" onclick="filterNews(this)">All brands</span>
+      <span class="bchip" data-brand="Resitrix" onclick="filterNews(this)">Resitrix</span>
+      <span class="bchip" data-brand="Mastersystems" onclick="filterNews(this)">Mastersystems</span>
+      <span class="bchip" data-brand="VMZINC" onclick="filterNews(this)">VMZINC</span>
+    </div>
+    <div class="news-list">
+
+      <div class="ni" data-brand="VMZINC" onclick="openArticle('loyalty')">
+        <div class="ni-left">
+          <div class="ni-meta"><span class="ni-brand nb-v">VMZINC</span><span class="ni-date">15 Jan 2025</span></div>
+          <div class="ni-title">Loyalty program 2025 — earn points and unlock exclusive benefits</div>
+          <div class="ni-excerpt">The VMZINC loyalty program has been updated for 2025. New reward tiers, voucher redemption via the partner portal, and a referral bonus for partners who onboard new certified installers.</div>
+        </div>
+        <div class="ni-right"><button class="read-more-btn">Read more →</button></div>
+      </div>
+
+      <div class="ni" data-brand="Resitrix" onclick="openArticle('spring')">
+        <div class="ni-left">
+          <div class="ni-meta"><span class="ni-brand nb-r">Resitrix</span><span class="ni-date">12 Mar 2025</span></div>
+          <div class="ni-title">Spring Newsletter 2025 — New EPDM product range and installation updates</div>
+          <div class="ni-excerpt">Discover our latest innovations in EPDM waterproofing systems. Key improvements include enhanced UV resistance and a simplified installation process for professional installers.</div>
+        </div>
+        <div class="ni-right"><button class="read-more-btn">Read more →</button></div>
+      </div>
+
+      <div class="ni" data-brand="all" onclick="openArticle('invoices')">
+        <div class="ni-left">
+          <div class="ni-meta"><span class="ni-brand nb-all">All brands</span><span class="ni-date">1 Feb 2025</span></div>
+          <div class="ni-title">Invoice downloads — understanding your documents in the portal</div>
+          <div class="ni-excerpt">Here you will find all your invoices available for download. This section is updated automatically each month. Use the filters to find invoices by brand or period.</div>
+        </div>
+        <div class="ni-right"><button class="read-more-btn">Read more →</button></div>
+      </div>
+
+      <div class="ni" data-brand="Mastersystems" onclick="openArticle('datasheets')">
+        <div class="ni-left">
+          <div class="ni-meta"><span class="ni-brand nb-m">Mastersystems</span><span class="ni-date">28 Feb 2025</span></div>
+          <div class="ni-title">Updated technical data sheets — pre-tape 2.2 mm series</div>
+          <div class="ni-excerpt">The technical data sheets for the pre-tape 2.2 mm formats have been revised to reflect updated performance values. Please replace any previously downloaded versions.</div>
+        </div>
+        <div class="ni-right"><button class="read-more-btn">Read more →</button></div>
+      </div>
+
+      <div class="ni" data-brand="VMZINC" onclick="openArticle('vouchers')">
+        <div class="ni-left">
+          <div class="ni-meta"><span class="ni-brand nb-v">VMZINC</span><span class="ni-date">3 Mar 2025</span></div>
+          <div class="ni-title">Q1 2025 vouchers now available — redeem before 30 June</div>
+          <div class="ni-excerpt">Your Q1 2025 partner vouchers have been credited to your account. Log in to the loyalty portal to view your balance and redeem vouchers on eligible orders and training sessions.</div>
+        </div>
+        <div class="ni-right"><button class="read-more-btn">Read more →</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── ARTICLE DATA ── */
+const articles = {
+  loyalty: {
+    brand: '<span class="ni-brand nb-v">VMZINC</span>',
+    date: '15 Jan 2025',
+    title: 'Loyalty program 2025 — earn points and unlock exclusive benefits',
+    body: `<p>Dear partner, we are pleased to introduce the updated VMZINC Loyalty Program for 2025. This year we have extended the reward structure to better recognise the long-term commitment of our certified installers and distributors across all markets.</p>
+<h3>How it works</h3>
+<p>Points are earned automatically on every qualifying purchase registered through your partner account. At the end of each quarter, your tier status is updated accordingly.</p>
+<ul><li>Bronze — from 500 points: priority access to new product samples</li><li>Silver — from 1,500 points: dedicated technical support line + 15% training discount</li><li>Gold — from 3,000 points: co-marketing budget + invitation to annual partner event</li></ul>
+<h3>Vouchers and redemption</h3>
+<p>Starting Q2 2025, points can be redeemed as vouchers directly in the partner portal. Vouchers are valid for 12 months and can be applied to training registrations, product orders, or tooling purchases.</p>
+<h3>Referral bonus</h3>
+<p>We have added a referral bonus for partners who onboard new certified installers. For each verified referral, 200 bonus points are credited to your account within 30 days of the new partner's first qualifying order.</p>`,
+    cta: true, ctaHint: 'Ready to get started? Access the full loyalty portal to track your points and redeem your vouchers.', ctaLabel: 'Join the program →', ctaUrl: 'https://vmzinc.com/loyalty'
+  },
+  spring: {
+    brand: '<span class="ni-brand nb-r">Resitrix</span>',
+    date: '12 Mar 2025',
+    title: 'Spring Newsletter 2025 — New EPDM product range',
+    body: `<p>We are pleased to announce the launch of our updated EPDM waterproofing range. Key improvements include enhanced UV resistance, a wider colour palette, and a simplified installation process that reduces average time on site by up to 20%.</p>
+<h3>New products</h3>
+<ul><li>Resitrix SK W Full Bond — now available in 3 m width</li><li>Resitrix SK Partial Bond — updated adhesive formulation</li><li>Resitrix MB — new lightweight variant for refurbishment projects</li></ul>
+<h3>Updated documentation</h3>
+<p>All technical data sheets and DOP certificates have been updated. Please download the latest versions from the Documents section and replace any previously issued materials.</p>`,
+    cta: true, ctaHint: 'Download the full Spring 2025 product overview.', ctaLabel: 'Go to Documents →', ctaUrl: '#'
+  },
+  invoices: {
+    brand: '<span class="ni-brand nb-all">All brands</span>',
+    date: '1 Feb 2025',
+    title: 'Invoice downloads — understanding your documents in the portal',
+    body: `<p>This section of the portal gives you access to all invoices issued to your company across all VM Building Solutions brands. Documents are made available within 24 hours of issue and are retained for 36 months.</p>
+<h3>How to find your invoices</h3>
+<p>Go to the Documents section and filter by Document Type: Invoice. You can further narrow results by brand, date range, or search by invoice number.</p>
+<h3>Formats available</h3>
+<ul><li>PDF — standard invoice for accounting purposes</li><li>XML — structured format for ERP import (available on request)</li></ul>
+<h3>Questions?</h3>
+<p>If an invoice is missing or contains an error, please contact your account manager directly. Do not use the portal support form for billing queries.</p>`,
+    cta: false
+  },
+  datasheets: {
+    brand: '<span class="ni-brand nb-m">Mastersystems</span>',
+    date: '28 Feb 2025',
+    title: 'Updated technical data sheets — pre-tape 2.2 mm series',
+    body: `<p>The technical data sheets for the pre-tape 2.2 mm and 3.05 m × 15.25 m formats have been revised to reflect updated performance values following extended testing completed in January 2025.</p>
+<h3>What has changed</h3>
+<ul><li>Updated tensile strength values (EN 12311-1)</li><li>Revised peel adhesion data for low-temperature application</li><li>New section on compatibility with PIR insulation boards</li></ul>
+<p>Please replace any previously downloaded versions. The updated sheets are available immediately in the Documents section under Technische Fiches.</p>`,
+    cta: true, ctaHint: 'Download the updated data sheets now.', ctaLabel: 'Go to Documents →', ctaUrl: '#'
+  },
+  vouchers: {
+    brand: '<span class="ni-brand nb-v">VMZINC</span>',
+    date: '3 Mar 2025',
+    title: 'Q1 2025 vouchers now available — redeem before 30 June',
+    body: `<p>Your Q1 2025 partner vouchers have been credited to your account based on your purchase volume in the period January–March 2025. The total value credited varies by tier.</p>
+<h3>Voucher values by tier</h3>
+<ul><li>Bronze: €25 voucher</li><li>Silver: €75 voucher</li><li>Gold: €150 voucher + complimentary training session</li></ul>
+<h3>How to redeem</h3>
+<p>Log in to the loyalty portal, navigate to My Vouchers, and apply your voucher code at checkout on eligible orders. Vouchers expire 30 June 2025 and cannot be extended.</p>`,
+    cta: true, ctaHint: 'Access your voucher balance in the loyalty portal.', ctaLabel: 'Redeem vouchers →', ctaUrl: 'https://vmzinc.com/loyalty'
+  }
+};
+
+let currentCtaUrl = '#';
+
+function openArticle(id) {
+  const a = articles[id];
+  if (!a) return;
+  document.getElementById('modal-meta').innerHTML = a.brand + ' <span style="font-size:11px;color:#aaa">' + a.date + '</span>';
+  document.getElementById('modal-title').textContent = a.title;
+  document.getElementById('modal-body').innerHTML = a.body;
+  document.getElementById('modal-date').textContent = 'Published ' + a.date;
+  const ctaBar = document.getElementById('modal-cta');
+  if (a.cta) {
+    document.getElementById('modal-cta-hint').textContent = a.ctaHint;
+    document.getElementById('modal-cta-btn').textContent = a.ctaLabel;
+    currentCtaUrl = a.ctaUrl;
+    ctaBar.style.display = 'flex';
+  } else {
+    ctaBar.style.display = 'none';
+  }
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBackdrop(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+
+function handleCta() {
+  if (currentCtaUrl && currentCtaUrl !== '#') window.open(currentCtaUrl, '_blank');
+  else closeModal();
+}
+
+/* ── NEWS FILTER ── */
+function filterNews(el) {
+  document.querySelectorAll('.bchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const brand = el.dataset.brand;
+  document.querySelectorAll('.ni').forEach(ni => {
+    const nb = ni.dataset.brand;
+    ni.dataset.hidden = (brand !== 'all' && nb !== brand && nb !== 'all') ? 'true' : 'false';
+  });
+}
+
+/* ── DOCUMENTS FILTER + SEARCH ── */
+function filterDocs() {
+  const brands = {
+    Resitrix: document.getElementById('f-r').checked,
+    Mastersystems: document.getElementById('f-m').checked,
+    VMZINC: document.getElementById('f-v').checked
+  };
+  const types = {
+    'Technische Fiches': document.getElementById('ft-tf').checked,
+    Brochure: document.getElementById('ft-br').checked,
+    DOP: document.getElementById('ft-dop').checked,
+    'BIM Objects': document.getElementById('ft-bim').checked,
+    Attesten: document.getElementById('ft-att').checked,
+    'SDS-fiches': document.getElementById('ft-sds').checked
+  };
+  const langs = {
+    NL: document.getElementById('fl-nl').checked,
+    FR: document.getElementById('fl-fr').checked,
+    EN: document.getElementById('fl-en').checked,
+    DE: document.getElementById('fl-de').checked
+  };
+  const q = document.getElementById('doc-search').value.toLowerCase().trim();
+  let visible = 0;
+  document.querySelectorAll('.doc-card').forEach(card => {
+    const b = card.dataset.brand, t = card.dataset.type, l = card.dataset.lang, n = card.dataset.name.toLowerCase();
+    const show = brands[b] && types[t] && langs[l] && (!q || n.includes(q));
+    card.dataset.hidden = show ? 'false' : 'true';
+    if (show) visible++;
+  });
+  document.getElementById('doc-count').textContent = visible + ' document' + (visible !== 1 ? 's' : '');
+  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+  document.getElementById('doc-subtitle').textContent = q ? 'Search results for "' + q + '"' : 'Showing all documents';
+}
+
+function clearSearch() {
+  document.getElementById('doc-search').value = '';
+  filterDocs();
+}
+
+function showDownload(name) {
+  const orig = event.target.textContent;
+  event.target.textContent = '✓ Downloading…';
+  event.target.style.background = '#0f6e56';
+  setTimeout(() => { event.target.textContent = orig; event.target.style.background = ''; }, 1800);
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+
+</body></html>

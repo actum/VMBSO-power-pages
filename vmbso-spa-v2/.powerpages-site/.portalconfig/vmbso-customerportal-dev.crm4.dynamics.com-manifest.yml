@@ -657,10 +657,10 @@ adx_webfile:
 - RecordId: 2ef207fb-c396-4776-83b2-22908b25cc0b
   DisplayName: 2ef207fb-c396-4776-83b2-22908b25cc0b
   CheckSum: ac5c2eb98ed22b329753d536c1a967413316f3f2e5ef5e82516dd3a89586e043
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3746ba93-507b-4aa0-95c1-00cedea45271
   DisplayName: 3746ba93-507b-4aa0-95c1-00cedea45271
-  CheckSum: d936a8d4937a34ed1061c7ee35baecf7090324a6b85f51567cda767e819f405c
+  CheckSum: 1ed8a94c5a4c74cb74d6e5ee26a9dd02829cc694bae42653234d1ed32dbdc725
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: 4da9b490-5971-4b39-9162-14db60a55554
@@ -714,6 +714,10 @@ adx_webfile:
   DisplayName: 963a1874-4eed-4168-ac6c-c6f7b43c474a
   CheckSum: e468ec23f2735c6b0c765166348d275a35c6f8774a90459ca672cfff209de473
   IsDeleted: false
+- RecordId: 99c7d7a5-f18c-49a8-b48d-2b4378f30fc8
+  DisplayName: 99c7d7a5-f18c-49a8-b48d-2b4378f30fc8
+  CheckSum: 82e5e288b057f4cd3569130a4bd9cdc359eb2b515c9b9a5d17800ea912cb6379
+  IsDeleted: false
 - RecordId: 9cc60ebf-7f89-4b00-b4ad-7ad7bb83ac63
   DisplayName: 9cc60ebf-7f89-4b00-b4ad-7ad7bb83ac63
   CheckSum: 4a7deed1fc05437c47bda476bbc731d8e434ff690548bb4c539f4f09a882b89d
@@ -725,6 +729,10 @@ adx_webfile:
 - RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
   DisplayName: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
   CheckSum: eca17e46bd8e324c21db5c29095c493f698dbce80f8c1755b97763edb6c1eb9b
+  IsDeleted: true
+- RecordId: dd8105f4-e6ca-4d57-8f4c-eb5a367c89f6
+  DisplayName: dd8105f4-e6ca-4d57-8f4c-eb5a367c89f6
+  CheckSum: b89938abaae731bc96a761b2e7954973d3b2a0ca11890543527e12db70b5b007
   IsDeleted: true
 - RecordId: f6593d8f-746e-4017-92c7-0098afe5eb60
   DisplayName: f6593d8f-746e-4017-92c7-0098afe5eb60
@@ -827,7 +835,7 @@ adx_webpage:
   IsDeleted: false
 - RecordId: ca622aa0-ccdc-41d3-b919-09c47a49d28c
   DisplayName: ca622aa0-ccdc-41d3-b919-09c47a49d28c
-  CheckSum: 7da02336e1cfcd5987c4a8bfae1ada72f1de1e459f2ecca4acca4e5d983a604d
+  CheckSum: 091248cc3531fb411e83b215c3d1a9f32c83b07a3f99622e663f60b8a0f17e17
   IsDeleted: false
 - RecordId: ccf3929b-3570-48fd-8a43-1c01a888ca96
   DisplayName: ccf3929b-3570-48fd-8a43-1c01a888ca96
@@ -985,10 +993,10 @@ annotation:
 - RecordId: 2ef207fb-c396-4776-83b2-22908b25cc0b
   DisplayName: main.2a8d1e09.js.LICENSE.txt
   CheckSum: a34a88880176ffaeb5f7795f19d66457500f8f3a7eb028a22034098ee3ec6b09
-  IsDeleted: false
+  IsDeleted: true
 - RecordId: 3746ba93-507b-4aa0-95c1-00cedea45271
   DisplayName: index.html
-  CheckSum: bf6dc80ff2b334b5df18abbd3727a8fd6baa67e9a09b59775648f7440e100870
+  CheckSum: 9f6b8eae08408ef69052b56c9c7826c19494ce0cf5259c852e7899376946f43d
   IsDeleted: false
 - RecordId: 4da9b490-5971-4b39-9162-14db60a55554
   DisplayName: asset-manifest.json
@@ -1042,6 +1050,10 @@ annotation:
   DisplayName: theme.css
   CheckSum: 7360307645ab1e78ac2b786fe59ad953398687d69616c06c0b41e843eccb1c48
   IsDeleted: false
+- RecordId: 99c7d7a5-f18c-49a8-b48d-2b4378f30fc8
+  DisplayName: main.efb0451b.js.LICENSE.txt
+  CheckSum: 3db45d66f4850cff3723aded47424f5a29d5b72c2e1b65ab578e5cff469a8abe
+  IsDeleted: false
 - RecordId: 9cc60ebf-7f89-4b00-b4ad-7ad7bb83ac63
   DisplayName: favicon.ico
   CheckSum: dc68d0d12c70242c7802a8df579ee23612b4e67e0a89de4a17996a57e8b2db5b
@@ -1053,6 +1065,10 @@ annotation:
 - RecordId: d417de90-ed9e-4d2c-8e38-1cecb4d193b8
   DisplayName: main.eeb10c5e.css
   CheckSum: 24d0a08e667b53c8dd63a843202b23928b09c7163a35a40373f2b8aeaf9ce5cc
+  IsDeleted: true
+- RecordId: dd8105f4-e6ca-4d57-8f4c-eb5a367c89f6
+  DisplayName: main.5a62a5dc.js.LICENSE.txt
+  CheckSum: 9ee5bb4aef71e4bd785f83412db0a358261728b56f893457c31cfa651fb5729d
   IsDeleted: true
 - RecordId: f6593d8f-746e-4017-92c7-0098afe5eb60
   DisplayName: bootstrap.min.css
