@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_newspagecontent_actum_brand
+entityname: News Brand Intersect
+id: 0c225f3f-aaa7-49e0-a000-a7d4a8508f1e
+parententitypermission:
+read: true
+scope: 756150000
+write: false

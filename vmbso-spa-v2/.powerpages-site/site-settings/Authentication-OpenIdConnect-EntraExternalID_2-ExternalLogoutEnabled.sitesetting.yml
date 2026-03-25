@@ -1,3 +1,4 @@
 id: 5827bf47-d25d-49b0-b2a3-b89429d1de9a
 name: Authentication/OpenIdConnect/EntraExternalID_2/ExternalLogoutEnabled
-value: false
+source: 0
+value: true

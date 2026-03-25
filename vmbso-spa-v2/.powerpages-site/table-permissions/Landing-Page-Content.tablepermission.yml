@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_landingpagecontent
+entityname: Landing Page Content
+id: 943777eb-d1e6-4e3e-84b4-460ec0a31ce5
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

@@ -129,7 +129,7 @@ const CTA_FETCH_XML = `<fetch>
     <filter>
       <condition attribute="statecode" operator="eq" value="0"/>
     </filter>
-    <link-entity name="actum_calltoactionbutton_actum_newspageset" from="actum_newspagecontentid" to="actum_newspagecontentid" link-type="inner" intersect="true">
+    <link-entity name="actum_calltoactionbutton_actum_newspage" from="actum_newspagecontentid" to="actum_newspagecontentid" link-type="inner" intersect="true">
       <link-entity name="actum_calltoactionbutton" from="actum_calltoactionbuttonid" to="actum_calltoactionbuttonid" link-type="inner" alias="cta">
         <attribute name="actum_calltoactionbuttonid"/>
         <attribute name="actum_ctatext"/>
@@ -143,7 +143,7 @@ const CTA_FETCH_XML = `<fetch>
   </entity>
 </fetch>`;
 
-/** Raw row returned by FetchXML */
+/** Raw row returned by FetchXML — one row per article × brand × role combination */
 interface RawNewsRow {
   actum_newspagecontentid: string;
   actum_name: string;
@@ -156,16 +156,18 @@ interface RawNewsRow {
   /** Brand fields from the outer-joined actum_brand link-entity */
   'brand.actum_brandid'?: string;
   'brand.actum_name'?: string;
+  /** Role fields from the outer-joined actum_role link-entity */
+  'role.actum_roleid'?: string;
 }
 
 /**
- * Build FetchXML to fetch active news articles with their brand (M2O join).
- * Language / country / role filters are added only when the GUID is available.
+ * Build FetchXML to fetch active news articles with brands (M2M) and roles (M2M).
+ * Language / country are M2O inline filters (null = show to all).
+ * Role is M2M — outer-joined and post-filtered client-side.
  */
 function buildNewsFetchXml(
   languageId?: string,
   countryId?: string,
-  roleId?: string,
 ): string {
   const maybeFilter = (attr: string, guid?: string) =>
     guid
@@ -188,12 +190,16 @@ function buildNewsFetchXml(
       <condition attribute="statecode" operator="eq" value="0"/>
       ${maybeFilter('actum_languageid', languageId)}
       ${maybeFilter('actum_countryid', countryId)}
-      ${maybeFilter('actum_roleid', roleId)}
     </filter>
-    <link-entity name="actum_newspagecontent_actum_brandset" from="actum_newspagecontentid" to="actum_newspagecontentid" link-type="outer" intersect="true">
+    <link-entity name="actum_newspagecontent_actum_brand" from="actum_newspagecontentid" to="actum_newspagecontentid" link-type="outer" intersect="true">
       <link-entity name="actum_brand" from="actum_brandid" to="actum_brandid" link-type="outer" alias="brand">
         <attribute name="actum_brandid"/>
         <attribute name="actum_name"/>
+      </link-entity>
+    </link-entity>
+    <link-entity name="actum_newspagecontent_actum_role" from="actum_newspagecontentid" to="actum_newspagecontentid" link-type="outer" intersect="true">
+      <link-entity name="actum_role" from="actum_roleid" to="actum_roleid" link-type="outer" alias="role">
+        <attribute name="actum_roleid"/>
       </link-entity>
     </link-entity>
     <order attribute="actum_publishdate" descending="true"/>
@@ -202,25 +208,35 @@ function buildNewsFetchXml(
 }
 
 // ---------------------------------------------------------------------------
-// Deduplication — one row per article×brand pair → grouped by article
+// Deduplication — one row per article×brand×role → grouped by article
 // ---------------------------------------------------------------------------
 
-function deduplicateArticles(rows: RawNewsRow[]): NewsArticle[] {
+function deduplicateArticles(rows: RawNewsRow[]): {
+  articles: NewsArticle[];
+  roleIds: Map<string, string[]>;
+} {
   const map = new Map<string, NewsArticle>();
+  const roleMap = new Map<string, Set<string>>();
 
   rows.forEach(row => {
     const id = row.actum_newspagecontentid;
     const brandId = row['brand.actum_brandid'];
     const brandName = row['brand.actum_name'];
+    const roleId = row['role.actum_roleid'];
 
     if (map.has(id)) {
       const existing = map.get(id)!;
       if (brandId && !existing.brands.find(b => b.id === brandId)) {
         existing.brands.push({ id: brandId, name: brandName ?? '' });
       }
+      if (roleId) roleMap.get(id)!.add(roleId);
     } else {
       const brands: { id: string; name: string }[] = [];
       if (brandId) brands.push({ id: brandId, name: brandName ?? '' });
+
+      const roles = new Set<string>();
+      if (roleId) roles.add(roleId);
+      roleMap.set(id, roles);
 
       map.set(id, {
         actum_newspagecontentid: id,
@@ -237,7 +253,10 @@ function deduplicateArticles(rows: RawNewsRow[]): NewsArticle[] {
     }
   });
 
-  return Array.from(map.values());
+  return {
+    articles: Array.from(map.values()),
+    roleIds: new Map(Array.from(roleMap.entries()).map(([id, set]) => [id, Array.from(set)])),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -281,19 +300,28 @@ export const useNews = () => {
         roleId = account?._actum_roleid_value?.replace(/[{}]/g, '');
       }
 
-      const fetchXml = buildNewsFetchXml(languageId, countryId, roleId);
+      const fetchXml = buildNewsFetchXml(languageId, countryId);
 
-      // Run both queries in parallel
-      const [articlesResponse, ctasResponse] = await Promise.all([
+      // Run both queries in parallel; CTA query is non-fatal (WAF may block it)
+      const [articlesResponse, ctasResult] = await Promise.all([
         apiClient.odata<{ value: RawNewsRow[] }>(
           `/actum_newspagecontents?fetchXml=${encodeURIComponent(fetchXml)}`,
         ),
         apiClient.odata<{ value: RawCtaRow[] }>(
           `/actum_newspagecontents?fetchXml=${encodeURIComponent(CTA_FETCH_XML)}`,
-        ),
+        ).catch(() => ({ value: [] as RawCtaRow[] })),
       ]);
+      const ctasResponse = ctasResult;
 
-      const articles = deduplicateArticles(articlesResponse.value ?? []);
+      const { articles: deduplicated, roleIds } = deduplicateArticles(articlesResponse.value ?? []);
+
+      // Post-filter by role: keep if no roles linked (null = show to all) OR one matches user's role
+      const articles = roleId
+        ? deduplicated.filter(a => {
+            const roles = roleIds.get(a.actum_newspagecontentid) ?? [];
+            return roles.length === 0 || roles.includes(roleId);
+          })
+        : deduplicated;
 
       // Merge CTAs into matching articles
       (ctasResponse.value ?? []).forEach(row => {

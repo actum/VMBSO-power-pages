@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_calltoactionbutton
+entityname: Call to action
+id: f92f84a5-988f-4430-9ab5-84569ea68c63
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

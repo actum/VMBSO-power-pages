@@ -7,6 +7,14 @@ export interface CtaButton {
   target: string;
 }
 
+export interface LandingPageCta {
+  id: string;
+  text: string;
+  url: string;
+  /** 182980000 = _self, 182980001 = _blank */
+  target: number;
+}
+
 export interface HeroSection {
   greetingsText: string;
   title: string;
@@ -42,10 +50,12 @@ export interface LandingPageContent {
   actum_title?: string;
   actum_introductiontext?: string;
   actum_heroimageurl?: string;
-  actum_imagealt?: string;
   actum_bannerimageurl?: string;
   actum_bannerimagetext?: string;
   actum_bannertitle?: string;
   _actum_languageid_value?: string;
+  _actum_countryid_value?: string;
+  _actum_roleid_value?: string;
+  _actum_brandid_value?: string;
   statecode?: number;
 }

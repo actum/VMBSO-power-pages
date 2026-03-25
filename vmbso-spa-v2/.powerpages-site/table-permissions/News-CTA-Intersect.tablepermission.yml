@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_calltoactionbutton_actum_newspage
+entityname: News CTA Intersect
+id: 8e4e30a5-95dd-4dc1-bb68-f5020d4d6105
+parententitypermission:
+read: true
+scope: 756150000
+write: false
