@@ -36,9 +36,15 @@
     "validation": {
       "noDocumentsFound": "Aucun document trouvé."
     },
+    "filters": {
+      "brand": "Marque",
+      "fileType": "Type de fichier",
+      "button": "Filtres"
+    },
     "actions": {
       "search": "Rechercher",
-      "clear": "Effacer"
+      "clear": "Effacer",
+      "download": "Télécharger"
     },
     "download": {
       "preparing": "Nous préparons votre téléchargement",
@@ -76,9 +82,30 @@
     "cookieSettings": "Paramètres des cookies"
   },
 
+  "newsPage": {
+    "pageTitle": "Actualités | Portail client VMBSO",
+    "title": "Actualités / Page de contenu",
+    "subtitle": "Dernières actualités, lettres d'information et annonces",
+    "filters": {
+      "allBrands": "Toutes les marques"
+    },
+    "actions": {
+      "readMore": "Lire la suite",
+      "close": "Fermer"
+    },
+    "modal": {
+      "published": "Publié le"
+    },
+    "validation": {
+      "noArticlesFound": "Aucun article trouvé."
+    }
+  },
+
   "header": {
     "navigation": {
-      "documents": "Documents"
+      "home": "Accueil",
+      "documents": "Documents",
+      "news": "Actualités"
     },
     "menu": {
       "profile": "Profil",
@@ -128,6 +155,9 @@
       "login": "Se connecter",
       "forgotPassword": "Mot de passe oublié ?",
       "createAccount": "Créer un compte"
+    },
+    "rejected": {
+      "message": "Votre demande d'accès a été rejetée. Veuillez contacter notre équipe d'assistance si vous pensez qu'il s'agit d'une erreur."
     }
   },
 
@@ -139,7 +169,7 @@
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
 
     "actions": {
-      "goToDocuments": "Aller aux documents",
+      "goHome": "Aller à l'accueil",
       "back": "Retour"
     }
   },

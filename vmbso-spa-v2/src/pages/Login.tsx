@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
@@ -7,32 +7,33 @@ import {
   Box,
   Grid,
   CircularProgress,
-  Tooltip,
-  IconButton,
+  Alert,
+  // Tooltip,
+  // IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config/powerPages.config';
 import { getCsrfToken } from '../services/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { Cookie as CookieIcon } from '@mui/icons-material'
-import { CookiesContext } from '../contexts/CookiesContext';
+import LanguagePicker from '../components/common/LanguagePicker';
+// import { Cookie as CookieIcon } from '@mui/icons-material'
+// import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
-  const { isAuthenticated, loading, isProfileComplete } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
-  const { setDialogOpen } = useContext(CookiesContext);
+  //const { setDialogOpen } = useContext(CookiesContext);
   const [loginLoading, setLoginLoading] = React.useState(false);
 
   React.useEffect(() => { 
     document.title = t('loginPage:pageTitle');
   }, [t]);
 
-  // Auto-redirect authenticated users
-  // Navigate directly to /update-profile when profile is incomplete to avoid extra redirects
+  // Auto-redirect authenticated users (rejected users stay on login to see the error)
   React.useEffect(() => {
-    if (!loading && isAuthenticated) {
+    if (!loading && isAuthenticated && !isRejected) {
       if (config.devMode) {
         console.log(
           '[LOGIN] User already authenticated, redirecting to',
@@ -45,14 +46,14 @@ export const Login: React.FC = () => {
         navigate('/', { replace: true });
       }
     }
-  }, [isAuthenticated, isProfileComplete, loading, navigate]);
+  }, [isAuthenticated, isProfileComplete, isRejected, loading, navigate]);
 
   /**
    * Initiate Entra External ID authentication via a hidden form POST to
    * /Account/Login/ExternalLogin. Power Pages then issues a 302 redirect
    * directly to Entra External ID — no intermediate sign-in page.
    */
-  const submitExternalLogin = async () => {
+  const submitExternalLogin = async (extraParams?: Record<string, string>) => {
     if (config.devMode) {
       console.log('[LOGIN DEBUG] DEV MODE: Redirecting to /');
       window.location.href = '/';
@@ -65,7 +66,11 @@ export const Login: React.FC = () => {
 
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = config.auth.externalLoginUrl;
+      // Extra params (e.g. prompt=create) go in the query string of the action URL.
+      // Power Pages reads these from the URL and forwards them to the Entra authorization request.
+      form.action = extraParams
+        ? `${config.auth.externalLoginUrl}?${new URLSearchParams(extraParams).toString()}`
+        : config.auth.externalLoginUrl;
 
       const fields: Record<string, string> = {
         provider: config.auth.providerScheme,
@@ -129,6 +134,11 @@ export const Login: React.FC = () => {
                 borderRadius: { xs: '0.8rem', md: '0.8rem 0 0 0.8rem' },
               }}
             >
+              {/* Language picker */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <LanguagePicker />
+              </Box>
+
               {/* Logo */}
               <Box sx={{ mb: 4 }}>
                 <img
@@ -137,6 +147,13 @@ export const Login: React.FC = () => {
                   style={{ height: "2.6rem" }}
                 />
               </Box>
+
+              {/* Rejected account alert */}
+              {isRejected && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                  {t("loginPage:rejected.message")}
+                </Alert>
+              )}
 
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
                   {t("loginPage:title")}
@@ -148,7 +165,7 @@ export const Login: React.FC = () => {
                 fullWidth
                 variant="contained"
                 size="large"
-                onClick={submitExternalLogin}
+                onClick={() => submitExternalLogin()}
                 disabled={loginLoading}
                 sx={{
                   textTransform: 'none',
@@ -167,7 +184,7 @@ export const Login: React.FC = () => {
                 </Typography>
                 <Button
                   variant="outlined"
-                  onClick={submitExternalLogin}
+                  onClick={() => submitExternalLogin({ prompt: 'create' })}
                   sx={{
                     textTransform: 'none',
                     fontWeight: 500,
@@ -208,7 +225,7 @@ export const Login: React.FC = () => {
         </Grid>
       </Container>
 
-      <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
+      {/* <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
         <IconButton
           onClick={() => setDialogOpen(prev => !prev)}
           sx={{
@@ -221,7 +238,7 @@ export const Login: React.FC = () => {
         >
           <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
     </Box>
   );
 };

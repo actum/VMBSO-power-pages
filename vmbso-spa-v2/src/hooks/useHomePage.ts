@@ -6,12 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dataverseService } from '../services/dataverseService';
 import { useAuth } from '../contexts/AuthContext';
-import type { HomePageData, LandingPageContent } from '../types/homePage';
-
-function stripHtmlRichText(raw: string | undefined): string {
-  if (!raw) return '';
-  return raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
+import type { HomePageData, LandingPageContent, LandingPageCta, CtaButton } from '../types/homePage';
 
 function interpolateGreeting(template: string | undefined, displayName: string): string {
   const t = template?.trim() || '';
@@ -19,26 +14,37 @@ function interpolateGreeting(template: string | undefined, displayName: string):
   return t.replace(/\{\{name\}\}/g, displayName).replace(/\{name\}/g, displayName);
 }
 
+function ctaToButton(cta: LandingPageCta): CtaButton {
+  return {
+    text: cta.text,
+    url: cta.url,
+    target: cta.target === 182980001 ? '_blank' : '_self',
+  };
+}
+
 function mapToHomePageData(
   row: LandingPageContent,
   firstName: string | undefined,
   fullName: string | undefined,
-  ctaLabel: string
+  ctas: LandingPageCta[],
+  fallbackCtaLabel: string,
 ): HomePageData {
   const nameForGreeting = (firstName || fullName || '').trim() || 'there';
   const greetingsText = interpolateGreeting(row.actum_greetingstext, nameForGreeting);
 
-  const documentsCta = { text: ctaLabel, url: '/documents', target: '_self' };
+  const ctaButtons: CtaButton[] = ctas.length
+    ? ctas.map(ctaToButton)
+    : [{ text: fallbackCtaLabel, url: '/documents', target: '_self' }];
 
   return {
     heroSection: {
       greetingsText,
       title: row.actum_title?.trim() || '',
-      introText: stripHtmlRichText(row.actum_introductiontext),
-      ctas: [documentsCta],
+      introText: row.actum_introductiontext || '',
+      ctas: ctaButtons,
       heroImage: {
         url: row.actum_heroimageurl?.trim() || '',
-        alt: row.actum_imagealt?.trim() || '',
+        alt: '',
       },
     },
     bannerSection: {
@@ -47,7 +53,7 @@ function mapToHomePageData(
         alt: row.actum_bannerimagetext?.trim() || '',
       },
       title: row.actum_bannertitle?.trim() || '',
-      ctas: [documentsCta],
+      ctas: ctaButtons,
     },
   };
 }
@@ -69,8 +75,25 @@ export const useHomePage = () => {
       setLoading(true);
       setError(null);
 
-      const row = await dataverseService.landingPageContent.getByLanguage(
-        currentUser._actum_languageid_value
+      const languageId = currentUser._actum_languageid_value?.replace(/[{}]/g, '');
+
+      // Fetch account for country + role + brands
+      let countryId: string | undefined;
+      let roleId: string | undefined;
+
+      if (currentUser._parentcustomerid_value) {
+        const account = await dataverseService.accounts.getById(
+          currentUser._parentcustomerid_value,
+        );
+        countryId = account?._actum_primarycountryid_value?.replace(/[{}]/g, '');
+        roleId = account?._actum_roleid_value?.replace(/[{}]/g, '');
+      }
+
+      // brandIds: not yet available from account M2M — pass undefined to show null-brand content
+      const row = await dataverseService.landingPageContent.getForUser(
+        languageId,
+        countryId,
+        roleId,
       );
 
       if (!row) {
@@ -79,11 +102,16 @@ export const useHomePage = () => {
         return;
       }
 
+      // Fetch CTAs in parallel once we have the page ID
+      const ctas = await dataverseService.landingPageContent.getCtasForPage(
+        row.actum_landingpagecontentid,
+      );
+
       const firstName = currentUser.firstname;
       const fullName = currentUser.fullname?.trim() || `${currentUser.firstname ?? ''} ${currentUser.lastname ?? ''}`.trim();
 
       setHomePageData(
-        mapToHomePageData(row, firstName, fullName, t('actions.goToDocuments'))
+        mapToHomePageData(row, firstName, fullName, ctas, t('actions.goToDocuments'))
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : t('errors.loadFailed');
@@ -93,7 +121,15 @@ export const useHomePage = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.contactid, currentUser?._actum_languageid_value, currentUser?.firstname, currentUser?.lastname, currentUser?.fullname, t]);
+  }, [
+    currentUser?.contactid,
+    currentUser?._actum_languageid_value,
+    currentUser?._parentcustomerid_value,
+    currentUser?.firstname,
+    currentUser?.lastname,
+    currentUser?.fullname,
+    t,
+  ]);
 
   useEffect(() => {
     fetchHomePage();

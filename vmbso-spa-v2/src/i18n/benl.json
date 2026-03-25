@@ -36,9 +36,15 @@
     "validation": {
       "noDocumentsFound": "Geen documenten gevonden."
     },
+    "filters": {
+      "brand": "Merk",
+      "fileType": "Bestandstype",
+      "button": "Filters"
+    },
     "actions": {
       "search": "Zoeken",
-      "clear": "Wissen"
+      "clear": "Wissen",
+      "download": "Download"
     },
     "download": {
       "preparing": "We bereiden uw download voor",
@@ -76,9 +82,30 @@
     "cookieSettings": "Cookie-instellingen"
   },
 
+  "newsPage": {
+    "pageTitle": "Nieuws | VMBSO Klantenportaal",
+    "title": "Nieuws / Inhoudspagina",
+    "subtitle": "Laatste updates, nieuwsbrieven en aankondigingen",
+    "filters": {
+      "allBrands": "Alle merken"
+    },
+    "actions": {
+      "readMore": "Lees meer",
+      "close": "Sluiten"
+    },
+    "modal": {
+      "published": "Gepubliceerd"
+    },
+    "validation": {
+      "noArticlesFound": "Geen artikelen gevonden."
+    }
+  },
+
   "header": {
     "navigation": {
-      "documents": "Documenten"
+      "home": "Home",
+      "documents": "Documenten",
+      "news": "Nieuws"
     },
     "menu": {
       "profile": "Profiel",
@@ -128,6 +155,9 @@
       "login": "Inloggen",
       "forgotPassword": "Wachtwoord vergeten?",
       "createAccount": "Account aanmaken"
+    },
+    "rejected": {
+      "message": "Uw toegangsverzoek is afgewezen. Neem contact op met ons ondersteuningsteam als u denkt dat dit een fout is."
     }
   },
 
@@ -139,7 +169,7 @@
     "description": "De pagina die u zoekt bestaat niet of is verplaatst.",
 
     "actions": {
-      "goToDocuments": "Naar documenten",
+      "goHome": "Naar startpagina",
       "back": "Terug"
     }
   },

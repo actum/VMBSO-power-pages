@@ -2,10 +2,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { type Contact } from '../types/contact';
 import { authService } from '../services/authService';
 
+const APPROVAL_STATUS_REJECTED = 182980002;
+
 interface AuthContextType {
   currentUser: Contact | null;
   isAuthenticated: boolean;
   isProfileComplete: boolean;
+  isRejected: boolean;
   loading: boolean;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -29,6 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const isAuthenticated = currentUser !== null;
+  const isRejected = currentUser?.actum_approvalstatus === APPROVAL_STATUS_REJECTED;
 
   const isProfileComplete = React.useMemo(() => {
     if (!currentUser) return false;
@@ -91,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     currentUser,
     isAuthenticated,
     isProfileComplete,
+    isRejected,
     loading,
     logout,
     refreshUser,

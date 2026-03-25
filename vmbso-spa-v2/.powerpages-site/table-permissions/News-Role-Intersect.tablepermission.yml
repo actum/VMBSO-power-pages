@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_newspagecontent_actum_role
+entityname: News Role Intersect
+id: 9282a426-adbb-40e9-94a6-86ed22ef1761
+parententitypermission:
+read: true
+scope: 756150000
+write: false

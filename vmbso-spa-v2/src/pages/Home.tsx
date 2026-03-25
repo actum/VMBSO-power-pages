@@ -59,12 +59,19 @@ export const Home: React.FC = () => {
                                 {homePageData.heroSection.title}
                             </Typography>
 
-                            <Typography
-                                variant="body1"
-                                sx={{ mb: { xs: 4, md: 6 }, color: 'text.secondary', lineHeight: 1.7 }}
-                            >
-                                {homePageData.heroSection.introText}
-                            </Typography>
+                            <Box
+                                sx={{
+                                    mb: { xs: 4, md: 6 },
+                                    color: 'text.secondary',
+                                    lineHeight: 1.7,
+                                    '& p': { mb: 1.5, lineHeight: 1.75, color: 'text.secondary' },
+                                    '& h2, & h3': { fontWeight: 700, mt: 2, mb: 1, color: 'text.primary' },
+                                    '& ul, & ol': { pl: 3, mb: 1.5 },
+                                    '& li': { mb: 0.5, lineHeight: 1.75 },
+                                    '& strong': { color: 'text.primary', fontWeight: 600 },
+                                }}
+                                dangerouslySetInnerHTML={{ __html: homePageData.heroSection.introText }}
+                            />
 
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                                 {homePageData.heroSection.ctas.map((cta: CtaButton, idx: number) => (

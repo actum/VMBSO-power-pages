@@ -26,8 +26,8 @@ export const NotFound: React.FC = () => {
           {t("description")}
         </Typography>
         <Box>
-          <Button variant="contained" onClick={() => navigate('/documents')}>
-            {t("actions.goToDocuments")}
+          <Button variant="contained" onClick={() => navigate('/')}>
+            {t("actions.goHome")}
           </Button>
           <Button variant="outlined" onClick={() => navigate(-1)} sx={{ ml: 2 }}>
             {t("actions.back")}

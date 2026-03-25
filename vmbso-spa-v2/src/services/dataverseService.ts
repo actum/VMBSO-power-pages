@@ -10,7 +10,7 @@ import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
-import type { LandingPageContent } from '../types/homePage';
+import type { LandingPageContent, LandingPageCta } from '../types/homePage';
 import { config } from '../config/powerPages.config';
 
 /**
@@ -196,7 +196,7 @@ export const dataverseService = {
     async getById(accountId: string): Promise<Account | null> {
       try {
         const query = buildODataQuery({
-          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value'],
+          select: ['accountid', 'name', 'actum_vatregistrationnumber', '_actum_primarycountryid_value', '_actum_roleid_value'],
         });
         const response = await apiClient.odata<Account>(`/accounts(${accountId})${query}`);
         return response;
@@ -364,7 +364,6 @@ export const dataverseService = {
         actum_introductiontext:
           'Access your product documentation and resources in one place.',
         actum_heroimageurl: config.assets.loginHeroImage,
-        actum_imagealt: 'Building',
         actum_bannerimageurl: config.assets.loginHeroImage,
         actum_bannerimagetext: 'Products',
         actum_bannertitle: 'Explore your documents',
@@ -374,21 +373,45 @@ export const dataverseService = {
     },
 
     /**
-     * Fetch landing page row for the contact's preferred language lookup.
+     * Fetch the landing page row best matching the user's language, country, role and brands.
+     * Each filter uses a null-or-match OData condition so that a null value on the record
+     * means "show to all" (same rule as news articles).
      */
-    async getByLanguage(languageId: string | undefined): Promise<LandingPageContent | null> {
+    async getForUser(
+      languageId?: string,
+      countryId?: string,
+      roleId?: string,
+      brandIds?: string[],
+    ): Promise<LandingPageContent | null> {
       if (config.devMode) {
         return this.getMock();
       }
 
-      if (!languageId) {
-        console.warn('[landingPageContent] No language id on contact; cannot load CMS row');
-        return null;
-      }
-
       try {
-        const guid = languageId.replace(/[{}]/g, '');
-        const filter = `_actum_languageid_value eq '${guid}' and statecode eq 0`;
+        const clean = (guid?: string) => guid?.replace(/[{}]/g, '');
+
+        const nullOrMatch = (field: string, guid?: string) => {
+          const g = clean(guid);
+          return g
+            ? `(${field} eq null or ${field} eq ${g})`
+            : `${field} eq null`;
+        };
+
+        const brandFilter = () => {
+          const ids = (brandIds ?? []).map(clean).filter(Boolean) as string[];
+          if (!ids.length) return `_actum_brandid_value eq null`;
+          const branches = ids.map(id => `_actum_brandid_value eq ${id}`).join(' or ');
+          return `(_actum_brandid_value eq null or ${branches})`;
+        };
+
+        const conditions = [
+          'statecode eq 0',
+          nullOrMatch('_actum_languageid_value', languageId),
+          nullOrMatch('_actum_countryid_value', countryId),
+          nullOrMatch('_actum_roleid_value', roleId),
+          brandFilter(),
+        ];
+
         const query = buildODataQuery({
           select: [
             'actum_landingpagecontentid',
@@ -397,14 +420,16 @@ export const dataverseService = {
             'actum_title',
             'actum_introductiontext',
             'actum_heroimageurl',
-            'actum_imagealt',
             'actum_bannerimageurl',
             'actum_bannerimagetext',
             'actum_bannertitle',
             '_actum_languageid_value',
+            '_actum_countryid_value',
+            '_actum_roleid_value',
+            '_actum_brandid_value',
             'statecode',
           ],
-          filter,
+          filter: conditions.join(' and '),
           top: 1,
         });
 
@@ -413,7 +438,7 @@ export const dataverseService = {
         );
 
         if (!response.value?.length) {
-          console.warn('No landing page content found for language', languageId);
+          console.warn('[landingPageContent] No matching row found for user filters');
           return null;
         }
 
@@ -423,6 +448,35 @@ export const dataverseService = {
           return null;
         }
         console.error('Error fetching landing page content:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * Fetch CTA buttons linked to a landing page record.
+     */
+    async getCtasForPage(landingPageId: string): Promise<LandingPageCta[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_calltoactionbuttonid', 'actum_ctatext', 'actum_ctaurl', 'actum_ctatarget'],
+          filter: `_actum_landingpageid_value eq ${landingPageId} and statecode eq 0`,
+        });
+        const response = await apiClient.odata<{ value: Array<{
+          actum_calltoactionbuttonid: string;
+          actum_ctatext?: string;
+          actum_ctaurl?: string;
+          actum_ctatarget?: number;
+        }> }>(`/actum_calltoactionbuttons${query}`);
+        return (response.value ?? []).map(r => ({
+          id: r.actum_calltoactionbuttonid,
+          text: r.actum_ctatext ?? '',
+          url: r.actum_ctaurl ?? '#',
+          target: r.actum_ctatarget ?? 182980000,
+        }));
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
         throw error;
       }
     },

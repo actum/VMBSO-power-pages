@@ -1,0 +1,4 @@
+id: fdb066be-7f27-f111-8341-7ced8d428823
+name: Authentication/OpenIdConnect/EntraExternalID_2/PostLogoutRedirectUri
+source: 0
+value: https://customerportal-dev.powerappsportals.com/

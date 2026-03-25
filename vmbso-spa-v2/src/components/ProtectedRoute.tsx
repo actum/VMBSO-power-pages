@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
+import { config } from "../config/powerPages.config";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -24,7 +25,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requireCompleteProfile = true 
 }) => {
-  const { isAuthenticated, loading, isProfileComplete } = useAuth();
+  const { isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
+
+  // In local dev mode, bypass all auth and profile checks
+  if (config.devMode) {
+    return <>{children}</>;
+  }
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -42,8 +48,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Rule 1: Must be authenticated
-  if (!isAuthenticated) {
+  // Rule 1: Must be authenticated (and not rejected)
+  if (!isAuthenticated || isRejected) {
     return <Navigate to="/login" replace />;
   }
 
