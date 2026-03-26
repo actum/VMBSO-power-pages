@@ -47,10 +47,11 @@ const DEV_MOCK_USER: Contact = {
 export const authService = {
   /**
    * Logout current user.
-   * Federated logout clears both the Power Pages session and the Entra External ID session.
-   * Page navigates away — no return value needed.
+   * Power Pages requires a form POST with the anti-forgery token to actually
+   * invalidate the session cookie. A plain GET redirect is silently ignored.
+   * window.shell.getTokenDeferred() is the Power Pages API for obtaining the token.
    */
-  logout: (): void => {
+  logout: async (): Promise<void> => {
     if (config.devMode) {
       console.log('DEV MODE: Mock logout');
       localStorage.removeItem('dev_user');
@@ -58,8 +59,32 @@ export const authService = {
       return;
     }
 
-    // Federated logout: clears both Power Pages session and Entra External ID session
-    window.location.href = config.auth.logoutUrl;
+    const shell = (window as any)?.shell;
+    if (shell?.getTokenDeferred) {
+      try {
+        const token: string = await new Promise((resolve, reject) => {
+          shell.getTokenDeferred()
+            .done((t: string) => resolve(t))
+            .fail(() => reject(new Error('Failed to get CSRF token')));
+        });
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = config.auth.logoutUrl;
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = token;
+        form.appendChild(tokenInput);
+        document.body.appendChild(form);
+        form.submit();
+      } catch {
+        // Fallback to GET redirect if token fetch fails
+        window.location.href = config.auth.logoutUrl;
+      }
+    } else {
+      // Fallback: shell not available (e.g. portal not fully loaded)
+      window.location.href = config.auth.logoutUrl;
+    }
   },
 
   /**

@@ -7,7 +7,7 @@ delete: false
 entitylogicalname: actum_newspagecontent_actum_brand
 entityname: News Brand Intersect
 id: 0c225f3f-aaa7-49e0-a000-a7d4a8508f1e
-parententitypermission:
+parententitypermission: 
 read: true
 scope: 756150000
 write: false

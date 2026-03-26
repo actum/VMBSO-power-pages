@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import {
   Box,
   Typography,
@@ -18,10 +19,27 @@ import {
   ArrowForward as ArrowForwardIcon,
   Close as CloseIcon,
 } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { Layout } from '../components/Layout';
 import { NewsArticle } from '../types/newsArticle';
 import { useNews } from '../hooks/useNews';
+
+const ClampedSummary = styled('div')(({ theme }) => ({
+  ...theme.typography.body2,
+  color: theme.palette.text.secondary,
+  lineHeight: 1.6,
+  display: '-webkit-box',
+  WebkitLineClamp: 3,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+}));
+
+const ArticleSummary = styled('div')(({ theme }) => ({
+  ...theme.typography.body2,
+  color: theme.palette.text.secondary,
+  lineHeight: 1.75,
+}));
 
 // Same palette as Documents page
 const BRAND_CHIP_COLORS = [
@@ -218,19 +236,11 @@ export const News: React.FC = () => {
               </Typography>
 
               {article.actum_summary && (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    lineHeight: 1.6,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
+                <ClampedSummary
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(article.actum_summary, { FORBID_ATTR: ['style'] }),
                   }}
-                >
-                  {article.actum_summary}
-                </Typography>
+                />
               )}
             </Box>
 
@@ -292,12 +302,14 @@ export const News: React.FC = () => {
                     '& li': { mb: 0.5, lineHeight: 1.75, color: 'text.secondary' },
                     '& strong': { color: 'text.primary', fontWeight: 600 },
                   }}
-                  dangerouslySetInnerHTML={{ __html: openArticle.actum_body }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(openArticle.actum_body) }}
                 />
               ) : (
-                <Typography variant="body2" color="text.secondary">
-                  {openArticle.actum_summary}
-                </Typography>
+                <ArticleSummary
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(openArticle.actum_summary ?? '', { FORBID_ATTR: ['style'] }),
+                  }}
+                />
               )}
             </DialogContent>
 

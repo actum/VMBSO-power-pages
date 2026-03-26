@@ -1,0 +1,12 @@
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_brand
+entityname: actum_newspagecontent_actum_brand
+id: 641466c1-4828-f111-8342-7ced8d42822b
+parententitypermission: 9a2b379d-4828-f111-8342-7ced8d42822b
+parentrelationship: actum_NewsPageContent_actum_brand_actum_brand
+read: true
+scope: 756150003
+write: false

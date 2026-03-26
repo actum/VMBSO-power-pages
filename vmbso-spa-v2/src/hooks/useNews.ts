@@ -24,7 +24,7 @@ export const DEV_MOCK_ARTICLES: NewsArticle[] = [
     actum_name: 'Loyalty Program Announcement',
     actum_title: 'Loyalty program 2025 — earn points and unlock exclusive benefits',
     actum_summary:
-      'The VMZINC loyalty program has been updated for 2025. New reward tiers, voucher redemption via the partner portal, and a referral bonus for partners who onboard new certified installers.',
+    '<div class="ck-content" data-wrapper="true" dir="ltr" style="--ck-image-style-spacing: 1.5em; --ck-inline-image-style-spacing: calc(var(--ck-image-style-spacing) / 2); font-family: Segoe UI; font-size: 11pt;"><p style="margin: 0;">The VMZINC loyalty program has been updated for 2025. New reward tiers, voucher redemption via the partner portal, and a referral bonus for partners who onboard new certified installers.</p></div>',
     actum_body: `
       <p>Dear partner, we are pleased to introduce the updated VMZINC Loyalty Program for 2025. This year we have extended the reward structure to better recognise the long-term commitment of our certified installers and distributors across all markets.</p>
       <h2>How it works</h2>

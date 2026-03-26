@@ -15,7 +15,7 @@ const DEV_MOCK_DOCUMENTS: DocumentWithBrands[] = [
     actum_productdocumentationid: 'dev-doc-001',
     actum_name: 'VMZINC Installation Guide 2026',
     actum_filename: 'vmzinc_installation_guide_2026.pdf',
-    actum_description: 'Complete step-by-step installation guide for VMZINC standing seam roofing and façade systems, including substrate preparation, fixings, and weatherproofing details.',
+    actum_description: '<div class="ck-content" data-wrapper="true" dir="ltr" style="--ck-image-style-spacing: 1.5em; --ck-inline-image-style-spacing: calc(var(--ck-image-style-spacing) / 2); font-family: Segoe UI; font-size: 11pt;"><p style="margin: 0;">Complete step-by-step <b>installation guide for VMZINC</b> standing seam roofing and <i>façade systems</i>, including substrate preparation, fixings, and weatherproofing details.</p></div>',
     actum_fileextension: 'pdf',
     actum_language: 'EN',
     actum_visible: true,

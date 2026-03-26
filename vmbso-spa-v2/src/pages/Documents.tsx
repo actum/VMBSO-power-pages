@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import {
   Typography,
   Box,
@@ -20,6 +21,7 @@ import {
   FormGroup,
   Divider,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import {
   DownloadOutlined,
   FilterList as FilterListIcon,
@@ -33,6 +35,17 @@ import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 import { DocumentWithBrands } from '../types/document';
+
+const ClampedDescription = styled('div')(({ theme }) => ({
+  ...theme.typography.body2,
+  color: theme.palette.text.secondary,
+  lineHeight: 1.5,
+  marginBottom: '20px',
+  display: '-webkit-box',
+  WebkitLineClamp: 3,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+}));
 
 // Rotating palette for brand chips (cycles if more than 4 distinct brands)
 const BRAND_CHIP_COLORS = [
@@ -530,20 +543,11 @@ export const Documents: React.FC = () => {
 
                       {/* Description */}
                       {doc.actum_description && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            lineHeight: 1.5,
-                            mb: '20px',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
+                        <ClampedDescription
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(doc.actum_description ?? '', { FORBID_ATTR: ['style'] }),
                           }}
-                        >
-                          {doc.actum_description}
-                        </Typography>
+                        />
                       )}
                     </CardContent>
 

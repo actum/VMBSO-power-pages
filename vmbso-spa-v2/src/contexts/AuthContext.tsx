@@ -10,7 +10,7 @@ interface AuthContextType {
   isProfileComplete: boolean;
   isRejected: boolean;
   loading: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -80,10 +80,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   };
 
-  // Logout: clears client state then redirects — page navigates away so no async needed
-  const logout = () => {
+  // Logout: clears client state then POSTs to Power Pages to invalidate the session cookie
+  const logout = async () => {
     setCurrentUser(null);
-    authService.logout();
+    await authService.logout();
   };
 
   const refreshUser = async () => {

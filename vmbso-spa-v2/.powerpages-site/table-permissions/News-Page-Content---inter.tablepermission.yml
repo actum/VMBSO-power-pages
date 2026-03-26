@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_newspagecontent
+entityname: News Page Content - inter
+id: dc10ce1d-ae2e-4cc4-8711-2333d46def34
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

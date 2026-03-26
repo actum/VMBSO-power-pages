@@ -1,0 +1,14 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_newspagecontent
+entityname: actum_newspagecontent_actum_brand
+id: 60e73827-f79c-497f-b570-35d0ecc1b407
+parententitypermission: ca638b2c-dff2-40f9-8a5f-85e998910dbb
+parentrelationship: actum_NewsPageContent_actum_brand_actum_brand
+read: true
+scope: 756150003
+write: false
