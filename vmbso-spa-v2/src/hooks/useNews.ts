@@ -1,8 +1,10 @@
 /**
- * Custom hook for fetching news articles via FetchXML.
- * Brand is resolved via the M2O _actum_brandid_value lookup joined directly
- * to actum_brand — no intersect table needed.
+ * Custom hook for fetching news articles.
+ * Supports two query strategies — toggle USE_ODATA below to switch:
+ *   false → FetchXML  (current default, works with WAF restrictions)
+ *   true  → OData $expand (cleaner, but requires correct N:N nav-prop names in Dataverse)
  *
+ * Brand is resolved via the M2M actum_newspagecontent_actum_brand intersect.
  * Articles are filtered by the current user's language (contact), country and
  * role (account). A null value on the article means "applies to all".
  */
@@ -13,6 +15,17 @@ import { config } from '../config/powerPages.config';
 import { NewsArticle } from '../types/newsArticle';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
+
+// ---------------------------------------------------------------------------
+// Strategy switcher
+// ---------------------------------------------------------------------------
+
+/**
+ * Set to true to use OData $expand queries instead of FetchXML.
+ * OData requires correct N:N navigation property names — verify them in
+ * Dataverse > actum_newspagecontent > Relationships before enabling.
+ */
+const USE_ODATA = true;
 
 // ---------------------------------------------------------------------------
 // Mock data (dev mode only)
@@ -111,7 +124,7 @@ export const DEV_MOCK_ARTICLES: NewsArticle[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// FetchXML builder
+// FetchXML — types, queries, deduplication
 // ---------------------------------------------------------------------------
 
 /** Raw row from the CTA FetchXML — one row per article×CTA pair */
@@ -260,6 +273,105 @@ function deduplicateArticles(rows: RawNewsRow[]): {
 }
 
 // ---------------------------------------------------------------------------
+// OData — types, queries, mapper
+// ---------------------------------------------------------------------------
+
+/**
+ * N:N navigation property names on actum_newspagecontent — verified from Dataverse.
+ */
+const CTA_NAV_PROP   = 'actum_CallToActionButton_actum_NewsPageContent_actum_NewsPageContent';
+const BRAND_NAV_PROP = 'actum_NewsPageContent_actum_brand_actum_brand';
+const ROLE_NAV_PROP  = 'actum_NewsPageContent_actum_role_actum_role';
+
+interface RawCtaItem {
+  actum_calltoactionbuttonid: string;
+  actum_ctatext?: string;
+  actum_ctaurl?: string;
+  actum_ctatarget?: number;
+}
+
+/** Row from CTA OData query — one row per article, CTAs nested under CTA_NAV_PROP */
+interface RawCtaODataRow {
+  actum_newspagecontentid: string;
+  [key: string]: RawCtaItem[] | string | undefined;
+}
+
+interface RawBrandItem {
+  actum_brandid: string;
+  actum_name: string;
+}
+
+interface RawRoleItem {
+  actum_roleid: string;
+}
+
+/** Row from news OData query — one row per article, brands/roles nested */
+interface RawNewsODataRow {
+  actum_newspagecontentid: string;
+  actum_name: string;
+  actum_title: string;
+  actum_summary?: string;
+  actum_body?: string;
+  actum_publishdate?: string;
+  createdon: string;
+  statecode: number;
+  [key: string]: RawBrandItem[] | RawRoleItem[] | string | number | undefined;
+}
+
+/** OData URL for fetching active articles with CTAs expanded */
+const CTA_ODATA_URL =
+  'actum_newspagecontents'
+  + '?$select=actum_newspagecontentid'
+  + '&$filter=statecode eq 0'
+  + `&$expand=${CTA_NAV_PROP}($select=actum_calltoactionbuttonid,actum_ctatext,actum_ctaurl,actum_ctatarget;$filter=statecode eq 0)`;
+
+/** Build OData URL for articles with brands and roles expanded */
+function buildNewsODataUrl(languageId?: string, countryId?: string): string {
+  const filters = ['statecode eq 0'];
+  if (languageId) {
+    filters.push(`(_actum_languageid_value eq null or _actum_languageid_value eq ${languageId})`);
+  }
+  if (countryId) {
+    filters.push(`(_actum_countryid_value eq null or _actum_countryid_value eq ${countryId})`);
+  }
+  return (
+    'actum_newspagecontents'
+    + '?$select=actum_newspagecontentid,actum_name,actum_title,actum_summary,actum_body,actum_publishdate,createdon'
+    + `&$filter=${filters.join(' and ')}`
+    + `&$expand=${BRAND_NAV_PROP}($select=actum_brandid,actum_name),${ROLE_NAV_PROP}($select=actum_roleid)`
+    + '&$orderby=actum_publishdate desc'
+  );
+}
+
+/** Map OData rows (one per article, nested brands/roles) to NewsArticle[] */
+function mapToArticles(rows: RawNewsODataRow[]): {
+  articles: NewsArticle[];
+  roleIds: Map<string, string[]>;
+} {
+  const articles: NewsArticle[] = rows.map(row => ({
+    actum_newspagecontentid: row.actum_newspagecontentid,
+    actum_name: row.actum_name,
+    actum_title: row.actum_title,
+    actum_summary: row.actum_summary,
+    actum_body: row.actum_body,
+    actum_publishdate: row.actum_publishdate,
+    createdon: row.createdon,
+    statecode: row.statecode,
+    brands: ((row[BRAND_NAV_PROP] ?? []) as RawBrandItem[]).map(b => ({ id: b.actum_brandid, name: b.actum_name })),
+    ctas: [],
+  }));
+
+  const roleIds = new Map(
+    rows.map(row => [
+      row.actum_newspagecontentid,
+      ((row[ROLE_NAV_PROP] ?? []) as RawRoleItem[]).map(r => r.actum_roleid),
+    ]),
+  );
+
+  return { articles, roleIds };
+}
+
+// ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
 
@@ -302,42 +414,83 @@ export const useNews = () => {
 
       const fetchXml = buildNewsFetchXml(languageId, countryId);
 
-      // Run both queries in parallel; CTA query is non-fatal (WAF may block it)
-      const [articlesResponse, ctasResult] = await Promise.all([
-        apiClient.odata<{ value: RawNewsRow[] }>(
-          `/actum_newspagecontents?fetchXml=${encodeURIComponent(fetchXml)}`,
-        ),
-        apiClient.odata<{ value: RawCtaRow[] }>(
-          `/actum_newspagecontents?fetchXml=${encodeURIComponent(CTA_FETCH_XML)}`,
-        ).catch(() => ({ value: [] as RawCtaRow[] })),
-      ]);
-      const ctasResponse = ctasResult;
+      let articles: NewsArticle[];
+      let roleIds: Map<string, string[]>;
 
-      const { articles: deduplicated, roleIds } = deduplicateArticles(articlesResponse.value ?? []);
+      if (USE_ODATA) {
+        // ── OData path ──────────────────────────────────────────────────────
+        const [articlesResponse, ctasResult] = await Promise.all([
+          apiClient.odata<{ value: RawNewsODataRow[] }>(
+            `/${buildNewsODataUrl(languageId, countryId)}`,
+          ),
+          apiClient.odata<{ value: RawCtaODataRow[] }>(
+            `/${CTA_ODATA_URL}`,
+          ).catch(() => ({ value: [] as RawCtaODataRow[] })),
+        ]);
 
-      // Post-filter by role: keep if no roles linked (null = show to all) OR one matches user's role
-      const articles = roleId
-        ? deduplicated.filter(a => {
+        ({ articles, roleIds } = mapToArticles(articlesResponse.value ?? []));
+
+        // Filter by role
+        if (roleId) {
+          articles = articles.filter(a => {
             const roles = roleIds.get(a.actum_newspagecontentid) ?? [];
             return roles.length === 0 || roles.includes(roleId);
-          })
-        : deduplicated;
-
-      // Merge CTAs into matching articles
-      (ctasResponse.value ?? []).forEach(row => {
-        const article = articles.find(a => a.actum_newspagecontentid === row.actum_newspagecontentid);
-        if (article && row['cta.actum_calltoactionbuttonid']) {
-          const ctaId = row['cta.actum_calltoactionbuttonid']!;
-          if (!article.ctas.find(c => c.id === ctaId)) {
-            article.ctas.push({
-              id: ctaId,
-              text: row['cta.actum_ctatext'] ?? '',
-              url: row['cta.actum_ctaurl'] ?? '#',
-              target: row['cta.actum_ctatarget'] ?? 182980000,
-            });
-          }
+          });
         }
-      });
+
+        // Build CTA lookup map and merge
+        const ctaMap = new Map<string, RawCtaItem[]>();
+        (ctasResult.value ?? []).forEach(row => {
+          const ctas = (row[CTA_NAV_PROP] ?? []) as RawCtaItem[];
+          if (ctas.length > 0) ctaMap.set(row.actum_newspagecontentid, ctas);
+        });
+        articles.forEach(article => {
+          const ctas = ctaMap.get(article.actum_newspagecontentid) ?? [];
+          article.ctas = ctas.map(cta => ({
+            id: cta.actum_calltoactionbuttonid,
+            text: cta.actum_ctatext ?? '',
+            url: cta.actum_ctaurl ?? '#',
+            target: cta.actum_ctatarget ?? 182980000,
+          }));
+        });
+      } else {
+        // ── FetchXML path ────────────────────────────────────────────────────
+        const [articlesResponse, ctasResult] = await Promise.all([
+          apiClient.odata<{ value: RawNewsRow[] }>(
+            `/actum_newspagecontents?fetchXml=${encodeURIComponent(fetchXml)}`,
+          ),
+          apiClient.odata<{ value: RawCtaRow[] }>(
+            `/actum_newspagecontents?fetchXml=${encodeURIComponent(CTA_FETCH_XML)}`,
+          ).catch(() => ({ value: [] as RawCtaRow[] })),
+        ]);
+
+        let deduplicated: NewsArticle[];
+        ({ articles: deduplicated, roleIds } = deduplicateArticles(articlesResponse.value ?? []));
+
+        // Filter by role
+        articles = roleId
+          ? deduplicated.filter(a => {
+              const roles = roleIds.get(a.actum_newspagecontentid) ?? [];
+              return roles.length === 0 || roles.includes(roleId);
+            })
+          : deduplicated;
+
+        // Merge CTAs
+        (ctasResult.value ?? []).forEach(row => {
+          const article = articles.find(a => a.actum_newspagecontentid === row.actum_newspagecontentid);
+          if (article && row['cta.actum_calltoactionbuttonid']) {
+            const ctaId = row['cta.actum_calltoactionbuttonid']!;
+            if (!article.ctas.find(c => c.id === ctaId)) {
+              article.ctas.push({
+                id: ctaId,
+                text: row['cta.actum_ctatext'] ?? '',
+                url: row['cta.actum_ctaurl'] ?? '#',
+                target: row['cta.actum_ctatarget'] ?? 182980000,
+              });
+            }
+          }
+        });
+      }
 
       setArticles(articles);
     } catch (err) {
