@@ -426,7 +426,8 @@ export const dataverseService = {
         };
 
         const conditions = [
-          'statecode eq 0',
+          'statecode eq 1',
+          'statuscode eq 182980001',
           nullOrMatch('_actum_languageid_value', languageId),
           nullOrMatch('_actum_countryid_value', countryId),
           nullOrMatch('_actum_roleid_value', roleId),

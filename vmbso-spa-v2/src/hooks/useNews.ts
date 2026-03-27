@@ -12,7 +12,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient, ApiError } from '../services/apiClient';
 import { config } from '../config/powerPages.config';
-import { NewsArticle } from '../types/newsArticle';
+import type { NewsArticle } from '../types/newsArticle';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 
