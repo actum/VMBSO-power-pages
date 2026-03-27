@@ -82,19 +82,23 @@ export const useHomePage = () => {
       let countryId: string | undefined;
       let roleId: string | undefined;
 
+      let brandIds: string[] = [];
+
       if (currentUser._parentcustomerid_value) {
-        const account = await dataverseService.accounts.getById(
-          currentUser._parentcustomerid_value,
-        );
+        const [account, accountBrands] = await Promise.all([
+          dataverseService.accounts.getById(currentUser._parentcustomerid_value),
+          dataverseService.accounts.getBrands(currentUser._parentcustomerid_value),
+        ]);
         countryId = account?._actum_primarycountryid_value?.replace(/[{}]/g, '');
         roleId = account?._actum_roleid_value?.replace(/[{}]/g, '');
+        brandIds = accountBrands.map(b => b.actum_brandid);
       }
 
-      // brandIds: not yet available from account M2M — pass undefined to show null-brand content
       const row = await dataverseService.landingPageContent.getForUser(
         languageId,
         countryId,
         roleId,
+        brandIds,
       );
 
       if (!row) {

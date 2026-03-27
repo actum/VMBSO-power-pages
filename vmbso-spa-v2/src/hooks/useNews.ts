@@ -400,16 +400,19 @@ export const useNews = () => {
       // Language from contact
       const languageId = currentUser._actum_languageid_value?.replace(/[{}]/g, '');
 
-      // Country + role from linked account
+      // Country + role + brands from linked account
       let countryId: string | undefined;
       let roleId: string | undefined;
+      let brandIds: string[] = [];
 
       if (currentUser._parentcustomerid_value) {
-        const account = await dataverseService.accounts.getById(
-          currentUser._parentcustomerid_value,
-        );
+        const [account, accountBrands] = await Promise.all([
+          dataverseService.accounts.getById(currentUser._parentcustomerid_value),
+          dataverseService.accounts.getBrands(currentUser._parentcustomerid_value),
+        ]);
         countryId = account?._actum_primarycountryid_value?.replace(/[{}]/g, '');
         roleId = account?._actum_roleid_value?.replace(/[{}]/g, '');
+        brandIds = accountBrands.map(b => b.actum_brandid);
       }
 
       const fetchXml = buildNewsFetchXml(languageId, countryId);
@@ -436,6 +439,13 @@ export const useNews = () => {
             const roles = roleIds.get(a.actum_newspagecontentid) ?? [];
             return roles.length === 0 || roles.includes(roleId);
           });
+        }
+
+        // Filter by brand — null brands on article = show to all
+        if (brandIds.length > 0) {
+          articles = articles.filter(a =>
+            a.brands.length === 0 || a.brands.some(b => brandIds.includes(b.id))
+          );
         }
 
         // Build CTA lookup map and merge
@@ -474,6 +484,13 @@ export const useNews = () => {
               return roles.length === 0 || roles.includes(roleId);
             })
           : deduplicated;
+
+        // Filter by brand — null brands on article = show to all
+        if (brandIds.length > 0) {
+          articles = articles.filter(a =>
+            a.brands.length === 0 || a.brands.some(b => brandIds.includes(b.id))
+          );
+        }
 
         // Merge CTAs
         (ctasResult.value ?? []).forEach(row => {

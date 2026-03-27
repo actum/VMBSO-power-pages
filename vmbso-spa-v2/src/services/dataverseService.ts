@@ -209,6 +209,27 @@ export const dataverseService = {
     },
 
     /**
+     * Get brands linked to an account via the M2M relationship.
+     * Nav prop: actum_account_actum_brand_actum_brand
+     */
+    async getBrands(accountId: string): Promise<Brand[]> {
+      try {
+        const query = buildODataQuery({
+          select: ['actum_brandid', 'actum_name'],
+        });
+        const response = await apiClient.odata<{ value: Brand[] }>(
+          `/accounts(${accountId})/actum_account_actum_brand_actum_brand${query}`
+        );
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /**
      * Create a new Account record.
      * Uses Prefer: return=representation to get the created record back.
      */
