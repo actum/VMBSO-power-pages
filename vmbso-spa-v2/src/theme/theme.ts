@@ -170,7 +170,11 @@ const theme = createTheme({
           boxShadow: 'none',
           '&:hover': {
             boxShadow: `0 1px 4px ${colors.shadowColor}`,
-            backgroundColor: colors.black,
+            backgroundColor: colors.primaryTealDark,
+          },
+          '&:active': {
+            boxShadow: 'none',
+            backgroundColor: colors.tealDark,
           },
         },
         outlined: {
