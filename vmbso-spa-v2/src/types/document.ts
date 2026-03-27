@@ -6,7 +6,7 @@ export interface ProductDocument {
   '@odata.etag'?: string;
   actum_productdocumentationid: string;
   actum_name: string;
-  actum_filename: string;
+  actum_filename?: string;
   actum_description?: string;
   actum_fileextension?: string;
   actum_language?: string;
@@ -18,12 +18,16 @@ export interface ProductDocument {
   'actum_unapprovedaccess@OData.Community.Display.V1.FormattedValue'?: string;
   'brand.actum_name'?: string;
   'brand.actum_brandid'?: string;
+  'doctype.actum_documenttypeid'?: string;
+  'doctype.actum_name'?: string;
+  'doctype.actum_code'?: string;
 }
 
 /**
- * Deduplicated document with all associated brands aggregated into an array.
+ * Deduplicated document with all associated brands and document types aggregated into arrays.
  * Used for display — one entry per unique document.
  */
-export interface DocumentWithBrands extends Omit<ProductDocument, 'brand.actum_name' | 'brand.actum_brandid'> {
+export interface DocumentWithBrands extends Omit<ProductDocument, 'brand.actum_name' | 'brand.actum_brandid' | 'doctype.actum_documenttypeid' | 'doctype.actum_name' | 'doctype.actum_code'> {
   brands: { id: string; name: string }[];
+  documentTypes: { id: string; name: string; code: string }[];
 }

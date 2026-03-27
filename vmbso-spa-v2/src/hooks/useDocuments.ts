@@ -12,55 +12,36 @@ import { useAuth } from '../contexts/AuthContext';
 
 const DEV_MOCK_DOCUMENTS: DocumentWithBrands[] = [
   {
-    actum_productdocumentationid: 'dev-doc-001',
-    actum_name: 'VMZINC Installation Guide 2026',
-    actum_filename: 'vmzinc_installation_guide_2026.pdf',
-    actum_description: '<div class="ck-content" data-wrapper="true" dir="ltr" style="--ck-image-style-spacing: 1.5em; --ck-inline-image-style-spacing: calc(var(--ck-image-style-spacing) / 2); font-family: Segoe UI; font-size: 11pt;"><p style="margin: 0;">Complete step-by-step <b>installation guide for VMZINC</b> standing seam roofing and <i>façade systems</i>, including substrate preparation, fixings, and weatherproofing details.</p></div>',
-    actum_fileextension: 'pdf',
-    actum_language: 'EN',
-    actum_visible: true,
-    actum_unapprovedaccess: false,
-    createdon: '2026-03-20T10:00:00Z',
-    brands: [{ id: 'brand-vmzinc', name: 'VMZINC' }],
-  },
-  {
-    actum_productdocumentationid: 'dev-doc-002',
-    actum_name: 'Technical Sheet — Mastersystems Pro Series',
-    actum_filename: 'mastersystems_pro_technical_sheet.pdf',
-    actum_description: 'Detailed technical specifications, dimensional tolerances, and performance data for the full Mastersystems Pro pre-applied self-adhesive tape range.',
-    actum_fileextension: 'pdf',
-    actum_language: 'FR',
-    actum_visible: true,
-    actum_unapprovedaccess: false,
-    createdon: '2026-03-15T14:30:00Z',
-    brands: [
-      { id: 'brand-mastersystems', name: 'Mastersystems' },
-      { id: 'brand-vmzinc', name: 'VMZINC' },
-    ],
-  },
-  {
-    actum_productdocumentationid: 'dev-doc-003',
-    actum_name: 'CAD & BIM Files Collection',
-    actum_filename: 'vmzinc_cad_bim_2026.zip',
-    actum_description: 'Full library of Revit families and AutoCAD detail drawings covering all VMZINC standing seam, flat-lock, and cassette product families for the 2026 range.',
+    // Mirrors real doc with 2 brands and no document type linked
+    actum_productdocumentationid: 'c1c16b2a-d726-f111-8341-7ced8d428823',
+    actum_name: 'Upload TEST',
+    actum_filename: 'SyncUsersFlow_1_0_0_1.zip',
+    actum_description: '<div class="ck-content" data-wrapper="true" dir="ltr" style="--ck-image-style-spacing: 1.5em; --ck-inline-image-style-spacing: calc(var(--ck-image-style-spacing) / 2); font-family: Segoe UI; font-size: 11pt;"><p style="margin: 0;">Hi. This is description for the document. <strong>Enjoy it</strong>.</p></div>',
     actum_fileextension: 'zip',
-    actum_language: 'NL',
     actum_visible: true,
     actum_unapprovedaccess: false,
-    createdon: '2026-03-10T09:00:00Z',
-    brands: [{ id: 'brand-vmzinc', name: 'VMZINC' }],
+    createdon: '2026-03-23T16:41:41Z',
+    brands: [
+      { id: 'ad236ebd-0900-f111-8407-000d3a66f792', name: 'VMZINC' },
+      { id: '0096b0c3-0900-f111-8407-000d3a66f792', name: 'Resitrix' },
+    ],
+    documentTypes: [],
   },
   {
-    actum_productdocumentationid: 'dev-doc-004',
-    actum_name: 'Resitrix Product Brochure 2026',
-    actum_filename: 'resitrix_brochure_2026.pdf',
-    actum_description: 'Full product catalogue for the Resitrix EPDM waterproofing membrane range, including system overviews, application guidelines, and certified performance data.',
-    actum_fileextension: 'pdf',
-    actum_language: 'NL',
+    // Mirrors real doc with 2 brands × 2 document types (4 raw rows → 1 deduplicated)
+    actum_productdocumentationid: '960c34c9-5222-f111-8341-7ced8d428823',
+    actum_name: 'TEST',
     actum_visible: true,
-    actum_unapprovedaccess: false,
-    createdon: '2026-03-01T08:00:00Z',
-    brands: [{ id: 'brand-resitrix', name: 'Resitrix' }],
+    actum_unapprovedaccess: true,
+    createdon: '2026-03-17T22:44:08Z',
+    brands: [
+      { id: 'ad236ebd-0900-f111-8407-000d3a66f792', name: 'VMZINC' },
+      { id: '311ce8cb-0900-f111-8407-000d3a66f792', name: 'Mastersystems' },
+    ],
+    documentTypes: [
+      { id: '36ae93e2-c229-f111-8342-000d3aba4b13', name: 'Brochure', code: 'BRC' },
+      { id: '21c6affb-c229-f111-8342-000d3aba4b13', name: 'Product overview', code: 'PRDO' },
+    ],
   },
 ];
 
@@ -71,17 +52,29 @@ const deduplicateDocuments = (raw: ProductDocument[]): DocumentWithBrands[] => {
     const id = row.actum_productdocumentationid;
     const brandId = row['brand.actum_brandid'];
     const brandName = row['brand.actum_name'];
+    const doctypeId = row['doctype.actum_documenttypeid'];
+    const doctypeName = row['doctype.actum_name'];
+    const doctypeCode = row['doctype.actum_code'];
 
     if (map.has(id)) {
       const existing = map.get(id)!;
       if (brandId && !existing.brands.find(b => b.id === brandId)) {
         existing.brands.push({ id: brandId, name: brandName || '' });
       }
+      if (doctypeId && !existing.documentTypes.find(d => d.id === doctypeId)) {
+        existing.documentTypes.push({ id: doctypeId, name: doctypeName || '', code: doctypeCode || '' });
+      }
     } else {
-      const { 'brand.actum_name': _n, 'brand.actum_brandid': _i, ...rest } = row;
+      const {
+        'brand.actum_name': _n, 'brand.actum_brandid': _i,
+        'doctype.actum_documenttypeid': _di, 'doctype.actum_name': _dn, 'doctype.actum_code': _dc,
+        ...rest
+      } = row;
       const brands: { id: string; name: string }[] = [];
       if (brandId) brands.push({ id: brandId, name: brandName || '' });
-      map.set(id, { ...rest, brands });
+      const documentTypes: { id: string; name: string; code: string }[] = [];
+      if (doctypeId) documentTypes.push({ id: doctypeId, name: doctypeName || '', code: doctypeCode || '' });
+      map.set(id, { ...rest, brands, documentTypes });
     }
   });
 

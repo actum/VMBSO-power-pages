@@ -60,7 +60,7 @@ export const Documents: React.FC = () => {
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
-  const [selectedExtensions, setSelectedExtensions] = useState<Set<string>>(new Set());
+  const [selectedDocTypes, setSelectedDocTypes] = useState<Set<string>>(new Set());
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { documents, loading, error, refetch } = useDocuments();
   const { currentUser } = useAuth();
@@ -83,13 +83,13 @@ export const Documents: React.FC = () => {
     }));
   }, [documents]);
 
-  // Derive unique file extensions
-  const allExtensions = useMemo(() => {
-    const set = new Set<string>();
+  // Derive unique document types
+  const allDocTypes = useMemo(() => {
+    const map = new Map<string, { id: string; name: string; code: string }>();
     documents.forEach(doc => {
-      if (doc.actum_fileextension) set.add(doc.actum_fileextension.toLowerCase());
+      doc.documentTypes.forEach(dt => { if (dt.id) map.set(dt.id, dt); });
     });
-    return Array.from(set);
+    return Array.from(map.values());
   }, [documents]);
 
   // Color lookup by brand ID
@@ -102,8 +102,8 @@ export const Documents: React.FC = () => {
   const isBrandChecked = (brandId: string) =>
     selectedBrands.size === 0 || selectedBrands.has(brandId);
 
-  const isExtChecked = (ext: string) =>
-    selectedExtensions.size === 0 || selectedExtensions.has(ext);
+  const isDocTypeChecked = (id: string) =>
+    selectedDocTypes.size === 0 || selectedDocTypes.has(id);
 
   const toggleBrand = (brandId: string) => {
     setSelectedBrands(prev => {
@@ -124,19 +124,19 @@ export const Documents: React.FC = () => {
     });
   };
 
-  const toggleExtension = (ext: string) => {
-    setSelectedExtensions(prev => {
+  const toggleDocType = (id: string) => {
+    setSelectedDocTypes(prev => {
       if (prev.size === 0) {
-        const next = new Set(allExtensions);
-        next.delete(ext);
+        const next = new Set(allDocTypes.map(d => d.id));
+        next.delete(id);
         return next;
       }
       const next = new Set(prev);
-      if (next.has(ext)) {
-        next.delete(ext);
+      if (next.has(id)) {
+        next.delete(id);
       } else {
-        next.add(ext);
-        if (next.size === allExtensions.length) return new Set();
+        next.add(id);
+        if (next.size === allDocTypes.length) return new Set();
       }
       return next;
     });
@@ -147,10 +147,10 @@ export const Documents: React.FC = () => {
     return documents.filter(doc => {
       // Brand filter
       if (selectedBrands.size > 0 && !doc.brands.some(b => selectedBrands.has(b.id))) return false;
-      // Extension filter
+      // Document type filter
       if (
-        selectedExtensions.size > 0 &&
-        !selectedExtensions.has(doc.actum_fileextension?.toLowerCase() ?? '')
+        selectedDocTypes.size > 0 &&
+        !doc.documentTypes.some(dt => selectedDocTypes.has(dt.id))
       ) return false;
       // Search
       if (searchText.trim()) {
@@ -163,7 +163,7 @@ export const Documents: React.FC = () => {
       }
       return true;
     });
-  }, [documents, selectedBrands, selectedExtensions, searchText]);
+  }, [documents, selectedBrands, selectedDocTypes, searchText]);
 
   const formatDate = (isoDate: string) => {
     try {
@@ -305,21 +305,21 @@ export const Documents: React.FC = () => {
           {t('filters.fileType')}
         </Typography>
         <FormGroup>
-          {allExtensions.map(ext => (
+          {allDocTypes.map(dt => (
             <FormControlLabel
-              key={ext}
+              key={dt.id}
               sx={{ m: 0, py: '2px' }}
               control={
                 <Checkbox
                   size="small"
-                  checked={isExtChecked(ext)}
-                  onChange={() => toggleExtension(ext)}
+                  checked={isDocTypeChecked(dt.id)}
+                  onChange={() => toggleDocType(dt.id)}
                   color="primary"
                 />
               }
               label={
                 <Typography variant="body2" sx={{ color: '#444' }}>
-                  {ext.toUpperCase()}
+                  {dt.name}
                 </Typography>
               }
             />
