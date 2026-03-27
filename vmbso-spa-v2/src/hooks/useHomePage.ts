@@ -32,9 +32,10 @@ function mapToHomePageData(
   const nameForGreeting = (firstName || fullName || '').trim() || 'there';
   const greetingsText = interpolateGreeting(row.actum_greetingstext, nameForGreeting);
 
-  const ctaButtons: CtaButton[] = ctas.length
-    ? ctas.map(ctaToButton)
-    : [{ text: fallbackCtaLabel, url: '/documents', target: '_self' }];
+  // const ctaButtons: CtaButton[] = ctas.length
+  //   ? ctas.map(ctaToButton)
+  //   : [{ text: fallbackCtaLabel, url: '/documents', target: '_self' }];
+  const ctaButtons: CtaButton[] = ctas.map(ctaToButton);
 
   return {
     heroSection: {

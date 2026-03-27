@@ -453,21 +453,29 @@ export const dataverseService = {
     },
 
     /**
-     * Fetch CTA buttons linked to a landing page record.
+     * Fetch CTA buttons linked to a landing page record via M2M $expand.
+     * Nav prop: actum_CallToActionButton_actum_LandingPageContent_actum_LandingPageContent
      */
     async getCtasForPage(landingPageId: string): Promise<LandingPageCta[]> {
+      const CTA_NAV_PROP = 'actum_CallToActionButton_actum_LandingPageContent_actum_LandingPageContent';
       try {
-        const query = buildODataQuery({
-          select: ['actum_calltoactionbuttonid', 'actum_ctatext', 'actum_ctaurl', 'actum_ctatarget'],
-          filter: `_actum_landingpageid_value eq ${landingPageId} and statecode eq 0`,
-        });
-        const response = await apiClient.odata<{ value: Array<{
+        const url = `/actum_landingpagecontents(${landingPageId})?$select=actum_landingpagecontentid&$expand=${CTA_NAV_PROP}($select=actum_calltoactionbuttonid,actum_ctatext,actum_ctaurl,actum_ctatarget;$filter=statecode eq 0)`;
+        const response = await apiClient.odata<{
+          actum_landingpagecontentid: string;
+          [key: string]: Array<{
+            actum_calltoactionbuttonid: string;
+            actum_ctatext?: string;
+            actum_ctaurl?: string;
+            actum_ctatarget?: number;
+          }> | string;
+        }>(url);
+        const ctas = (response[CTA_NAV_PROP] ?? []) as Array<{
           actum_calltoactionbuttonid: string;
           actum_ctatext?: string;
           actum_ctaurl?: string;
           actum_ctatarget?: number;
-        }> }>(`/actum_calltoactionbuttons${query}`);
-        return (response.value ?? []).map(r => ({
+        }>;
+        return ctas.map(r => ({
           id: r.actum_calltoactionbuttonid,
           text: r.actum_ctatext ?? '',
           url: r.actum_ctaurl ?? '#',
