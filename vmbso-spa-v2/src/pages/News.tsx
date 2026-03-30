@@ -53,21 +53,22 @@ export const News: React.FC = () => {
   const { t } = useTranslation('newsPage');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [openArticle, setOpenArticle] = useState<NewsArticle | null>(null);
-  const { articles, loading, error } = useNews();
+  const { articles, userBrands, loading, error } = useNews();
 
   React.useEffect(() => {
     document.title = t('pageTitle');
   }, [t]);
 
   const allBrands = useMemo(() => {
-    const map = new Map<string, string>();
-    articles.forEach(a => a.brands.forEach(b => { if (b.id) map.set(b.id, b.name); }));
-    return Array.from(map.entries()).map(([id, name], i) => ({
-      id,
-      name,
-      colors: BRAND_CHIP_COLORS[i % BRAND_CHIP_COLORS.length],
-    }));
-  }, [articles]);
+    const brandsInArticles = new Set(articles.flatMap(a => a.brands.map(b => b.id)));
+    return userBrands
+      .filter(b => brandsInArticles.has(b.id))
+      .map((b, i) => ({
+        id: b.id,
+        name: b.name,
+        colors: BRAND_CHIP_COLORS[i % BRAND_CHIP_COLORS.length],
+      }));
+  }, [userBrands, articles]);
 
   const brandColorMap = useMemo(() => {
     const map = new Map<string, typeof BRAND_CHIP_COLORS[0]>();
@@ -93,7 +94,7 @@ export const News: React.FC = () => {
 
   const brandChipRow = (brands: NewsArticle['brands'], publishDate?: string) => (
     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
-      {brands.map(brand => {
+      {brands.filter(b => brandColorMap.has(b.id)).map(brand => {
         const colors = brandColorMap.get(brand.id) ?? BRAND_CHIP_COLORS[0];
         return (
           <Chip
