@@ -1,3 +1,5 @@
 id: 3782a7f4-2218-414e-af6c-99442006c794
 name: Authentication/OpenIdConnect/EntraExternalID_2/MetadataAddress
-value: https://vmbsocustomerportaluat.ciamlogin.com/18435343-9fd6-4462-8046-47e928f5c986/v2.0/.well-known/openid-configuration
+statecode: 1
+statuscode: 2
+value: ''

@@ -1,3 +1,6 @@
 id: b1cf05cf-ce9c-44d2-8c82-8adf35d76c2a
 name: Authentication/OpenIdConnect/EntraExternalID_2/RedirectUri
-value: https://customerportal-dev.powerappsportals.com/signin-entraexternalid_2
+source: 0
+statecode: 1
+statuscode: 2
+value: ''
