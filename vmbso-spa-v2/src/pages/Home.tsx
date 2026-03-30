@@ -152,7 +152,7 @@ export const Home: React.FC = () => {
                             />
                         </Box>
 
-                        {/* Right half — teal background, title, CTAs */}
+                        {/* Right half — teal background, banner image text */}
                         <Box
                             sx={{
                                 flex: { xs: 'none', md: '0 0 50%' },
@@ -162,40 +162,14 @@ export const Home: React.FC = () => {
                                 justifyContent: 'center',
                                 px: { xs: 8, md: 12 },
                                 py: { xs: 8, md: 10 },
-                                gap: 5,
                             }}
                         >
                             <Typography
                                 variant="h2"
                                 sx={{ color: 'white', lineHeight: 1.2 }}
                             >
-                                {homePageData.bannerSection.title}
+                                {homePageData.bannerSection.bannerImageText}
                             </Typography>
-
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                                {homePageData.bannerSection.ctas.map((cta: CtaButton, idx: number) => (
-                                    <Button
-                                        key={idx}
-                                        variant="outlined"
-                                        size="large"
-                                        endIcon={<ArrowForwardIcon />}
-                                        component="a"
-                                        href={cta.url}
-                                        target={cta.target}
-                                        rel={cta.target === '_blank' ? 'noopener noreferrer' : undefined}
-                                        sx={{
-                                            color: 'white',
-                                            borderColor: 'white',
-                                            '&:hover': {
-                                                borderColor: 'white',
-                                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                            },
-                                        }}
-                                    >
-                                        {cta.text}
-                                    </Button>
-                                ))}
-                            </Box>
                         </Box>
                     </Box>
                 </>

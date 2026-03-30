@@ -51,10 +51,9 @@ function mapToHomePageData(
     bannerSection: {
       image: {
         url: row.actum_bannerimageurl?.trim() || '',
-        alt: row.actum_bannerimagetext?.trim() || '',
+        alt: '',
       },
-      title: row.actum_bannertitle?.trim() || '',
-      ctas: ctaButtons,
+      bannerImageText: row.actum_bannerimagetext?.trim() || '',
     },
   };
 }

@@ -284,7 +284,7 @@
       },
       "phoneNumber": {
         "label": "TELEFOONNUMMER",
-        "placeholder": "+31 6 12345678"
+        "placeholder": "+32 6 12345678"
       },
       "companyName": {
         "label": "BEDRIJFSNAAM",
@@ -307,7 +307,7 @@
       "companyPhone": {
         "label": "TELEFOONNUMMER",
         "aria": "Bedrijfstelefoon",
-        "placeholder": "+31 20 1234567"
+        "placeholder": "+32 20 1234567"
       },
       "address": {
         "label": "ADRES",

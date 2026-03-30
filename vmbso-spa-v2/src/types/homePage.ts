@@ -31,8 +31,7 @@ export interface BannerSection {
     url: string;
     alt: string;
   };
-  title: string;
-  ctas: CtaButton[];
+  bannerImageText: string;
 }
 
 export interface HomePageData {

@@ -179,9 +179,9 @@ export const Login: React.FC = () => {
                 <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
                   {t("loginPage:firstVisit.title")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ my: 4 }}>
+                {/* <Typography variant="body2" color="text.secondary" sx={{ my: 4 }}>
                   {t("loginPage:firstVisit.subtitle")}
-                </Typography>
+                </Typography> */}
                 <Button
                   variant="outlined"
                   onClick={() => submitExternalLogin({ prompt: 'create' })}
