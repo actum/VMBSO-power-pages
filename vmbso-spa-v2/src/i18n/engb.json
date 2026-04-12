@@ -116,7 +116,7 @@
   },
 
   "layout": {
-    "pendingApprovalBanner": "Your account is pending approval. You will be notified once it has been reviewed."
+    "pendingApprovalBanner": "Your account is pending approval. Some functionalities may only be available after this approval."
   },
 
   "languages": {

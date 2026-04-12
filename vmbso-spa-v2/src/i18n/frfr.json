@@ -114,7 +114,7 @@
   },
 
   "layout": {
-    "pendingApprovalBanner": "Votre compte est en attente d'approbation. Vous serez notifié une fois qu'il aura été examiné."
+    "pendingApprovalBanner": "Votre compte est en attente d'approbation. Certaines fonctionnalités ne seront disponibles qu'après cette approbation."
   },
 
   "languages": {
