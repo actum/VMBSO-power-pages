@@ -12,6 +12,8 @@ import {
   useMediaQuery,
   Paper,
   CircularProgress,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
@@ -38,9 +40,29 @@ export const UpdateProfile: React.FC = () => {
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   const { t } = useTranslation(["updateProfilePage"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Translation helpers for entity lookups
+  const translateCountry = (countryName: string): string => {
+    const key = `entities.countries.${countryName}`;
+    const translated = t(key);
+    return translated === key ? countryName : translated; // Fallback to original if not found
+  };
+
+  const translateRole = (roleName: string): string => {
+    const key = `entities.roles.${roleName}`;
+    const translated = t(key);
+    return translated === key ? roleName : translated; // Fallback to original if not found
+  };
+
+  const translateLanguage = (languageCode: string): string => {
+    const key = `languages:options.${languageCode}`;
+    const translated = t(key);
+    return translated === key ? languageCode : translated; // Fallback to original if not found
+  };
 
   // Set page title from translation
   useEffect(() => { 
@@ -160,6 +182,24 @@ export const UpdateProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSubmitted(true);
+
+    // Validate required fields
+    const contactFieldsValid =
+      !!values.actum_language?.toString().trim() &&
+      !!values.telephone1?.toString().trim();
+
+    const vatSearchDone = vatSearchState === "found" || vatSearchState === "notFound";
+    const companyFieldsValid = vatSearchDone;
+
+    const isValid = isProfileComplete 
+      ? contactFieldsValid
+      : contactFieldsValid && companyFieldsValid;
+
+    if (!isValid) {
+      setError(t("updateProfilePage:messages.fillRequiredFields"));
+      return;
+    }
 
     try {
       setUpdating(true);
@@ -216,21 +256,10 @@ export const UpdateProfile: React.FC = () => {
     }
   };
 
-  // ── Save button guard ─────────────────────────────────────────────────────
-  const contactFieldsValid =
-    !!values.actum_language?.toString().trim() &&
-    !!values.telephone1?.toString().trim();
-
-  const vatSearchDone = vatSearchState === "found" || vatSearchState === "notFound";
-
-  // Simplified: only require VAT search completion
-  // The flow will handle creating/linking the account and validate required fields
-  const companyFieldsValid = vatSearchDone;
-
-  // When profile is complete, only validate language and phone
-  const canSave = isProfileComplete 
-    ? contactFieldsValid
-    : contactFieldsValid && companyFieldsValid;
+  // Helper to determine if field should show error
+  const shouldShowError = (fieldValue: any): boolean => {
+    return submitted && !fieldValue;
+  };
 
   const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
 
@@ -293,7 +322,7 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
 
           <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mt: 1 }}>
-            {/* VAT + Search */}
+            {/* VAT + SshouldShowError(values.telephone1) ? t("validation.phoneNumber") : undefined
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.vat.label")}
@@ -388,7 +417,7 @@ export const UpdateProfile: React.FC = () => {
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : countries.map(c => (
                           <MenuItem key={c.actum_countryid} value={c.actum_countryid}>
-                            {c.actum_name}
+                            {translateCountry(c.actum_name)}
                           </MenuItem>
                         ))}
                   </InputLabelField>
@@ -483,7 +512,11 @@ export const UpdateProfile: React.FC = () => {
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : brands.map(b => (
                           <MenuItem key={b.actum_brandid} value={b.actum_brandid}>
-                            {b.actum_name}
+                            <Checkbox 
+                              checked={(values.actum_brand ?? []).indexOf(b.actum_brandid) > -1} 
+                              sx={{ mr: 1 }}
+                            />
+                            <ListItemText primary={b.actum_name} />
                           </MenuItem>
                         ))}
                   </InputLabelField>
@@ -505,7 +538,7 @@ export const UpdateProfile: React.FC = () => {
                       ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
                       : roles.map(r => (
                           <MenuItem key={r.actum_roleid} value={r.actum_roleid}>
-                            {r.actum_name}
+                            {translateRole(r.actum_name)}
                           </MenuItem>
                         ))}
                   </InputLabelField>
@@ -523,7 +556,7 @@ export const UpdateProfile: React.FC = () => {
                 fullWidth
                 required
                 onChange={handleChange("actum_language")}
-                error={t("validation.language")}
+                error={shouldShowError(values.actum_language) ? t("validation.language") : undefined}
                 disabled={!values.actum_primarycountry || languagesLoading}
               >
                 {languagesLoading
@@ -532,7 +565,7 @@ export const UpdateProfile: React.FC = () => {
                     ? <MenuItem value="" disabled>{t("fields.language.noOptions")}</MenuItem>
                     : languages.map(lang => (
                         <MenuItem key={lang.actum_languageid} value={lang.actum_languageid}>
-                          {lang.actum_name}
+                          {translateLanguage(lang.actum_code)}
                         </MenuItem>
                       ))}
               </InputLabelField>
@@ -559,9 +592,9 @@ export const UpdateProfile: React.FC = () => {
               size={isMobile ? "large" : "medium"}
               type="submit"
               variant="contained"
-              disabled={updating || !canSave}
+              disabled={updating}
             >
-              {canSave && updating ? t("action.updating") : t("action.update")}
+              {updating ? t("action.updating") : t("action.update")}
             </Button>
           </Box>
         </Paper>

@@ -5,6 +5,31 @@
     "completeCompanyDetails": "Bedrijfsgegevens"
   },
 
+  "entities": {
+    "countries": {
+      "Belgium": "België",
+      "France": "Frankrijk",
+      "Netherlands": "Nederland",
+      "Germany": "Duitsland",
+      "Luxembourg": "Luxemburg",
+      "Denmark": "Denemarken",
+      "Spain": "Spanje",
+      "Italy": "Italië",
+      "Portugal": "Portugal",
+      "Austria": "Oostenrijk",
+      "Switzerland": "Zwitserland",
+      "United Kingdom": "Verenigd Koninkrijk"
+    },
+    "roles": {
+      "Distributor": "Distributeur",
+      "Architect": "Architect",
+      "Installer": "Installateur",
+      "Contractor": "Aannemer",
+      "Engineer": "Ingenieur",
+      "Builder": "Bouwer"
+    }
+  },
+
   "fields": {
     "companyBrand": {
       "label": "BEDRIJFSMERK",
@@ -54,7 +79,7 @@
       "aria": "Adres van het bedrijf"
     },
     "companyRole": {
-      "label": "FUNCTIE IN HET BEDRIJF",
+      "label": "KIES JOUW ACTIVITEIT",
       "aria": "Functieselector van het bedrijf",
       "options": {
         "distributor": "Distributeur",
@@ -99,6 +124,14 @@
   "action": {
     "update": "Bijwerken",
     "updating": "Bezig met bijwerken…",
-    "searching": "Zoeken…"
-  }
+    "searching": "Zoeken…"  },
+
+  "messages": {
+    "fillRequiredFields": "Vul alle verplichte velden in",
+    "updateSuccess": "Profiel succesvol bijgewerkt",
+    "updateError": "Profiel bijwerken mislukt",
+    "updateFailed": "Er is een fout opgetreden bij het bijwerken van uw profiel",
+    "unexpectedError": "Er is een onverwachte fout opgetreden",
+    "vatSearchError": "BTW-zoekopdracht mislukt",
+    "profileLockedInfo": "Uw profiel is vergrendeld. U kunt alleen uw telefoonnummer en taal bijwerken."  }
 }

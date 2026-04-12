@@ -5,6 +5,31 @@
     "completeCompanyDetails": "Détails de l'entreprise"
   },
 
+  "entities": {
+    "countries": {
+      "Belgium": "Belgique",
+      "France": "France",
+      "Netherlands": "Pays-Bas",
+      "Germany": "Allemagne",
+      "Luxembourg": "Luxembourg",
+      "Denmark": "Danemark",
+      "Spain": "Espagne",
+      "Italy": "Italie",
+      "Portugal": "Portugal",
+      "Austria": "Autriche",
+      "Switzerland": "Suisse",
+      "United Kingdom": "Royaume-Uni"
+    },
+    "roles": {
+      "Distributor": "Distributeur",
+      "Architect": "Architecte",
+      "Installer": "Installateur",
+      "Contractor": "Entrepreneur",
+      "Engineer": "Ingénieur",
+      "Builder": "Constructeur"
+    }
+  },
+
   "fields": {
     "companyBrand": {
       "label": "MARQUE DE L'ENTREPRISE",
@@ -54,7 +79,7 @@
       "aria": "Adresse de l'entreprise"
     },
     "companyRole": {
-      "label": "RÔLE DANS L'ENTREPRISE",
+      "label": "CHOISISSEZ VOTRE ACTIVITÉ",
       "aria": "Sélecteur de rôle dans l'entreprise",
       "options": {
         "distributor": "Distributeur",
@@ -100,5 +125,15 @@
     "update": "Mettre à jour",
     "updating": "Mise à jour en cours…",
     "searching": "Recherche en cours…"
+  },
+
+  "messages": {
+    "fillRequiredFields": "Veuillez remplir tous les champs obligatoires",
+    "updateSuccess": "Profil mis à jour avec succès",
+    "updateError": "Échec de la mise à jour du profil",
+    "updateFailed": "Une erreur s'est produite lors de la mise à jour de votre profil",
+    "unexpectedError": "Une erreur inattendue s'est produite",
+    "vatSearchError": "La recherche de TVA a échoué",
+    "profileLockedInfo": "Votre profil est verrouillé. Vous ne pouvez mettre à jour que votre numéro de téléphone et votre langue."
   }
 }

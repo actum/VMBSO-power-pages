@@ -5,6 +5,31 @@
     "completeCompanyDetails": "Company details"
   },
 
+  "entities": {
+    "countries": {
+      "Belgium": "Belgium",
+      "France": "France",
+      "Netherlands": "Netherlands",
+      "Germany": "Germany",
+      "Luxembourg": "Luxembourg",
+      "Denmark": "Denmark",
+      "Spain": "Spain",
+      "Italy": "Italy",
+      "Portugal": "Portugal",
+      "Austria": "Austria",
+      "Switzerland": "Switzerland",
+      "United Kingdom": "United Kingdom"
+    },
+    "roles": {
+      "Distributor": "Distributor",
+      "Architect": "Architect",
+      "Installer": "Installer",
+      "Contractor": "Contractor",
+      "Engineer": "Engineer",
+      "Builder": "Builder"
+    }
+  },
+
   "fields": {
     "companyBrand": {
       "label": "COMPANY BRAND",
@@ -54,7 +79,7 @@
       "aria": "Company address"
     },
     "companyRole": {
-      "label": "COMPANY ROLE",
+      "label": "CHOOSE YOUR ACTIVITY",
       "aria": "Company role selector",
       "options": {
         "distributor": "Distributor",
@@ -100,5 +125,15 @@
     "update": "Update",
     "updating": "Updating…",
     "searching": "Searching…"
+  },
+
+  "messages": {
+    "fillRequiredFields": "Please fill in all required fields",
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile",
+    "updateFailed": "An error occurred while updating your profile",
+    "unexpectedError": "An unexpected error occurred",
+    "vatSearchError": "VAT search failed",
+    "profileLockedInfo": "Your profile is locked. You can only update your phone number and language."
   }
 }
