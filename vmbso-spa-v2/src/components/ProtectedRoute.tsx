@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { config } from "../config/powerPages.config";
@@ -25,7 +25,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requireCompleteProfile = true 
 }) => {
-  const { isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
+  const { currentUser, isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
+  const location = useLocation();
 
   // In local dev mode, bypass all auth and profile checks
   if (config.devMode) {
@@ -56,6 +57,25 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Rule 2: If profile completion is required and profile is incomplete, redirect to complete it
   if (requireCompleteProfile && !isProfileComplete) {
     return <Navigate to="/update-profile" replace />;
+  }
+
+  // Rule 3: /invoices is only available to Installers from Belgium
+  if (location.pathname.startsWith("/invoices")) {
+
+    if (!currentUser) {
+      return <Navigate to="/login" replace />;
+    }
+
+    if (!currentUser.actum_role || !currentUser.actum_primarycountry) {
+      return <Navigate to="/documents" replace />;
+    }
+
+    const isInstaller = ["installer"].includes(currentUser.actum_role.toLowerCase());
+    const isBelgium = ["nl-nl", "be-nl"].includes(currentUser.actum_primarycountry.toLowerCase());
+
+    if (!isInstaller || !isBelgium) {
+      return <Navigate to="/documents" replace />;
+    }
   }
 
   // All checks passed - render the protected content
