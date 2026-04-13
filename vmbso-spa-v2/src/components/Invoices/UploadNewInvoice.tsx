@@ -109,7 +109,7 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
       setErrorMessage(null);
       setIsUploading(true);
 
-      const uploadedInvoice: Invoice = await dataverseService.invoices.uploadPdf({
+      const uploadedInvoice: Invoice = await dataverseService.invoices.uploadInvoice({
         contactId: currentUser.contactid,
         account: currentUser.fullname.trim(),
         contact: currentUser.emailaddress1.trim(),
