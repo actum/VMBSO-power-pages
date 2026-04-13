@@ -24,7 +24,8 @@
     
     "documentsSearch": {
       "label": "Documenten",
-      "placeholder": "Documenten zoeken..."
+      "placeholder": "Documenten zoeken...",
+      "tooltip": "Téléchargez votre PDF"
     },
     "documentsList": {
       "results": "Gevonden {{count}} document(en)"
@@ -44,7 +45,8 @@
     "actions": {
       "search": "Zoeken",
       "clear": "Wissen",
-      "download": "Download"
+      "download": "Download",
+      "uploadPdf": "PDF uploaden"
     },
     "download": {
       "preparing": "We bereiden uw download voor",
@@ -362,6 +364,43 @@
       "update": "Bijwerken",
       "updating": "Bezig met bijwerken…",
       "searching": "Zoeken…"
+    }
+  },
+
+  "invoicesPage": {
+    "title": "Mijn facturen",
+
+    "states": {
+      "submitted": "Ingediend",
+      "rejected": "Afgewezen",
+      "credited": "Gecrediteerd"
+    },
+
+    "uploadNewInvoice": {
+      "pageTitle": "Factuur | VMBSO Klantenportaal",
+      "title": "Nieuwe factuur uploaden",
+      "subtitle": "Zet uw factuur-PDF hieronder neer of blader door uw bestanden.",
+      "dropzone": {
+        "mobileTitle": "Blader naar factuurbestanden op uw apparaat.",
+        "idle": "Sleep uw PDF hierheen",
+        "active": "Zet de PDF neer om deze bij te voegen",
+        "hint": "Één PDF-bestand, tot {{maxSizeMb}} MB"
+      },
+      "selected": {
+        "label": "Geselecteerd bestand"
+      },
+      "actions": {
+        "browse": "Bestanden bekijken",
+        "replace": "Bestand vervangen",
+        "remove": "Verwijderen",
+        "upload": "Factuur uploaden"
+      },
+      "validation": {
+        "required": "Voeg een PDF toe voordat u uploadt.",
+        "invalidType": "Alleen PDF-bestanden zijn toegestaan.",
+        "fileTooLarge": "Het bestand mag maximaal {{maxSizeMb}} MB groot zijn.",
+        "tooManyFiles": "Upload slechts één PDF-bestand."
+      }
     }
   }
 }

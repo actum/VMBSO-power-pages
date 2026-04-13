@@ -21,10 +21,11 @@
 
   "documentsPage": {
     "pageTitle": "Documents | Portail client VMBSO",
-    
+
     "documentsSearch": {
       "label": "Documents",
-      "placeholder": "Rechercher des documents..."
+      "placeholder": "Rechercher des documents...",
+      "tooltip": "Téléchargez votre PDF"
     },
     "documentsList": {
       "results": "Trouvé {{count}} document(s)"
@@ -44,7 +45,8 @@
     "actions": {
       "search": "Rechercher",
       "clear": "Effacer",
-      "download": "Télécharger"
+      "download": "Télécharger",
+      "uploadPdf": "Téléverser un PDF"
     },
     "download": {
       "preparing": "Nous préparons votre téléchargement",
@@ -362,6 +364,43 @@
       "update": "Mettre à jour",
       "updating": "Mise à jour…",
       "searching": "Recherche en cours…"
+    }
+  },
+
+  "invoicesPage": {
+    "title": "Mes factures",
+
+    "states": {
+      "submitted": "Soumis",
+      "rejected": "Rejeté",
+      "credited": "Crédité"
+    },
+
+    "uploadNewInvoice": {
+      "pageTitle": "Facture | Portail Client VMBSO",
+      "title": "Télécharger une nouvelle facture",
+      "subtitle": "Déposez votre facture PDF ci-dessous ou parcourez vos fichiers.",
+      "dropzone": {
+        "mobileTitle": "Parcourir les fichiers de factures sur votre appareil.",
+        "idle": "Glissez et déposez votre PDF ici",
+        "active": "Déposez le PDF pour le joindre",
+        "hint": "Un seul fichier PDF, jusqu'à {{maxSizeMb}} Mo"
+      },
+      "selected": {
+        "label": "Fichier sélectionné"
+      },
+      "actions": {
+        "browse": "Parcourir les fichiers",
+        "replace": "Remplacer le fichier",
+        "remove": "Supprimer",
+        "upload": "Télécharger la facture"
+      },
+      "validation": {
+        "required": "Veuillez ajouter un PDF avant de télécharger.",
+        "invalidType": "Seuls les fichiers PDF sont autorisés.",
+        "fileTooLarge": "Le fichier doit faire {{maxSizeMb}} Mo ou moins.",
+        "tooManyFiles": "Veuillez télécharger un seul fichier PDF."
+      }
     }
   }
 }
