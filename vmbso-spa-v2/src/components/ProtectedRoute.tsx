@@ -71,7 +71,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     const isInstaller = ["installer"].includes(currentUser.actum_role.toLowerCase());
-    const isBelgium = ["nl-nl", "be-nl"].includes(currentUser.actum_primarycountry.toLowerCase());
+    const isBelgium = ["belgium"].includes(currentUser.actum_primarycountry.toLowerCase());
 
     if (!isInstaller || !isBelgium) {
       return <Navigate to="/documents" replace />;
