@@ -3,15 +3,63 @@
  * Handles all CRUD operations for Dataverse entities
  */
 
-import { apiClient, ApiError } from './apiClient';
+import { apiClient, ApiError, getCsrfToken } from './apiClient';
 import type { Contact } from '../types/contact';
 import type { Account } from '../types/account';
 import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
+import type { Invoice } from '../types/invoice';
 import type { LandingPageContent, LandingPageCta } from '../types/homePage';
 import { config } from '../config/powerPages.config';
+
+type FlowArrayResponse<T> = {
+  status?: string;
+  data?: T[] | string;
+  message?: string;
+};
+
+type UploadInvoiceArgs = {
+  contactId: string;
+  account: string;
+  contact: string;
+  file: File;
+};
+
+function parseFlowArrayData<T>(response: FlowArrayResponse<T>, entityName: string): T[] {
+  if (response?.status === '500') {
+    throw new Error(response.message || `Failed to fetch ${entityName}`);
+  }
+
+  const payload = response?.data;
+  if (typeof payload === 'string') {
+    try {
+      const parsed = JSON.parse(payload);
+      if (!Array.isArray(parsed)) {
+        throw new Error(`Unexpected ${entityName} data format`);
+      }
+      return parsed as T[];
+    } catch (error) {
+      console.error(`Failed to parse ${entityName} flow response:`, error);
+      throw new Error(`Failed to parse ${entityName} data`);
+    }
+  }
+
+  if (!Array.isArray(payload)) {
+    throw new Error(`Unexpected ${entityName} data format`);
+  }
+
+  return payload;
+}
+
+function isFlowArrayResponse<T>(value: unknown): value is FlowArrayResponse<T> {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  return 'status' in value || 'data' in value || 'message' in value;
+}
 
 /**
  * OData query builder
@@ -78,8 +126,8 @@ export const dataverseService = {
 
         // Add cache-busting filter with current datetime (always false condition)
         const cacheBuster = new Date().toISOString();
-        
-        const query = buildODataQuery({ 
+
+        const query = buildODataQuery({
           select: fields,
           // Temporarily disable $expand to avoid 400 errors
           // expand: [
@@ -87,9 +135,9 @@ export const dataverseService = {
           //   'parentcustomerid($select=accountid,name)'  // Expand Account for Company Name
           // ],
           filter: `createdon ne ${cacheBuster}`,  // Cache-busting: always unique, never affects results
-          top: 1 
+          top: 1
         });
-        
+
         const response = await apiClient.odata<{ value: Contact[] }>(`/contacts${query}`);
 
         if (!response.value?.length) {
@@ -367,6 +415,151 @@ export const dataverseService = {
         }
         throw error;
       }
+    },
+  },
+
+  /**
+   * Invoice operations
+   */
+  invoices: {
+    /**
+     * Fetch invoices for a specific contact directly from Dataverse via OData.
+     */
+    async getByContact(contactId: string): Promise<Invoice[]> {
+      if (config.devMode) {
+        return [];
+      }
+
+      if (!contactId) {
+        return [];
+      }
+
+      const query = buildODataQuery({
+        select: [
+          'actum_invoicenumber',
+          'actum_creditpoints',
+          'actum_status',
+          'statuscode',
+          'actum_account',
+          'actum_contact',
+          '_actum_accountid_value',
+          '_actum_contactid_value',
+        ],
+        filter: `_actum_contactid_value eq ${contactId}`,
+        orderby: 'createdon desc',
+      });
+
+      const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
+        headers: {
+          Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
+        },
+      });
+
+      return response.value ?? [];
+    },
+
+    /**
+     * Fetch invoices from Dataverse using OData.
+     * Tries likely table names because table logical name can vary by environment.
+     */
+    async getAll(): Promise<Invoice[]> {
+      if (config.devMode) {
+        return [];
+      }
+
+      const query = buildODataQuery({
+        select: [
+          'actum_invoicenumber',
+          'actum_creditpoints',
+          'actum_status',
+          'statuscode',
+          'actum_account',
+          'actum_contact',
+          '_actum_accountid_value',
+          '_actum_contactid_value',
+        ],
+        orderby: 'createdon desc',
+      });
+
+      try {
+        const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
+          headers: {
+            Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
+          },
+        });
+
+        return response.value ?? [];
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    /**
+     * Upload an invoice PDF with form data through a cloud flow endpoint.
+     */
+    async uploadInvoice({ contactId, account, contact, file }: UploadInvoiceArgs): Promise<Invoice> {
+      if (!config.flows.uploadInvoicePdf) {
+        throw new Error('Invoice upload flow URL is not configured.');
+      }
+
+      const token = await getCsrfToken();
+      const formData = new FormData();
+      formData.append('contactId', contactId);
+      formData.append('account', account);
+      formData.append('contact', contact);
+      formData.append('invoicePdf', file, file.name);
+
+      const response = await fetch(config.flows.uploadInvoicePdf, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          __RequestVerificationToken: token,
+          'x-requested-with': 'XMLHttpRequest',
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const details = await response.text().catch(() => '');
+        throw new Error(`Invoice upload failed: ${response.status}${details ? ` - ${details}` : ''}`);
+      }
+
+      if (response.status === 204) {
+        return {
+          actum_invoicenumber: crypto.randomUUID(),
+          actum_creditpoints: 0,
+          actum_status: 'submitted',
+          actum_account: account,
+          actum_contact: contact,
+          actum_invoicedocument: file,
+        };
+      }
+
+      const body = await response.json().catch(() => null) as
+        | Invoice
+        | FlowArrayResponse<Invoice>
+        | null;
+
+      if (!body) {
+        return {
+          actum_invoicenumber: crypto.randomUUID(),
+          actum_creditpoints: 0,
+          actum_status: 'submitted',
+          actum_account: account,
+          actum_contact: contact,
+          actum_invoicedocument: file,
+        };
+      }
+
+      if (isFlowArrayResponse<Invoice>(body) && (body.status || body.data)) {
+        const rows = parseFlowArrayData(body, 'uploaded invoice');
+        if (rows.length > 0) {
+          return { ...rows[0], actum_invoicedocument: file };
+        }
+      }
+
+      const mapped = body as Invoice;
+      return { ...mapped, actum_invoicedocument: file };
     },
   },
 
