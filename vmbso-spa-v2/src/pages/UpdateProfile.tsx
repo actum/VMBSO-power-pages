@@ -31,6 +31,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import InputLabelField from "../components/common/ui/InputLabelField";
+import { mapDataverseToFrontend } from "../utils/languageMapper";
+import { isValidE164, autoFormatPhone } from "../utils/phoneUtils";
 
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
@@ -41,6 +43,7 @@ export const UpdateProfile: React.FC = () => {
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [companyFieldsSubmitted, setCompanyFieldsSubmitted] = useState(false);
   const { t } = useTranslation(["updateProfilePage"]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -59,7 +62,9 @@ export const UpdateProfile: React.FC = () => {
   };
 
   const translateLanguage = (languageCode: string): string => {
-    const key = `languages:options.${languageCode}`;
+    // Map Dataverse code (nl-NL) to frontend code (be-NL) before translation lookup
+    const frontendCode = mapDataverseToFrontend(languageCode);
+    const key = `languages:options.${frontendCode}`;
     const translated = t(key);
     return translated === key ? languageCode : translated; // Fallback to original if not found
   };
@@ -150,13 +155,34 @@ export const UpdateProfile: React.FC = () => {
   const handleChange = (field: keyof Contact) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setValues(prev => ({ ...prev, [field]: e.target.value }));
+    const value = e.target.value;
+    
+    // Reset submitted state when user makes changes
+    if (submitted) {
+      setSubmitted(false);
+    }
+    if (companyFieldsSubmitted) {
+      setCompanyFieldsSubmitted(false);
+    }
+    
+    // Auto-format phone numbers to E.164 format
+    if (field === 'telephone1' || field === 'actum_companyphone') {
+      const previousValue = (values[field] as string) || '';
+      const formatted = autoFormatPhone(value, previousValue);
+      setValues(prev => ({ ...prev, [field]: formatted }));
+    } else {
+      setValues(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleVatSearch = async () => {
     if (!vatInput.trim()) return;
     setVatSearchState("searching");
     setError(null);
+    
+    // Reset company fields submitted state when doing new VAT search
+    setCompanyFieldsSubmitted(false);
+    
     try {
       const account = await dataverseService.accounts.searchByVAT(vatInput.trim());
       if (account) {
@@ -187,10 +213,23 @@ export const UpdateProfile: React.FC = () => {
     // Validate required fields
     const contactFieldsValid =
       !!values.actum_language?.toString().trim() &&
-      !!values.telephone1?.toString().trim();
+      !!values.telephone1?.toString().trim() &&
+      isValidE164(values.telephone1 || '');
 
     const vatSearchDone = vatSearchState === "found" || vatSearchState === "notFound";
-    const companyFieldsValid = vatSearchDone;
+    
+    // Company fields validation - includes phone E.164 validation when company fields are visible
+    const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
+    
+    // Mark company fields as submitted if they're currently visible
+    if (companyFieldsVisible) {
+      setCompanyFieldsSubmitted(true);
+    }
+    
+    const companyPhoneValid = !companyFieldsVisible || 
+      (!!values.actum_companyphone?.toString().trim() && isValidE164(values.actum_companyphone || ''));
+    
+    const companyFieldsValid = vatSearchDone && companyPhoneValid;
 
     const isValid = isProfileComplete 
       ? contactFieldsValid
@@ -256,9 +295,48 @@ export const UpdateProfile: React.FC = () => {
     }
   };
 
-  // Helper to determine if field should show error
-  const shouldShowError = (fieldValue: any): boolean => {
-    return submitted && !fieldValue;
+  // Helper for phone field errors - shows E.164 validation errors
+  const getPhoneError = (phone: string | undefined, fieldName: string, isCompanyField: boolean = false): string | undefined => {
+    // Company fields should only show errors after company fields have been submitted
+    if (isCompanyField && !companyFieldsSubmitted) return undefined;
+    if (!submitted) return undefined;
+    if (!phone || !phone.trim()) return t(`validation.${fieldName}`);
+    if (!isValidE164(phone)) {
+      return t(`validation.${fieldName}Format`) || 'Phone must be in E.164 format (e.g., +32123456789)';
+    }
+    return undefined;
+  };
+
+  // Helper for language field errors
+  const getLanguageError = (): string | undefined => {
+    if (!submitted) return undefined;
+    if (!values.actum_language) return t("validation.language");
+    return undefined;
+  };
+
+  // Helper for VAT field errors
+  const getVatError = (): string | undefined => {
+    if (!submitted || isProfileComplete) return undefined;
+    if (!vatInput.trim()) return t("validation.vat");
+    return undefined;
+  };
+
+  // Helper for company name field errors
+  const getCompanyNameError = (): string | undefined => {
+    if (!submitted) return undefined;
+    if (isProfileComplete || vatSearchState === "found") return undefined;
+    if (vatSearchState === "notFound" && !values.actum_companyname?.trim()) {
+      return t("validation.companyName");
+    }
+    return undefined;
+  };
+
+  // Helper for company field errors (country, address, city, zipCode, brand, role)
+  const getCompanyFieldError = (fieldValue: any, validationKey: string): string | undefined => {
+    if (!companyFieldsSubmitted) return undefined;
+    const isEmpty = Array.isArray(fieldValue) ? fieldValue.length === 0 : !fieldValue;
+    if (isEmpty) return t(`validation.${validationKey}`);
+    return undefined;
   };
 
   const companyFieldsVisible = vatSearchState === "notFound" && !isProfileComplete;
@@ -298,6 +376,7 @@ export const UpdateProfile: React.FC = () => {
                 onChange={handleChange("emailaddress1")}
                 fullWidth
                 disabled
+                disableInternalValidation={true}
                 helperText=" "
               />
             </Grid>
@@ -305,13 +384,14 @@ export const UpdateProfile: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.phoneNumber.label")}
-                placeholder={t("fields.phoneNumber.placeholder")}
+                placeholder="+32123456789"
                 value={values.telephone1 || ""}
                 fullWidth
                 required
                 inputMode="tel"
                 onChange={handleChange("telephone1")}
-                error={t("validation.phoneNumber")}
+                error={getPhoneError(values.telephone1, "phoneNumber")}
+                disableInternalValidation={true}
               />
             </Grid>
           </Grid>
@@ -322,7 +402,7 @@ export const UpdateProfile: React.FC = () => {
           </Typography>
 
           <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mt: 1 }}>
-            {/* VAT + SshouldShowError(values.telephone1) ? t("validation.phoneNumber") : undefined
+            {/* VAT Field */}
             <Grid item xs={12} sm={6}>
               <InputLabelField
                 label={t("fields.vat.label")}
@@ -331,6 +411,7 @@ export const UpdateProfile: React.FC = () => {
                 fullWidth
                 required={!isProfileComplete}
                 disabled={isProfileComplete}
+                disableInternalValidation={true}
                 onChange={e => {
                   setVatInput(e.target.value);
                   // Reset search state if user edits the VAT after searching
@@ -344,7 +425,7 @@ export const UpdateProfile: React.FC = () => {
                     handleVatSearch();
                   }
                 }}
-                error={t("validation.vat")}
+                error={getVatError()}
                 hideHelperText
                 InputProps={{
                   endAdornment: !isProfileComplete ? (
@@ -377,8 +458,9 @@ export const UpdateProfile: React.FC = () => {
                 fullWidth
                 required={vatSearchState === "notFound" && !isProfileComplete}
                 disabled={vatSearchState === "found" || isProfileComplete}
+                disableInternalValidation={true}
                 onChange={handleChange("actum_companyname")}
-                error={t("validation.companyName")}
+                error={getCompanyNameError()}
               />
             </Grid>
 
@@ -409,8 +491,9 @@ export const UpdateProfile: React.FC = () => {
                     value={values.actum_primarycountry || ""}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={handleChange("actum_primarycountry")}
-                    error={t("validation.primaryCountry")}
+                    error={getCompanyFieldError(values.actum_primarycountry, "primaryCountry")}
                     disabled={countriesLoading}
                   >
                     {countriesLoading
@@ -427,12 +510,14 @@ export const UpdateProfile: React.FC = () => {
                   <InputLabelField
                     label={t("fields.companyPhone.label")}
                     ariaLabel={t("fields.companyPhone.aria")}
+                    placeholder="+32123456789"
                     value={values.actum_companyphone || ""}
                     fullWidth
                     required
                     inputMode="tel"
+                    disableInternalValidation={true}
                     onChange={handleChange("actum_companyphone")}
-                    error={t("validation.companyPhone")}
+                    error={getPhoneError(values.actum_companyphone, "companyPhone", true)}
                   />
                 </Grid>
 
@@ -443,8 +528,9 @@ export const UpdateProfile: React.FC = () => {
                     value={values.address1_line1 || ""}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={handleChange("address1_line1")}
-                    error={t("validation.address")}
+                    error={getCompanyFieldError(values.address1_line1, "address")}
                   />
                 </Grid>
 
@@ -455,8 +541,9 @@ export const UpdateProfile: React.FC = () => {
                     value={values.address1_city || ""}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={handleChange("address1_city")}
-                    error={t("validation.city")}
+                    error={getCompanyFieldError(values.address1_city, "city")}
                   />
                 </Grid>
 
@@ -467,8 +554,9 @@ export const UpdateProfile: React.FC = () => {
                     value={values.address1_postalcode || ""}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={handleChange("address1_postalcode")}
-                    error={t("validation.zipCode")}
+                    error={getCompanyFieldError(values.address1_postalcode, "zipCode")}
                   />
                 </Grid>
 
@@ -478,6 +566,7 @@ export const UpdateProfile: React.FC = () => {
                     ariaLabel={t("fields.companyEmail.aria")}
                     type="email"
                     value={values.actum_companyemail || ""}
+                    disableInternalValidation={true}
                     onChange={handleChange("actum_companyemail")}
                     fullWidth
                   />
@@ -491,14 +580,18 @@ export const UpdateProfile: React.FC = () => {
                     value={values.actum_brand ?? []}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={e => {
                       const val = e.target.value;
+                      // Reset submitted states when user makes changes
+                      if (submitted) setSubmitted(false);
+                      if (companyFieldsSubmitted) setCompanyFieldsSubmitted(false);
                       setValues(prev => ({
                         ...prev,
                         actum_brand: typeof val === "string" ? val.split(",") : val as string[],
                       }));
                     }}
-                    error={t("validation.companyBrand")}
+                    error={getCompanyFieldError(values.actum_brand, "companyBrand")}
                     disabled={brandsLoading}
                     SelectProps={{
                       multiple: true,
@@ -530,8 +623,9 @@ export const UpdateProfile: React.FC = () => {
                     value={values.actum_role || ""}
                     fullWidth
                     required
+                    disableInternalValidation={true}
                     onChange={handleChange("actum_role")}
-                    error={t("validation.companyRole")}
+                    error={getCompanyFieldError(values.actum_role, "companyRole")}
                     disabled={rolesLoading}
                   >
                     {rolesLoading
@@ -555,8 +649,9 @@ export const UpdateProfile: React.FC = () => {
                 value={values.actum_language || ""}
                 fullWidth
                 required
+                disableInternalValidation={true}
                 onChange={handleChange("actum_language")}
-                error={shouldShowError(values.actum_language) ? t("validation.language") : undefined}
+                error={getLanguageError()}
                 disabled={!values.actum_primarycountry || languagesLoading}
               >
                 {languagesLoading

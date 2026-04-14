@@ -21,9 +21,14 @@ export const initializeTranslations = async () => {
   try {
     const translations = await loadTranslations();
     
-    // Add translations to i18n
-    Object.entries(translations).forEach(([languageCode, translation]) => {
-      i18n.addResourceBundle(languageCode, 'translation', translation, true, true);
+    // Add translations to i18n - each top-level key becomes a namespace
+    Object.entries(translations).forEach(([languageCode, translationData]) => {
+      // translationData is an object with namespaces like { languages: {...}, loginPage: {...}, etc }
+      if (typeof translationData === 'object' && translationData !== null) {
+        Object.entries(translationData).forEach(([namespace, namespaceData]) => {
+          i18n.addResourceBundle(languageCode, namespace, namespaceData, true, true);
+        });
+      }
     });
 
     console.log('[i18n] Translations loaded successfully');

@@ -17,11 +17,6 @@ interface TranslationRecord {
   actum_content: string;
   _actum_languageid_value?: string;
   statecode: number;
-  // Expanded language entity
-  actum_languageid?: {
-    actum_code: string;
-    actum_name: string;
-  };
 }
 
 interface TranslationResources {
@@ -29,8 +24,8 @@ interface TranslationResources {
 }
 
 /**
- * Legacy fallback: Map Dataverse language names to i18next language codes
- * This is only used if actum_code is not available from the expanded entity
+ * Map Dataverse language names to i18next language codes.
+ * Used to identify which frontend locale each translation belongs to.
  */
 const LANGUAGE_NAME_MAP: Record<string, string> = {
   'English': 'en-GB',
@@ -65,7 +60,7 @@ async function loadTranslationsFromDataverse(): Promise<TranslationResources> {
   try {
     console.log('[Translation] Fetching from Dataverse...');
     const response = await apiClient.odata<{ value: TranslationRecord[] }>(
-      '/actum_translations?$select=actum_translationid,actum_translationname,actum_content,_actum_languageid_value,statecode&$expand=actum_languageid($select=actum_code,actum_name)&$filter=statecode eq 0',
+      '/actum_translations?$select=actum_translationid,actum_translationname,actum_content,_actum_languageid_value,statecode&$filter=statecode eq 0',
       {
         timeout: 10000, // 10 second timeout for translations
       }
@@ -75,26 +70,15 @@ async function loadTranslationsFromDataverse(): Promise<TranslationResources> {
     let successCount = 0;
 
     for (const record of response.value || []) {
-      // Try to get language code from expanded entity first (preferred)
-      let frontendLanguageCode: string | undefined;
-      
-      if (record.actum_languageid?.actum_code) {
-        // Map Dataverse code (e.g., nl-NL) to frontend code (e.g., be-NL)
-        const dataverseCode = record.actum_languageid.actum_code;
-        frontendLanguageCode = mapDataverseToFrontend(dataverseCode);
-        console.log(`[Translation] Mapping ${dataverseCode} → ${frontendLanguageCode}`);
-      } else {
-        // Fallback to name-based mapping for backwards compatibility
-        frontendLanguageCode = LANGUAGE_NAME_MAP[record.actum_translationname];
-        if (frontendLanguageCode) {
-          console.warn(`[Translation] Using legacy name mapping for ${record.actum_translationname}`);
-        }
-      }
+      // Map translation name to frontend language code
+      const frontendLanguageCode = LANGUAGE_NAME_MAP[record.actum_translationname];
       
       if (!frontendLanguageCode) {
-        console.warn(`[Translation] Unknown language: ${record.actum_translationname} (code: ${record.actum_languageid?.actum_code || 'N/A'})`);
+        console.warn(`[Translation] Unknown language: ${record.actum_translationname}`);
         continue;
       }
+      
+      console.log(`[Translation] Mapping ${record.actum_translationname} → ${frontendLanguageCode}`);
 
       try {
         // Parse the escaped JSON content
