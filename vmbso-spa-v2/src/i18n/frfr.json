@@ -114,7 +114,7 @@
   },
 
   "layout": {
-    "pendingApprovalBanner": "Votre compte est en attente d'approbation. Vous serez notifié une fois qu'il aura été examiné."
+    "pendingApprovalBanner": "Votre compte est en attente d'approbation. Certaines fonctionnalités ne seront disponibles qu'après cette approbation."
   },
 
   "languages": {
@@ -250,6 +250,7 @@
     },
     
     "messages": {
+      "fillRequiredFields": "Veuillez remplir tous les champs obligatoires",
       "profileLockedInfo": "Vous pouvez mettre à jour votre numéro de téléphone et votre préférence linguistique. Les informations de l'entreprise sont verrouillées et ne peuvent pas être modifiées.",
       "updateSuccess": "Profil mis à jour avec succès !",
       "updateError": "Une erreur s'est produite lors de la mise à jour de votre profil.",
@@ -315,7 +316,7 @@
         "placeholder": "12 Rue Principale, Paris"
       },
       "companyRole": {
-        "label": "RÔLE DANS L'ENTREPRISE",
+        "label": "CHOISISSEZ VOTRE ACTIVITÉ",
         "aria": "Sélection du rôle",
         "options": {
           "distributor": "Distributeur",
@@ -341,10 +342,12 @@
     "validation": {
       "language": "La langue est requise",
       "phoneNumber": "Le numéro de téléphone est requis",
+      "phoneNumberFormat": "Le téléphone doit être au format E.164 (ex: +32123456789)",
       "companyName": "Le nom de l'entreprise est requis",
       "vat": "Le numéro de TVA est requis",
       "primaryCountry": "Le pays est requis",
       "companyPhone": "Le téléphone de l'entreprise est requis",
+      "companyPhoneFormat": "Le téléphone de l'entreprise doit être au format E.164 (ex: +32123456789)",
       "address": "L'adresse de l'entreprise est requise",
       "city": "La ville est requise",
       "zipCode": "Le code postal est requis",

@@ -6,6 +6,7 @@ type InputLabelFieldProps = Omit<TextFieldProps, "error"> & {
   error?: string;
   ariaLabel?: string;
   hideHelperText?: boolean;
+  disableInternalValidation?: boolean; // Disable onBlur validation when parent manages validation
 }
 
 const InputLabelField: React.FC<InputLabelFieldProps> = ({
@@ -22,19 +23,25 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
   error,
   multiline,
   hideHelperText,
+  disableInternalValidation = false,
   ...rest
 }) => {
 
   const [touched, setTouched] = useState<boolean>(false);
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
-    setTouched(true);
-
+    if (!disableInternalValidation) {
+      setTouched(true);
+    }
     onBlur?.(e);
   };
 
   const valueMissing = Array.isArray(value) ? value.length === 0 : !Boolean(value);
-  const isError = touched && valueMissing && required;
+  const internalError = !disableInternalValidation && touched && valueMissing && required;
+  
+  // Use external error if provided, otherwise use internal validation
+  const hasError = error !== undefined ? Boolean(error) : internalError;
+  const errorMessage = error || (internalError ? "This field is required" : "");
 
   return (
     <>
@@ -51,8 +58,8 @@ const InputLabelField: React.FC<InputLabelFieldProps> = ({
         required={required}
         onChange={onChange}
         onBlur={handleBlur}
-        error={isError}
-        helperText={isError ? error : !hideHelperText && " "}
+        error={hasError}
+        helperText={hasError ? errorMessage : !hideHelperText && " "}
         multiline={multiline}
         rows={multiline ? rows : undefined}
         {...rest}

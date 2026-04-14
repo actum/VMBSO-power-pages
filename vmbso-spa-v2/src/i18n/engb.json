@@ -116,7 +116,7 @@
   },
 
   "layout": {
-    "pendingApprovalBanner": "Your account is pending approval. You will be notified once it has been reviewed."
+    "pendingApprovalBanner": "Your account is pending approval. Some functionalities may only be available after this approval."
   },
 
   "languages": {
@@ -252,6 +252,7 @@
     },
     
     "messages": {
+      "fillRequiredFields": "Please fill in all required fields",
       "profileLockedInfo": "You can update your phone number and language preference. Company information is locked and cannot be modified.",
       "updateSuccess": "Profile updated successfully!",
       "updateError": "An error occurred while updating your profile.",
@@ -317,7 +318,7 @@
         "placeholder": "123 High Street, London"
       },
       "companyRole": {
-        "label": "COMPANY ROLE",
+        "label": "CHOOSE YOUR ACTIVITY",
         "aria": "Company role selector",
         "options": {
           "distributor": "Distributor",
@@ -343,10 +344,12 @@
     "validation": {
       "language": "Language is required",
       "phoneNumber": "Phone number is required",
+      "phoneNumberFormat": "Phone must be in E.164 format (e.g., +32123456789)",
       "companyName": "Company name is required",
       "vat": "VAT number is required",
       "primaryCountry": "Country is required",
       "companyPhone": "Company phone is required",
+      "companyPhoneFormat": "Company phone must be in E.164 format (e.g., +32123456789)",
       "address": "Company address is required",
       "city": "City is required",
       "zipCode": "Zip code is required",

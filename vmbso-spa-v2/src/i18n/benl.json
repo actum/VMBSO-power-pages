@@ -114,7 +114,7 @@
   },
 
   "layout": {
-    "pendingApprovalBanner": "Uw account wacht op goedkeuring. U wordt op de hoogte gebracht zodra deze is beoordeeld."
+    "pendingApprovalBanner": "Uw account wacht op goedkeuring. Sommige functionaliteiten zijn mogelijks nog niet beschikbaar."
   },
 
   "languages": {
@@ -250,6 +250,7 @@
     },
     
     "messages": {
+      "fillRequiredFields": "Vul alle verplichte velden in",
       "profileLockedInfo": "U kunt uw telefoonnummer en taalvoorkeur bijwerken. Bedrijfsinformatie is vergrendeld en kan niet worden gewijzigd.",
       "updateSuccess": "Profiel succesvol bijgewerkt!",
       "updateError": "Er is een fout opgetreden bij het bijwerken van uw profiel.",
@@ -315,7 +316,7 @@
         "placeholder": "Hoogstraat 123, Amsterdam"
       },
       "companyRole": {
-        "label": "ROL IN BEDRIJF",
+        "label": "KIES JOUW ACTIVITEIT",
         "aria": "Rol selector",
         "options": {
           "distributor": "Distributeur",
@@ -341,10 +342,12 @@
     "validation": {
       "language": "Taal is verplicht",
       "phoneNumber": "Telefoonnummer is verplicht",
+      "phoneNumberFormat": "Telefoonnummer moet in E.164 formaat zijn (bijv. +32123456789)",
       "companyName": "Bedrijfsnaam is verplicht",
       "vat": "BTW-nummer is verplicht",
       "primaryCountry": "Land is verplicht",
       "companyPhone": "Bedrijfstelefoon is verplicht",
+      "companyPhoneFormat": "Bedrijfstelefoon moet in E.164 formaat zijn (bijv. +32123456789)",
       "address": "Bedrijfsadres is verplicht",
       "city": "Stad is verplicht",
       "zipCode": "Postcode is verplicht",

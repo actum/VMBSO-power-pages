@@ -1,0 +1,11 @@
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_invoiceitem
+entityname: Invoice Item
+id: 59a6ceb3-3b8f-4d80-a0f8-47b72503fe20
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

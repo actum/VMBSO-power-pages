@@ -1,0 +1,14 @@
+accountrelationship: actum_invoice_Account
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: true
+delete: false
+entitylogicalname: actum_invoice
+entityname: Invoices
+id: b8477cd3-7843-4f9d-8044-4ddf1948ca8e
+parententitypermission: 
+read: true
+scope: 756150002
+write: false
