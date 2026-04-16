@@ -13,10 +13,16 @@ import {
   useTheme,
   useMediaQuery,
   Alert,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
   // Link,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
+  Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { logout, currentUser } = useAuth();
   const { t } = useTranslation(['header', 'footer', 'layout']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // const { setDialogOpen } = useContext(CookiesContext);
@@ -58,6 +65,25 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     handleUserMenuClose();
     navigate('/update-profile');
   };
+
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMenuOpen(false);
+  };
+
+  const handleMobileNavigation = (path: string) => {
+    navigate(path);
+    handleMobileMenuClose();
+  };
+
+  const navigationItems = [
+    { label: t('header:navigation.home'), path: '/' },
+    { label: t('header:navigation.documents'), path: '/documents' },
+    { label: t('header:navigation.news'), path: '/news' },
+  ];
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -88,11 +114,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Navigation links — Home | Documents | News */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0 }}>
-              {[
-                { label: t('header:navigation.home'), path: '/' },
-                { label: t('header:navigation.documents'), path: '/documents' },
-                { label: t('header:navigation.news'), path: '/news' },
-              ].map(item => (
+              {navigationItems.map(item => (
                 <Button
                   key={item.path}
                   onClick={() => navigate(item.path)}
@@ -149,6 +171,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </IconButton>
             </Box>
 
+            {/* Mobile Menu Button */}
+            <IconButton
+              color="inherit"
+              aria-label="open menu"
+              edge="end"
+              onClick={handleMobileMenuToggle}
+              sx={{ 
+                display: { xs: 'flex', md: 'none' },
+                color: 'text.primary',
+                ml: 1,
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -175,6 +212,37 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        anchor="left"
+        open={mobileMenuOpen}
+        onClose={handleMobileMenuClose}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width: 280,
+          },
+        }}
+      >
+        <Box sx={{ pt: 2 }}>
+          <List>
+            {navigationItems.map((item) => (
+              <ListItem key={item.path} disablePadding>
+                <ListItemButton onClick={() => handleMobileNavigation(item.path)}>
+                  <ListItemText 
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontSize: '1.6rem',
+                      fontWeight: 500,
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
 
       {/* Pending Approval Ribbon */}
       {currentUser?.actum_approvalstatus === ApprovalStatus.Pending && (

@@ -363,6 +363,7 @@ export const dataverseService = {
       try {
         const query = buildODataQuery({
           select: ['actum_brandid', 'actum_name'],
+          filter: 'statecode eq 0',
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Brand[] }>(`/actum_brands${query}`);
