@@ -70,6 +70,8 @@ export const config = {
     brands: '/_api/actum_brands',
     /** Country lookup table. */
     countries: '/_api/actum_countries',
+    /** Invoice lookup table. */
+    invoices: '/_api/actum_invoices',
     /** Landing page CMS rows (per language). */
     landingPageContents: '/_api/actum_landingpagecontents',
   },
@@ -80,6 +82,10 @@ export const config = {
     updateProfile: '/_api/cloudflow/v1.0/trigger/0bc41f4c-841c-f111-8341-000d3a66f792',
     /** Fetch documents flow — returns list of product documentation for contact. */
     fetchDocuments: '/_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974',
+    /** Fetch invoices flow — returns invoice rows for the authenticated contact. */
+    fetchInvoices: 'TODO: add endpoint',
+    /** Upload invoice flow — accepts multipart form data with PDF + form fields. */
+    uploadInvoicePdf: 'TODO: add endpoint',
   },
 
   /** Static asset paths. */

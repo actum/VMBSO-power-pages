@@ -20,6 +20,7 @@ import {
   FormControlLabel,
   FormGroup,
   Divider,
+  Tooltip,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -27,14 +28,16 @@ import {
   FilterList as FilterListIcon,
   Search as SearchIcon,
   Close as CloseIcon,
+  UploadFileOutlined,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { useDocuments } from '../hooks/useDocuments';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
-import { DocumentWithBrands } from '../types/document';
+import { type DocumentWithBrands } from '../types/document';
 
 const ClampedDescription = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
@@ -56,6 +59,7 @@ const BRAND_CHIP_COLORS = [
 ];
 
 export const Documents: React.FC = () => {
+  const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [isPreparingDownload, setIsPreparingDownload] = useState(false);
@@ -409,10 +413,28 @@ export const Documents: React.FC = () => {
             </Box>
           </Drawer>
 
-          {/* Page title */}
-          <Typography variant="h4" gutterBottom>
-            {t('documentsSearch.label')}
-          </Typography>
+          {/* Invoices redirect icon button TODO: When design is provided, change this */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              mb: 2,
+            }}
+          >
+            <Typography variant="h4" sx={{ mb: 0 }}>
+              {t('documentsSearch.label')}
+            </Typography>
+            <Tooltip title={t('documentsSearch.tooltip')}>
+              <IconButton
+                color="primary"
+                onClick={() => navigate('/invoice')}
+                aria-label={t('actions.uploadPdf')}
+              >
+                <UploadFileOutlined />
+              </IconButton>
+            </Tooltip>
+          </Box>
 
           {/* Results bar: count + search */}
           <Box

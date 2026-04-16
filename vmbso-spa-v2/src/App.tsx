@@ -15,6 +15,7 @@ import { NotFound } from './pages/NotFound';
 import { Home } from './pages/Home';
 import { News } from './pages/News';
 import LangHandler from './components/LangHandler';
+import { Invoices } from './pages/Invoices';
 
 /**
  * Catches Entra External ID cancel/error redirects (e.g. /signin-entraexternalid_2?error=...)
@@ -71,6 +72,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Documents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/invoices"
+                element={
+                  <ProtectedRoute>
+                    <Invoices />
                   </ProtectedRoute>
                 }
               />

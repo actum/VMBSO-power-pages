@@ -1,17 +1,13 @@
 adx_entitypermission_webrole:
-- 2462da20-0f4b-47af-b85f-0210e147a2ef
 - 7cd9bdff-1527-405b-bb88-611db94d307c
-- 8cc3f400-bf85-47e9-b5d4-f31541f5f48b
-- b890214e-9181-4e97-bca8-9096ad7d0ff0
-- ba526b27-ec4b-4998-ad48-a22c0dc5fe31
-- dcf69c93-07fd-4740-a685-49725825c8ef
 append: false
 appendto: false
 create: false
 delete: false
 entitylogicalname: actum_newspagecontent
 entityname: News Page Content - inter
-id: 9a2b379d-4828-f111-8342-7ced8d42822b
+id: dc10ce1d-ae2e-4cc4-8711-2333d46def34
+parententitypermission: 
 read: true
 scope: 756150000
 write: false

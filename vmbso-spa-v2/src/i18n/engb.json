@@ -24,7 +24,8 @@
     
     "documentsSearch": {
       "label": "Documents",
-      "placeholder": "Search documents..."
+      "placeholder": "Search documents...",
+      "tooltip": "Upload your pdf"
     },
     "documentsList": {
       "results": "Found {{count}} document(s)"
@@ -46,7 +47,8 @@
     "actions": {
       "search": "Search",
       "clear": "Clear",
-      "download": "Download"
+      "download": "Download",
+      "uploadPdf": "Upload PDF"
     },
     "download": {
       "preparing": "We're preparing your download",
@@ -367,6 +369,43 @@
       "update": "Update",
       "updating": "Updating…",
       "searching": "Searching…"
+    }
+  },
+
+  "invoicesPage": {
+    "title": "My invoices",
+
+    "states": {
+      "submitted": "Submitted",
+      "rejected": "Rejected",
+      "credited": "Credited"
+    },
+
+    "uploadNewInvoice": {
+      "pageTitle": "Invoice | VMBSO Customer Portal",
+      "title": "Upload new invoice",
+      "subtitle": "Drop your invoice PDF below or browse from your device.",
+      "dropzone": {
+        "mobileTitle": "Browse for invoice files on your device.",
+        "idle": "Drag and drop your PDF here",
+        "active": "Drop the PDF to attach it",
+        "hint": "Single PDF file, up to {{maxSizeMb}} MB"
+      },
+      "selected": {
+        "label": "Selected file"
+      },
+      "actions": {
+        "browse": "Browse files",
+        "replace": "Replace file",
+        "remove": "Remove",
+        "upload": "Upload invoice"
+      },
+      "validation": {
+        "required": "Please add a PDF before uploading.",
+        "invalidType": "Only PDF files are allowed.",
+        "fileTooLarge": "The file must be {{maxSizeMb}} MB or smaller.",
+        "tooManyFiles": "Please upload only one PDF file."
+      }
     }
   }
 }
