@@ -82,7 +82,11 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
   }, [mapDropError]);
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    accept: { "application/pdf": [".pdf"] },
+    accept: { 
+      "application/pdf": [".pdf"],
+      "application/xml": [".xml"],
+      "text/xml": [".xml"]
+    },
     maxFiles: 1,
     maxSize: MAX_FILE_SIZE_BYTES,
     multiple: false,
@@ -100,8 +104,14 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
       return;
     }
 
-    if (!currentUser || !currentUser.contactid || !currentUser.fullname || !currentUser.emailaddress1) {
+    if (!currentUser || !currentUser.contactid || !currentUser.emailaddress1) {
       setErrorMessage("Missing authenticated contact context.");
+      return;
+    }
+
+    const accountId = currentUser._parentcustomerid_value || currentUser.parentcustomerid?.accountid;
+    if (!accountId) {
+      setErrorMessage("Missing company information. Please update your profile.");
       return;
     }
 
@@ -111,8 +121,7 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
 
       const uploadedInvoice: Invoice = await dataverseService.invoices.uploadInvoice({
         contactId: currentUser.contactid,
-        account: currentUser.fullname.trim(),
-        contact: currentUser.emailaddress1.trim(),
+        accountId: accountId,
         file: selectedFile,
       });
 

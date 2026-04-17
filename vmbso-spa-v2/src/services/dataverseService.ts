@@ -22,8 +22,7 @@ type FlowArrayResponse<T> = {
 
 type UploadInvoiceArgs = {
   contactId: string;
-  account: string;
-  contact: string;
+  accountId: string;
   file: File;
 };
 
@@ -617,71 +616,63 @@ export const dataverseService = {
     },
 
     /**
-     * Upload an invoice PDF with form data through a cloud flow endpoint.
+     * Upload an invoice using direct OData (2-step process):
+     * 1. Create invoice record with contact/account references
+     * 2. Upload file to actum_invoicedocument file column
      */
-    async uploadInvoice({ contactId, account, contact, file }: UploadInvoiceArgs): Promise<Invoice> {
-      if (!config.flows.uploadInvoicePdf) {
-        throw new Error('Invoice upload flow URL is not configured.');
-      }
-
+    async uploadInvoice({ contactId, accountId, file }: UploadInvoiceArgs): Promise<Invoice> {
       const token = await getCsrfToken();
-      const formData = new FormData();
-      formData.append('contactId', contactId);
-      formData.append('account', account);
-      formData.append('contact', contact);
-      formData.append('invoicePdf', file, file.name);
 
-      const response = await fetch(config.flows.uploadInvoicePdf, {
+      // Step 1: Create invoice record
+      const createResponse = await fetch(config.odata.invoices, {
         method: 'POST',
         credentials: 'include',
         headers: {
+          'Content-Type': 'application/json',
           __RequestVerificationToken: token,
           'x-requested-with': 'XMLHttpRequest',
         },
-        body: formData,
+        body: JSON.stringify({
+          '_actum_contactid_value': contactId,
+          '_actum_accountid_value': accountId,
+        }),
       });
 
-      if (!response.ok) {
-        const details = await response.text().catch(() => '');
-        throw new Error(`Invoice upload failed: ${response.status}${details ? ` - ${details}` : ''}`);
+      if (!createResponse.ok) {
+        const details = await createResponse.text().catch(() => '');
+        throw new Error(`Failed to create invoice record: ${createResponse.status}${details ? ` - ${details}` : ''}`);
       }
 
-      if (response.status === 204) {
-        return {
-          actum_invoicenumber: crypto.randomUUID(),
-          actum_creditpoints: 0,
-          actum_status: 'submitted',
-          actum_account: account,
-          actum_contact: contact,
-          actum_invoicedocument: file,
-        };
+      const createdInvoice = await createResponse.json() as Invoice;
+      const invoiceId = createdInvoice.actum_invoiceid;
+
+      if (!invoiceId) {
+        throw new Error('Invoice created but no ID returned');
       }
 
-      const body = await response.json().catch(() => null) as
-        | Invoice
-        | FlowArrayResponse<Invoice>
-        | null;
+      // Step 2: Upload file to the file column
+      const fileBytes = await file.arrayBuffer();
+      const uploadResponse = await fetch(`${config.odata.invoices}(${invoiceId})/actum_invoicedocument`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          __RequestVerificationToken: token,
+          'x-requested-with': 'XMLHttpRequest',
+        },
+        body: fileBytes,
+      });
 
-      if (!body) {
-        return {
-          actum_invoicenumber: crypto.randomUUID(),
-          actum_creditpoints: 0,
-          actum_status: 'submitted',
-          actum_account: account,
-          actum_contact: contact,
-          actum_invoicedocument: file,
-        };
+      if (!uploadResponse.ok) {
+        const details = await uploadResponse.text().catch(() => '');
+        throw new Error(`Failed to upload file: ${uploadResponse.status}${details ? ` - ${details}` : ''}`);
       }
 
-      if (isFlowArrayResponse<Invoice>(body) && (body.status || body.data)) {
-        const rows = parseFlowArrayData(body, 'uploaded invoice');
-        if (rows.length > 0) {
-          return { ...rows[0], actum_invoicedocument: file };
-        }
-      }
-
-      const mapped = body as Invoice;
-      return { ...mapped, actum_invoicedocument: file };
+      // Return the created invoice with file reference
+      return {
+        ...createdInvoice,
+        actum_invoicedocument: file,
+      };
     },
   },
 

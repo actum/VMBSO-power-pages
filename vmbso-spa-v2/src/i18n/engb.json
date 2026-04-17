@@ -407,12 +407,12 @@
     "uploadNewInvoice": {
       "pageTitle": "Invoice | VMBSO Customer Portal",
       "title": "Upload new invoice",
-      "subtitle": "Drop your invoice PDF below or browse from your device.",
+      "subtitle": "Drop your invoice PDF or UBL file below or browse from your device.",
       "dropzone": {
         "mobileTitle": "Browse for invoice files on your device.",
-        "idle": "Drag and drop your PDF here",
-        "active": "Drop the PDF to attach it",
-        "hint": "Single PDF file, up to {{maxSizeMb}} MB"
+        "idle": "Drag and drop your PDF or UBL (.xml) file here",
+        "active": "Drop the file to attach it",
+        "hint": "Single PDF or UBL file, up to {{maxSizeMb}} MB"
       },
       "selected": {
         "label": "Selected file"
@@ -424,10 +424,10 @@
         "upload": "Upload invoice"
       },
       "validation": {
-        "required": "Please add a PDF before uploading.",
-        "invalidType": "Only PDF files are allowed.",
+        "required": "Please add a file before uploading.",
+        "invalidType": "Only PDF and UBL (.xml) files are allowed.",
         "fileTooLarge": "The file must be {{maxSizeMb}} MB or smaller.",
-        "tooManyFiles": "Please upload only one PDF file."
+        "tooManyFiles": "Please upload only one file."
       }
     }
   }
