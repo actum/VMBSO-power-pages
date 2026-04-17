@@ -107,7 +107,8 @@
     "navigation": {
       "home": "Accueil",
       "documents": "Documents",
-      "news": "Actualités"
+      "news": "Actualités",
+      "invoices": "Factures"
     },
     "menu": {
       "profile": "Profil",
@@ -372,11 +373,33 @@
 
   "invoicesPage": {
     "title": "Mes factures",
+    "loading": "Chargement des factures...",
+    "noInvoices": "Aucune facture trouvée",
+    "invoiceDate": "Date de facture",
+    "uploaded": "Téléchargé",
+    "uploadedBy": "Téléchargé par",
+    "rejectionReason": "Raison du rejet",
+
+    "tabs": {
+      "myInvoices": "Mes Factures",
+      "uploadNew": "Télécharger une Nouvelle Facture"
+    },
+
+    "search": {
+      "placeholder": "Rechercher par numéro, nom ou email..."
+    },
+
+    "filter": {
+      "status": "Statut",
+      "all": "Tous les Statuts"
+    },
 
     "states": {
       "submitted": "Soumis",
+      "approved": "Approuvé",
       "rejected": "Rejeté",
-      "credited": "Crédité"
+      "credited": "Crédité",
+      "unknown": "Inconnu"
     },
 
     "uploadNewInvoice": {

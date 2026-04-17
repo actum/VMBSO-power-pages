@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { config } from "../config/powerPages.config";
+import { canAccessInvoices } from "../utils/accessControl";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -59,21 +60,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/update-profile" replace />;
   }
 
-  // Rule 3: /invoices is only available to Installers from Belgium
+  // Rule 3: /invoices is only available to approved users whose Account has both:
+  // - User approval status = Approved (182980001)
+  // - Role with actum_uploadinvoicesallowed = true
+  // - Country with actum_uploadinvoicesallowed = true
   if (location.pathname.startsWith("/invoices")) {
-
-    if (!currentUser) {
-      return <Navigate to="/login" replace />;
-    }
-
-    if (!currentUser.actum_role || !currentUser.actum_primarycountry) {
-      return <Navigate to="/documents" replace />;
-    }
-
-    const isInstaller = ["installer"].includes(currentUser.actum_role.toLowerCase());
-    const isBelgium = ["belgium"].includes(currentUser.actum_primarycountry.toLowerCase());
-
-    if (!isInstaller || !isBelgium) {
+    if (!canAccessInvoices(currentUser)) {
       return <Navigate to="/documents" replace />;
     }
   }

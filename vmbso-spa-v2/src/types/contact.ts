@@ -28,6 +28,16 @@ export interface Contact {
   parentcustomerid?: {
     accountid: string;
     name: string;
+    actum_Role?: {
+      actum_roleid: string;
+      actum_name: string;
+      actum_uploadinvoicesallowed?: boolean;
+    };
+    actum_Country?: {
+      actum_countryid: string;
+      actum_name: string;
+      actum_uploadinvoicesallowed?: boolean;
+    };
   };
   
   // Portal/Multi-language fields

@@ -4,4 +4,5 @@
 export interface Role {
   actum_roleid: string;
   actum_name: string;
+  actum_uploadinvoicesallowed?: boolean;
 }

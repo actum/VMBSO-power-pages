@@ -107,7 +107,8 @@
     "navigation": {
       "home": "Home",
       "documents": "Documenten",
-      "news": "Nieuws"
+      "news": "Nieuws",
+      "invoices": "Facturen"
     },
     "menu": {
       "profile": "Profiel",
@@ -372,11 +373,33 @@
 
   "invoicesPage": {
     "title": "Mijn facturen",
+    "loading": "Facturen laden...",
+    "noInvoices": "Geen facturen gevonden",
+    "invoiceDate": "Factuurdatum",
+    "uploaded": "Geüpload",
+    "uploadedBy": "Geüpload door",
+    "rejectionReason": "Reden voor afwijzing",
+
+    "tabs": {
+      "myInvoices": "Mijn Facturen",
+      "uploadNew": "Nieuwe Factuur Uploaden"
+    },
+
+    "search": {
+      "placeholder": "Zoeken op factuurnummer, naam of email..."
+    },
+
+    "filter": {
+      "status": "Status",
+      "all": "Alle Statussen"
+    },
 
     "states": {
       "submitted": "Ingediend",
+      "approved": "Goedgekeurd",
       "rejected": "Afgewezen",
-      "credited": "Gecrediteerd"
+      "credited": "Gecrediteerd",
+      "unknown": "Onbekend"
     },
 
     "uploadNewInvoice": {

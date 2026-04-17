@@ -109,7 +109,8 @@
     "navigation": {
       "home": "Home",
       "documents": "Documents",
-      "news": "News"
+      "news": "News",
+      "invoices": "Invoices"
     },
     "menu": {
       "profile": "Profile",
@@ -374,11 +375,33 @@
 
   "invoicesPage": {
     "title": "My invoices",
+    "loading": "Loading invoices...",
+    "noInvoices": "No invoices found",
+    "invoiceDate": "Invoice Date",
+    "uploaded": "Uploaded",
+    "uploadedBy": "Uploaded by",
+    "rejectionReason": "Rejection Reason",
+
+    "tabs": {
+      "myInvoices": "My Invoices",
+      "uploadNew": "Upload New Invoice"
+    },
+
+    "search": {
+      "placeholder": "Search by invoice number, name or email..."
+    },
+
+    "filter": {
+      "status": "Status",
+      "all": "All Statuses"
+    },
 
     "states": {
       "submitted": "Submitted",
+      "approved": "Approved",
       "rejected": "Rejected",
-      "credited": "Credited"
+      "credited": "Credited",
+      "unknown": "Unknown"
     },
 
     "uploadNewInvoice": {

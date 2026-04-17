@@ -83,7 +83,7 @@ export const config = {
     /** Fetch documents flow — returns list of product documentation for contact. */
     fetchDocuments: '/_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974',
     /** Fetch invoices flow — returns invoice rows for the authenticated contact. */
-    fetchInvoices: 'TODO: add endpoint',
+    fetchInvoices: '/_api/cloudflow/v1.0/trigger/6c50a0de-323a-f111-88b5-000d3aba4b13',
     /** Upload invoice flow — accepts multipart form data with PDF + form fields. */
     uploadInvoicePdf: 'TODO: add endpoint',
   },

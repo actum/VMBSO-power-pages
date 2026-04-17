@@ -19,7 +19,7 @@ const DEV_MOCK_USER: Contact = {
   createdon: new Date().toISOString(),
   modifiedon: new Date().toISOString(),
   // Required custom fields
-  actum_approvalstatus: 182980000,  // Pending
+  actum_approvalstatus: 182980001,  // Approved (required for invoice access)
   _actum_languageid_value: 'mock-language-id',
   actum_languageid: {
     actum_languageid: 'mock-language-id',
@@ -28,7 +28,17 @@ const DEV_MOCK_USER: Contact = {
   _parentcustomerid_value: 'mock-account-id',
   parentcustomerid: {
     accountid: 'mock-account-id',
-    name: 'Actum Digital'
+    name: 'Actum Digital',
+    actum_Role: {
+      actum_roleid: 'mock-role-id',
+      actum_name: 'Installer',
+      actum_uploadinvoicesallowed: true
+    },
+    actum_Country: {
+      actum_countryid: 'mock-country-id',
+      actum_name: 'Belgium',
+      actum_uploadinvoicesallowed: true
+    }
   },
   // UpdateProfile form fields
   actum_language: 'fr',

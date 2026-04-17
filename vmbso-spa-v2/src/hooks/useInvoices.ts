@@ -36,10 +36,10 @@ export const useInvoices = () => {
     }
   }, [currentUser?.contactid]);
 
-  // automatically fetch invoices on first load
+  // automatically fetch invoices when currentUser becomes available
   useEffect(() => {
     fetchInvoices();
-  }, []);
+  }, [fetchInvoices]);
 
   return {
     invoices,

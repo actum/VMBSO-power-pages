@@ -129,11 +129,10 @@ export const dataverseService = {
 
         const query = buildODataQuery({
           select: fields,
-          // Temporarily disable $expand to avoid 400 errors
-          // expand: [
-          //   'actum_languageid($select=actum_languageid,actum_name)',
-          //   'parentcustomerid($select=accountid,name)'  // Expand Account for Company Name
-          // ],
+          expand: [
+            'actum_languageid($select=actum_languageid,actum_name)',
+            'parentcustomerid($select=accountid,name;$expand=actum_Role($select=actum_roleid,actum_name,actum_uploadinvoicesallowed),actum_Country($select=actum_countryid,actum_name,actum_uploadinvoicesallowed))'
+          ],
           filter: `createdon ne ${cacheBuster}`,  // Cache-busting: always unique, never affects results
           top: 1
         });
@@ -424,39 +423,161 @@ export const dataverseService = {
    */
   invoices: {
     /**
-     * Fetch invoices for a specific contact directly from Dataverse via OData.
+     * Fetch invoices for the current user's account via Power Automate flow.
+     * Flow accepts contactId, derives accountId securely, and returns enriched invoices.
      */
     async getByContact(contactId: string): Promise<Invoice[]> {
       if (config.devMode) {
-        return [];
+        // Mock data for development with various statuses
+        return [
+          {
+            actum_invoiceid: 'mock-invoice-1',
+            actum_invoicenumber: 'VF25/01-15142',
+            actum_name: 'Portal Invoice VF25/01-15142',
+            statuscode: 182980004, // Rejected
+            actum_totalamount: 5175.91,
+            actum_totalnetamount: 4300,
+            actum_totalvat: 875.91,
+            actum_invoicedate: '2025-01-31T00:00:00Z',
+            actum_duedate: '2025-02-14T00:00:00Z',
+            createdon: '2026-03-30T18:51:47Z',
+            actum_distributorname: 'Defrancq Bouwspecialiteiten NV',
+            actum_customer: 'VAN SEVEREN N.V., URSELSEWEG 111 A, 9910 KNESSELARE, BE',
+            actum_rejectionreason: 'Distributor not on the white list and duplicate Invoice Number',
+            actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-01-15142.pdf',
+            'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€5,175.91',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Rejected',
+            'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '1/31/2025',
+            'uploader.contactid': 'mock-contact-1',
+            'uploader.fullname': 'John Doe',
+            'uploader.emailaddress1': 'john.doe@example.com',
+          },
+          {
+            actum_invoiceid: 'mock-invoice-2',
+            actum_invoicenumber: 'VF25/02-18500',
+            actum_name: 'Portal Invoice VF25/02-18500',
+            statuscode: 182980002, // Extracted/Credited
+            actum_totalamount: 11479.78,
+            actum_totalnetamount: 9537.08,
+            actum_totalvat: 1942.7,
+            actum_invoicedate: '2025-02-15T00:00:00Z',
+            actum_duedate: '2025-03-15T00:00:00Z',
+            createdon: '2026-03-31T18:36:11Z',
+            actum_distributorname: 'ABC Building Materials Ltd',
+            actum_customer: 'Test Company BV, Main Street 123, 1000 Brussels, BE',
+            actum_rejectionreason: null,
+            actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-02-18500.pdf',
+            'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€11,479.78',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Extracted',
+            'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '2/15/2025',
+            'uploader.contactid': 'mock-contact-2',
+            'uploader.fullname': 'Jane Smith',
+            'uploader.emailaddress1': 'jane.smith@example.com',
+          },
+          {
+            actum_invoiceid: 'mock-invoice-3',
+            actum_invoicenumber: 'VF25/03-24001',
+            actum_name: 'Portal Invoice VF25/03-24001',
+            statuscode: 182980000, // Submitted
+            actum_totalamount: 3250.50,
+            actum_totalnetamount: 2700,
+            actum_totalvat: 550.50,
+            actum_invoicedate: '2025-03-10T00:00:00Z',
+            actum_duedate: '2025-04-10T00:00:00Z',
+            createdon: '2026-04-01T09:15:22Z',
+            actum_distributorname: 'Construction Supplies Inc',
+            actum_customer: 'Another Company SA, Industrial Park 45, 2000 Antwerp, BE',
+            actum_rejectionreason: null,
+            actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-03-24001.pdf',
+            'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€3,250.50',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Submitted',
+            'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '3/10/2025',
+            'uploader.contactid': 'mock-contact-1',
+            'uploader.fullname': 'John Doe',
+            'uploader.emailaddress1': 'john.doe@example.com',
+          },
+          {
+            actum_invoiceid: 'mock-invoice-4',
+            actum_invoicenumber: 'VF25/04-30245',
+            actum_name: 'Portal Invoice VF25/04-30245',
+            statuscode: 182980001, // Approved
+            actum_totalamount: 8900.00,
+            actum_totalnetamount: 7400,
+            actum_totalvat: 1500,
+            actum_invoicedate: '2025-04-05T00:00:00Z',
+            actum_duedate: '2025-05-05T00:00:00Z',
+            createdon: '2026-04-05T14:42:10Z',
+            actum_distributorname: 'Premium Building Solutions',
+            actum_customer: 'Big Client NV, Business Avenue 789, 9000 Ghent, BE',
+            actum_rejectionreason: null,
+            actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-04-30245.pdf',
+            'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€8,900.00',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Approved',
+            'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '4/5/2025',
+            'uploader.contactid': 'mock-contact-3',
+            'uploader.fullname': 'Alice Johnson',
+            'uploader.emailaddress1': 'alice.johnson@example.com',
+          },
+          {
+            actum_invoiceid: 'mock-invoice-5',
+            actum_invoicenumber: 'VF25/04-35890',
+            actum_name: 'Portal Invoice VF25/04-35890',
+            statuscode: 182980004, // Rejected
+            actum_totalamount: 27346.00,
+            actum_totalnetamount: 22718.00,
+            actum_totalvat: 4628.00,
+            actum_invoicedate: '2025-04-12T00:00:00Z',
+            actum_duedate: '2025-05-12T00:00:00Z',
+            createdon: '2026-04-12T11:20:33Z',
+            actum_distributorname: 'Unknown Supplier',
+            actum_customer: 'Small Business BVBA, Rural Road 12, 3500 Hasselt, BE',
+            actum_rejectionreason: 'Invoice amount exceeds approved limit',
+            actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-04-35890.pdf',
+            'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€27,346.00',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Rejected',
+            'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '4/12/2025',
+            'uploader.contactid': 'mock-contact-2',
+            'uploader.fullname': 'Jane Smith',
+            'uploader.emailaddress1': 'jane.smith@example.com',
+          },
+        ];
       }
 
       if (!contactId) {
         return [];
       }
 
-      const query = buildODataQuery({
-        select: [
-          'actum_invoicenumber',
-          'actum_creditpoints',
-          'actum_status',
-          'statuscode',
-          'actum_account',
-          'actum_contact',
-          '_actum_accountid_value',
-          '_actum_contactid_value',
-        ],
-        filter: `_actum_contactid_value eq ${contactId}`,
-        orderby: 'createdon desc',
-      });
+      if (!config.flows.fetchInvoices || config.flows.fetchInvoices === 'TODO: add endpoint') {
+        throw new Error('Invoice fetch flow URL is not configured.');
+      }
 
-      const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
-        headers: {
-          Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
-        },
-      });
+      try {
+        const token = await getCsrfToken();
+        
+        const response = await fetch(config.flows.fetchInvoices, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            '__RequestVerificationToken': token,
+            'x-requested-with': 'XMLHttpRequest',
+          },
+          body: JSON.stringify({ clientID: contactId }),
+        });
 
-      return response.value ?? [];
+        if (!response.ok) {
+          const details = await response.text().catch(() => '');
+          throw new Error(`Fetch invoices failed: ${response.status}${details ? ` - ${details}` : ''}`);
+        }
+
+        // Flow returns array directly (not wrapped in { status, data })
+        const invoices = await response.json() as Invoice[];
+        
+        return invoices;
+      } catch (error) {
+        console.error('Error fetching invoices:', error);
+        throw error;
+      }
     },
 
     /**
