@@ -408,12 +408,12 @@
     "uploadNewInvoice": {
       "pageTitle": "Facture | Portail Client VMBSO",
       "title": "Télécharger une nouvelle facture",
-      "subtitle": "Déposez votre facture PDF ou UBL ci-dessous ou parcourez vos fichiers.",
+      "subtitle": "Déposez votre facture PDF, JPG ou UBL ci-dessous ou parcourez vos fichiers.",
       "dropzone": {
         "mobileTitle": "Parcourir les fichiers de factures sur votre appareil.",
-        "idle": "Glissez et déposez votre fichier PDF ou UBL (.xml) ici",
+        "idle": "Glissez et déposez votre fichier PDF, JPG ou UBL (.xml) ici",
         "active": "Déposez le fichier pour le joindre",
-        "hint": "Un seul fichier PDF ou UBL, jusqu'à {{maxSizeMb}} Mo"
+        "hint": "Un seul fichier PDF, JPG ou UBL, jusqu'à {{maxSizeMb}} Mo"
       },
       "selected": {
         "label": "Fichier sélectionné"
@@ -426,7 +426,7 @@
       },
       "validation": {
         "required": "Veuillez ajouter un fichier avant de télécharger.",
-        "invalidType": "Seuls les fichiers PDF et UBL (.xml) sont autorisés.",
+        "invalidType": "Seuls les fichiers PDF, JPG et UBL (.xml) sont autorisés.",
         "fileTooLarge": "Le fichier doit faire {{maxSizeMb}} Mo ou moins.",
         "tooManyFiles": "Veuillez télécharger un seul fichier."
       },

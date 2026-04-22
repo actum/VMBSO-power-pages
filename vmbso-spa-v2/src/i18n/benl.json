@@ -408,12 +408,12 @@
     "uploadNewInvoice": {
       "pageTitle": "Factuur | VMBSO Klantenportaal",
       "title": "Nieuwe factuur uploaden",
-      "subtitle": "Zet uw factuur-PDF of UBL-bestand hieronder neer of blader door uw bestanden.",
+      "subtitle": "Zet uw factuur-PDF, JPG of UBL-bestand hieronder neer of blader door uw bestanden.",
       "dropzone": {
         "mobileTitle": "Blader naar factuurbestanden op uw apparaat.",
-        "idle": "Sleep uw PDF- of UBL-bestand (.xml) hierheen",
+        "idle": "Sleep uw PDF-, JPG- of UBL-bestand (.xml) hierheen",
         "active": "Zet het bestand neer om het bij te voegen",
-        "hint": "Één PDF- of UBL-bestand, tot {{maxSizeMb}} MB"
+        "hint": "Één PDF-, JPG- of UBL-bestand, tot {{maxSizeMb}} MB"
       },
       "selected": {
         "label": "Geselecteerd bestand"
@@ -426,7 +426,7 @@
       },
       "validation": {
         "required": "Voeg een bestand toe voordat u uploadt.",
-        "invalidType": "Alleen PDF- en UBL-bestanden (.xml) zijn toegestaan.",
+        "invalidType": "Alleen PDF-, JPG- en UBL-bestanden (.xml) zijn toegestaan.",
         "fileTooLarge": "Het bestand mag maximaal {{maxSizeMb}} MB groot zijn.",
         "tooManyFiles": "Upload slechts één bestand."
       },

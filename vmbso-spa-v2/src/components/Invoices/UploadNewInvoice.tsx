@@ -89,7 +89,8 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
     accept: { 
       "application/pdf": [".pdf"],
       "application/xml": [".xml"],
-      "text/xml": [".xml"]
+      "text/xml": [".xml"],
+      "image/jpeg": [".jpg", ".jpeg"]
     },
     maxFiles: 1,
     maxSize: MAX_FILE_SIZE_BYTES,
