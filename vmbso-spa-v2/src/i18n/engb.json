@@ -380,7 +380,9 @@
     "invoiceDate": "Invoice Date",
     "uploaded": "Uploaded",
     "uploadedBy": "Uploaded by",
+    "company": "Company",
     "rejectionReason": "Rejection Reason",
+    "loyaltyPoints": "Loyalty Points",
 
     "tabs": {
       "myInvoices": "My Invoices",
@@ -397,10 +399,13 @@
     },
 
     "states": {
+      "draft": "Draft",
       "submitted": "Submitted",
-      "approved": "Approved",
+      "extracted": "Processed",
+      "review": "In Review",
       "rejected": "Rejected",
       "credited": "Credited",
+      "canceled": "Canceled",
       "unknown": "Unknown"
     },
 
@@ -428,6 +433,22 @@
         "invalidType": "Only PDF and UBL (.xml) files are allowed.",
         "fileTooLarge": "The file must be {{maxSizeMb}} MB or smaller.",
         "tooManyFiles": "Please upload only one file."
+      },
+      "uploading": {
+        "title": "Uploading your invoice",
+        "subtitle": "This may take a few moments..."
+      },
+      "success": {
+        "title": "Invoice uploaded successfully!",
+        "message": "Your invoice has been uploaded and is being processed."
+      },
+      "processing": {
+        "title": "Your invoice is being processed",
+        "message": "Your invoice has been successfully uploaded and is currently being validated by our AI system. This process typically takes 1-2 minutes. The status will update automatically once processing is complete."
+      },
+      "error": {
+        "title": "Upload failed",
+        "message": "There was an error uploading your invoice. Please try again."
       }
     }
   }

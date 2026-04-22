@@ -29,6 +29,8 @@ const DEV_MOCK_USER: Contact = {
   parentcustomerid: {
     accountid: 'mock-account-id',
     name: 'Actum Digital',
+    _actum_roleid_value: 'mock-role-id',
+    _actum_primarycountryid_value: 'mock-country-id',
     actum_Role: {
       actum_roleid: 'mock-role-id',
       actum_name: 'Installer',

@@ -1,7 +1,6 @@
 import React from "react";
 import { Layout } from "../components/Layout";
 import { UploadNewInvoice } from "../components/Invoices/UploadNewInvoice";
-import type { Invoice } from "../types/invoice";
 import { getInvoiceStatus } from "../types/invoice";
 import { 
   Box, 
@@ -14,8 +13,8 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
-  InputAdornment
+  InputAdornment,
+  Alert
 } from "@mui/material";
 import { 
   CheckCircle as CheckCircleIcon, 
@@ -29,21 +28,15 @@ import { useInvoices } from "../hooks/useInvoices";
 export const Invoices: React.FC = () => {
 
   const { t } = useTranslation("invoicesPage");
-  const { invoices: fetchedInvoices, loading, error } = useInvoices();
-  const [localInvoices, setLocalInvoices] = React.useState<Invoice[]>([]);
+  const { invoices: fetchedInvoices, loading, error, refetch } = useInvoices();
   const [tabValue, setTabValue] = React.useState(0);
   const [searchText, setSearchText] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
-
-  const invoices = React.useMemo(() => {
-    const fetchedByNumber = new Set(fetchedInvoices.map((invoice) => invoice.actum_invoicenumber));
-    const uniqueLocal = localInvoices.filter((invoice) => !fetchedByNumber.has(invoice.actum_invoicenumber));
-    return [...fetchedInvoices, ...uniqueLocal];
-  }, [fetchedInvoices, localInvoices]);
+  const [showProcessingNotification, setShowProcessingNotification] = React.useState(false);
 
   // Filter invoices based on search and status
   const filteredInvoices = React.useMemo(() => {
-    let filtered = invoices;
+    let filtered = fetchedInvoices;
 
     // Filter by search text
     if (searchText.trim()) {
@@ -69,28 +62,35 @@ export const Invoices: React.FC = () => {
     }
 
     return filtered;
-  }, [invoices, searchText, statusFilter]);
+  }, [fetchedInvoices, searchText, statusFilter]);
 
-  const handleInvoiceUploaded = (newInvoice: Invoice) => {
-    if (invoices.some(inv => inv.actum_invoicenumber === newInvoice.actum_invoicenumber)) {
-      console.warn("Invoice with this number already exists:", newInvoice.actum_invoicenumber);
-      return;
-    }
-    setLocalInvoices((prev) => [...prev, newInvoice]);
+  const handleInvoiceUploaded = () => {
+    // Refresh the invoice list from server
+    refetch();
+    
     // Switch to "My Invoices" tab to show the newly uploaded invoice
     setTabValue(0);
+    
+    // Show processing notification
+    setShowProcessingNotification(true);
   };
 
   const getStatusIcon = (status: ReturnType<typeof getInvoiceStatus>) => {
     switch (status) {
+      case "draft":
+        return <CheckCircleIcon color="disabled" fontSize="large" />;
       case "submitted":
         return <CheckCircleIcon color="info" fontSize="large" />;
-      case "approved":
-        return <CheckCircleIcon color="success" fontSize="large" />;
+      case "extracted":
+        return <CheckCircleIcon color="primary" fontSize="large" />;
+      case "review":
+        return <CheckCircleIcon color="warning" fontSize="large" />;
       case "credited":
         return <PaidIcon color="success" fontSize="large" />;
       case "rejected":
         return <CancelIcon color="error" fontSize="large" />;
+      case "canceled":
+        return <CancelIcon color="disabled" fontSize="large" />;
       default:
         return <CheckCircleIcon color="disabled" fontSize="large" />;
     }
@@ -113,6 +113,22 @@ export const Invoices: React.FC = () => {
         {/* Tab 0: My Invoices */}
         {tabValue === 0 && (
           <Box>
+            {/* Processing notification */}
+            {showProcessingNotification && (
+              <Alert 
+                severity="info" 
+                sx={{ mb: 3 }} 
+                onClose={() => setShowProcessingNotification(false)}
+              >
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                  {t("uploadNewInvoice.processing.title")}
+                </Typography>
+                <Typography variant="body2">
+                  {t("uploadNewInvoice.processing.message")}
+                </Typography>
+              </Alert>
+            )}
+
             {/* Search and Filter Controls */}
             <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
               <TextField
@@ -135,10 +151,13 @@ export const Invoices: React.FC = () => {
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
                   <MenuItem value="all">{t("filter.all")}</MenuItem>
+                  <MenuItem value="draft">{t("states.draft")}</MenuItem>
                   <MenuItem value="submitted">{t("states.submitted")}</MenuItem>
-                  <MenuItem value="approved">{t("states.approved")}</MenuItem>
+                  <MenuItem value="extracted">{t("states.extracted")}</MenuItem>
+                  <MenuItem value="review">{t("states.review")}</MenuItem>
                   <MenuItem value="credited">{t("states.credited")}</MenuItem>
                   <MenuItem value="rejected">{t("states.rejected")}</MenuItem>
+                  <MenuItem value="canceled">{t("states.canceled")}</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -166,18 +185,25 @@ export const Invoices: React.FC = () => {
                   <Box display="flex" alignItems="center" justifyContent="space-between" gap="1rem">
                     <Stack spacing={0.5}>
                       <Typography variant="h6">
-                        {invoice.actum_name.replace(/^Portal\s+/i, '')}
+                        {invoice.actum_name?.replace(/^Portal\s+/i, '') || invoice.actum_invoicenumber || t('states.draft')}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t('invoiceDate')}: {invoice['actum_invoicedate@OData.Community.Display.V1.FormattedValue'] || 
-                         new Date(invoice.actum_invoicedate).toLocaleDateString()}
-                      </Typography>
+                      {invoice.actum_invoicedate && (
+                        <Typography variant="body2" color="text.secondary">
+                          {t('invoiceDate')}: {invoice['actum_invoicedate@OData.Community.Display.V1.FormattedValue'] || 
+                           new Date(invoice.actum_invoicedate).toLocaleDateString()}
+                        </Typography>
+                      )}
                       <Typography variant="body2" color="text.secondary">
                         {t('uploadedBy')}: {invoice['uploader.fullname'] || 'Unknown'}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {invoice['uploader.emailaddress1']}
                       </Typography>
+                      {invoice['account.name'] && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                          {t('company')}: {invoice['account.name']}
+                        </Typography>
+                      )}
                       {invoice.actum_rejectionreason && (
                         <Typography variant="caption" color="error" sx={{ mt: 1 }}>
                           {t('rejectionReason')}: {invoice.actum_rejectionreason}
@@ -191,10 +217,17 @@ export const Invoices: React.FC = () => {
                         </Typography>
                         {getStatusIcon(getInvoiceStatus(invoice.statuscode))}
                       </Box>
-                      <Typography variant="h6">
-                        {invoice['actum_totalamount@OData.Community.Display.V1.FormattedValue'] || 
-                         `€${invoice.actum_totalamount.toFixed(2)}`}
-                      </Typography>
+                      {invoice.actum_totalamount !== undefined && (
+                        <Typography variant="h6">
+                          {invoice['actum_totalamount@OData.Community.Display.V1.FormattedValue'] || 
+                           `€${invoice.actum_totalamount.toFixed(2)}`}
+                        </Typography>
+                      )}
+                      {getInvoiceStatus(invoice.statuscode) === 'credited' && invoice.actum_loaltypointsgranted !== undefined && (
+                        <Typography variant="body2" color="success.main" sx={{ fontWeight: 600 }}>
+                          {t('loyaltyPoints')}: {invoice['actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue'] || invoice.actum_loaltypointsgranted}
+                        </Typography>
+                      )}
                       <Typography variant="caption" color="text.secondary">
                         {t('uploaded')}: {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
                          new Date(invoice.createdon).toLocaleDateString()}

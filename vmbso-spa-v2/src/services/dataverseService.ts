@@ -129,8 +129,9 @@ export const dataverseService = {
         const query = buildODataQuery({
           select: fields,
           expand: [
-            'actum_languageid($select=actum_languageid,actum_name)',
-            'parentcustomerid($select=accountid,name;$expand=actum_Role($select=actum_roleid,actum_name,actum_uploadinvoicesallowed),actum_Country($select=actum_countryid,actum_name,actum_uploadinvoicesallowed))'
+            'actum_languageid($select=actum_languageid,actum_name)'
+            // Note: Power Pages does not allow expanding parentcustomerid on Contact
+            // We must query the Account table separately using _parentcustomerid_value
           ],
           filter: `createdon ne ${cacheBuster}`,  // Cache-busting: always unique, never affects results
           top: 1
@@ -143,7 +144,44 @@ export const dataverseService = {
           return null;
         }
 
-        return response.value[0];
+        const contact = response.value[0];
+
+        // Fetch Account, Role, and Country separately due to Power Pages limitations
+        const accountId = contact._parentcustomerid_value;
+        
+        if (accountId) {
+          try {
+            // Step 1: Fetch Account with Role/Country lookup IDs
+            const accountResponse = await apiClient.odata<Account>(
+              `/accounts(${accountId})?$select=accountid,name,_actum_roleid_value,_actum_primarycountryid_value`
+            );
+            
+            contact.parentcustomerid = accountResponse;
+
+            // Step 2: Fetch Role if ID exists
+            const roleId = accountResponse._actum_roleid_value;
+            if (roleId) {
+              const roleResponse = await apiClient.odata<Role>(
+                `/actum_roles(${roleId})?$select=actum_roleid,actum_name,actum_uploadinvoicesallowed`
+              );
+              contact.parentcustomerid.actum_Role = roleResponse;
+            }
+
+            // Step 3: Fetch Country if ID exists
+            const countryId = accountResponse._actum_primarycountryid_value;
+            if (countryId) {
+              const countryResponse = await apiClient.odata<Country>(
+                `/actum_countries(${countryId})?$select=actum_countryid,actum_name,actum_uploadinvoicesallowed`
+              );
+              contact.parentcustomerid.actum_Country = countryResponse;
+            }
+          } catch (error) {
+            console.warn('Failed to fetch Account/Role/Country details:', error);
+            // Continue without related data
+          }
+        }
+
+        return contact;
       } catch (error) {
         // 401/403 means no active session
         if (error instanceof ApiError && [401, 403].includes(error.status)) {
@@ -450,12 +488,14 @@ export const dataverseService = {
             'uploader.contactid': 'mock-contact-1',
             'uploader.fullname': 'John Doe',
             'uploader.emailaddress1': 'john.doe@example.com',
+            'account.accountid': 'mock-account-1',
+            'account.name': 'Van Severen N.V.',
           },
           {
             actum_invoiceid: 'mock-invoice-2',
             actum_invoicenumber: 'VF25/02-18500',
             actum_name: 'Portal Invoice VF25/02-18500',
-            statuscode: 182980002, // Extracted/Credited
+            statuscode: 182980005, // Credited (changed from 182980002)
             actum_totalamount: 11479.78,
             actum_totalnetamount: 9537.08,
             actum_totalvat: 1942.7,
@@ -466,18 +506,21 @@ export const dataverseService = {
             actum_customer: 'Test Company BV, Main Street 123, 1000 Brussels, BE',
             actum_rejectionreason: null,
             actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-02-18500.pdf',
+            actum_loaltypointsgranted: 850,
             'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€11,479.78',
-            'statuscode@OData.Community.Display.V1.FormattedValue': 'Extracted',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Credited',
             'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '2/15/2025',
             'uploader.contactid': 'mock-contact-2',
             'uploader.fullname': 'Jane Smith',
             'uploader.emailaddress1': 'jane.smith@example.com',
+            'account.accountid': 'mock-account-2',
+            'account.name': 'Test Company BV',
           },
           {
             actum_invoiceid: 'mock-invoice-3',
             actum_invoicenumber: 'VF25/03-24001',
             actum_name: 'Portal Invoice VF25/03-24001',
-            statuscode: 182980000, // Submitted
+            statuscode: 182980002, // Extracted
             actum_totalamount: 3250.50,
             actum_totalnetamount: 2700,
             actum_totalvat: 550.50,
@@ -489,17 +532,19 @@ export const dataverseService = {
             actum_rejectionreason: null,
             actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-03-24001.pdf',
             'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€3,250.50',
-            'statuscode@OData.Community.Display.V1.FormattedValue': 'Submitted',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Processed',
             'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '3/10/2025',
             'uploader.contactid': 'mock-contact-1',
             'uploader.fullname': 'John Doe',
             'uploader.emailaddress1': 'john.doe@example.com',
+            'account.accountid': 'mock-account-1',
+            'account.name': 'Van Severen N.V.',
           },
           {
             actum_invoiceid: 'mock-invoice-4',
             actum_invoicenumber: 'VF25/04-30245',
             actum_name: 'Portal Invoice VF25/04-30245',
-            statuscode: 182980001, // Approved
+            statuscode: 182980005, // Credited (changed from Approved)
             actum_totalamount: 8900.00,
             actum_totalnetamount: 7400,
             actum_totalvat: 1500,
@@ -510,12 +555,15 @@ export const dataverseService = {
             actum_customer: 'Big Client NV, Business Avenue 789, 9000 Ghent, BE',
             actum_rejectionreason: null,
             actum_sharepointfileurl: 'https://vmbso.sharepoint.com/sites/portal-dev/invoices/VF25-04-30245.pdf',
+            actum_loaltypointsgranted: 650,
             'actum_totalamount@OData.Community.Display.V1.FormattedValue': '€8,900.00',
-            'statuscode@OData.Community.Display.V1.FormattedValue': 'Approved',
+            'statuscode@OData.Community.Display.V1.FormattedValue': 'Credited',
             'actum_invoicedate@OData.Community.Display.V1.FormattedValue': '4/5/2025',
             'uploader.contactid': 'mock-contact-3',
             'uploader.fullname': 'Alice Johnson',
             'uploader.emailaddress1': 'alice.johnson@example.com',
+            'account.accountid': 'mock-account-3',
+            'account.name': 'Big Client NV',
           },
           {
             actum_invoiceid: 'mock-invoice-5',
@@ -538,6 +586,8 @@ export const dataverseService = {
             'uploader.contactid': 'mock-contact-2',
             'uploader.fullname': 'Jane Smith',
             'uploader.emailaddress1': 'jane.smith@example.com',
+            'account.accountid': 'mock-account-4',
+            'account.name': 'Small Business BVBA',
           },
         ];
       }
@@ -551,28 +601,20 @@ export const dataverseService = {
       }
 
       try {
-        const token = await getCsrfToken();
-        
-        const response = await fetch(config.flows.fetchInvoices, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            '__RequestVerificationToken': token,
-            'x-requested-with': 'XMLHttpRequest',
-          },
-          body: JSON.stringify({ clientID: contactId }),
+        // Use apiClient.flow() which handles the proper content-type and format
+        const response = await apiClient.flow<FlowArrayResponse<Invoice>>(config.flows.fetchInvoices, {
+          contactId: contactId,
         });
 
-        if (!response.ok) {
-          const details = await response.text().catch(() => '');
-          throw new Error(`Fetch invoices failed: ${response.status}${details ? ` - ${details}` : ''}`);
+        // Flow returns { status: "Success", data: "[...]" } where data is a JSON string
+        if (response?.status === 'Success' || response?.status === '200') {
+          const invoices = parseFlowArrayData(response, 'invoices');
+          return invoices;
+        } else if (response?.status === '500') {
+          throw new Error(response.message || 'Failed to fetch invoices');
         }
-
-        // Flow returns array directly (not wrapped in { status, data })
-        const invoices = await response.json() as Invoice[];
         
-        return invoices;
+        return [];
       } catch (error) {
         console.error('Error fetching invoices:', error);
         throw error;
@@ -623,50 +665,110 @@ export const dataverseService = {
     async uploadInvoice({ contactId, accountId, file }: UploadInvoiceArgs): Promise<Invoice> {
       const token = await getCsrfToken();
 
+      console.log('[UPLOAD SERVICE] Step 1: Creating invoice record...');
+      
       // Step 1: Create invoice record
-      const createResponse = await fetch(config.odata.invoices, {
+      const createResponse = await fetch(config.api.invoices, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           __RequestVerificationToken: token,
           'x-requested-with': 'XMLHttpRequest',
+          'Prefer': 'return=representation',
         },
         body: JSON.stringify({
-          '_actum_contactid_value': contactId,
-          '_actum_accountid_value': accountId,
+          'actum_Contact@odata.bind': `/contacts(${contactId})`,
+          'actum_Account@odata.bind': `/accounts(${accountId})`,
         }),
       });
 
       if (!createResponse.ok) {
         const details = await createResponse.text().catch(() => '');
+        console.error('[UPLOAD SERVICE] Step 1 failed:', createResponse.status, details);
         throw new Error(`Failed to create invoice record: ${createResponse.status}${details ? ` - ${details}` : ''}`);
       }
 
-      const createdInvoice = await createResponse.json() as Invoice;
-      const invoiceId = createdInvoice.actum_invoiceid;
+      console.log('[UPLOAD SERVICE] Step 1 response status:', createResponse.status);
+      console.log('[UPLOAD SERVICE] Step 1 response headers:', Object.fromEntries(createResponse.headers.entries()));
+
+      let createdInvoice: Invoice;
+      let invoiceId: string;
+
+      // Handle both 200 OK with JSON body and 204 No Content with OData-EntityId header
+      if (createResponse.status === 204 || createResponse.headers.get('content-length') === '0') {
+        // No content returned, extract ID from OData-EntityId header
+        const entityIdHeader = createResponse.headers.get('OData-EntityId');
+        console.log('[UPLOAD SERVICE] No content in response, using OData-EntityId header:', entityIdHeader);
+        
+        if (!entityIdHeader) {
+          console.error('[UPLOAD SERVICE] No OData-EntityId header found');
+          throw new Error('Invoice created but no ID returned (no OData-EntityId header)');
+        }
+
+        // Extract GUID from URL like: https://.../_api/actum_invoices(12345678-1234-1234-1234-123456789012)
+        const idMatch = entityIdHeader.match(/\(([a-f0-9-]+)\)/i);
+        if (!idMatch || !idMatch[1]) {
+          console.error('[UPLOAD SERVICE] Could not extract ID from header:', entityIdHeader);
+          throw new Error('Could not extract invoice ID from OData-EntityId header');
+        }
+
+        invoiceId = idMatch[1];
+        console.log('[UPLOAD SERVICE] Extracted invoice ID:', invoiceId);
+        
+        // Create minimal invoice object
+        createdInvoice = {
+          actum_invoiceid: invoiceId,
+          statuscode: 1, // Draft
+          createdon: new Date().toISOString(),
+        };
+      } else {
+        // JSON response expected
+        try {
+          createdInvoice = await createResponse.json() as Invoice;
+          invoiceId = createdInvoice.actum_invoiceid;
+        } catch (error) {
+          console.error('[UPLOAD SERVICE] Failed to parse JSON response:', error);
+          throw new Error('Failed to parse create invoice response as JSON');
+        }
+      }
 
       if (!invoiceId) {
+        console.error('[UPLOAD SERVICE] No invoice ID available');
         throw new Error('Invoice created but no ID returned');
       }
 
+      console.log('[UPLOAD SERVICE] Step 1 success. Invoice ID:', invoiceId);
+      console.log('[UPLOAD SERVICE] Step 2: Uploading file to invoice...');
+      console.log('[UPLOAD SERVICE] File details:', { name: file.name, type: file.type, size: file.size });
+
       // Step 2: Upload file to the file column
       const fileBytes = await file.arrayBuffer();
-      const uploadResponse = await fetch(`${config.odata.invoices}(${invoiceId})/actum_invoicedocument`, {
+      const uploadUrl = `${config.api.invoices}(${invoiceId})/actum_invoicedocument`;
+      
+      console.log('[UPLOAD SERVICE] Upload URL:', uploadUrl);
+      
+      const uploadResponse = await fetch(uploadUrl, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/octet-stream',
           __RequestVerificationToken: token,
           'x-requested-with': 'XMLHttpRequest',
+          'x-ms-file-name': file.name,
         },
         body: fileBytes,
       });
 
+      console.log('[UPLOAD SERVICE] Step 2 response status:', uploadResponse.status);
+
       if (!uploadResponse.ok) {
         const details = await uploadResponse.text().catch(() => '');
+        console.error('[UPLOAD SERVICE] Step 2 failed:', uploadResponse.status, details);
         throw new Error(`Failed to upload file: ${uploadResponse.status}${details ? ` - ${details}` : ''}`);
       }
+
+      console.log('[UPLOAD SERVICE] Step 2 success. File uploaded.');
 
       // Return the created invoice with file reference
       return {

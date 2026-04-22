@@ -378,7 +378,9 @@
     "invoiceDate": "Factuurdatum",
     "uploaded": "Geüpload",
     "uploadedBy": "Geüpload door",
+    "company": "Bedrijf",
     "rejectionReason": "Reden voor afwijzing",
+    "loyaltyPoints": "Loyaliteitspunten",
 
     "tabs": {
       "myInvoices": "Mijn Facturen",
@@ -395,10 +397,11 @@
     },
 
     "states": {
-      "submitted": "Ingediend",
-      "approved": "Goedgekeurd",
+      "draft": "Concept",
+      "submitted": "Ingediend",      "extracted": "Verwerkt",      "review": "In Beoordeling",
       "rejected": "Afgewezen",
       "credited": "Gecrediteerd",
+      "canceled": "Geannuleerd",
       "unknown": "Onbekend"
     },
 
@@ -426,6 +429,22 @@
         "invalidType": "Alleen PDF- en UBL-bestanden (.xml) zijn toegestaan.",
         "fileTooLarge": "Het bestand mag maximaal {{maxSizeMb}} MB groot zijn.",
         "tooManyFiles": "Upload slechts één bestand."
+      },
+      "uploading": {
+        "title": "Uw factuur wordt geüpload",
+        "subtitle": "Dit kan enkele ogenblikken duren..."
+      },
+      "success": {
+        "title": "Factuur succesvol geüpload!",
+        "message": "Uw factuur is geüpload en wordt verwerkt."
+      },
+      "processing": {
+        "title": "Uw factuur wordt verwerkt",
+        "message": "Uw factuur is succesvol geüpload en wordt momenteel gevalideerd door ons AI-systeem. Dit proces duurt doorgaans 1-2 minuten. De status wordt automatisch bijgewerkt zodra de verwerking is voltooid."
+      },
+      "error": {
+        "title": "Upload mislukt",
+        "message": "Er is een fout opgetreden bij het uploaden van uw factuur. Probeer het opnieuw."
       }
     }
   }

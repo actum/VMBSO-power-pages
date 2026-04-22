@@ -378,7 +378,9 @@
     "invoiceDate": "Date de facture",
     "uploaded": "Téléchargé",
     "uploadedBy": "Téléchargé par",
+    "company": "Entreprise",
     "rejectionReason": "Raison du rejet",
+    "loyaltyPoints": "Points de Fidélité",
 
     "tabs": {
       "myInvoices": "Mes Factures",
@@ -395,10 +397,11 @@
     },
 
     "states": {
-      "submitted": "Soumis",
-      "approved": "Approuvé",
+      "draft": "Brouillon",
+      "submitted": "Soumis",      "extracted": "Traité",      "review": "En Révision",
       "rejected": "Rejeté",
       "credited": "Crédité",
+      "canceled": "Annulé",
       "unknown": "Inconnu"
     },
 
@@ -426,6 +429,22 @@
         "invalidType": "Seuls les fichiers PDF et UBL (.xml) sont autorisés.",
         "fileTooLarge": "Le fichier doit faire {{maxSizeMb}} Mo ou moins.",
         "tooManyFiles": "Veuillez télécharger un seul fichier."
+      },
+      "uploading": {
+        "title": "Téléchargement de votre facture",
+        "subtitle": "Cela peut prendre quelques instants..."
+      },
+      "success": {
+        "title": "Facture téléchargée avec succès !",
+        "message": "Votre facture a été téléchargée et est en cours de traitement."
+      },
+      "processing": {
+        "title": "Votre facture est en cours de traitement",
+        "message": "Votre facture a été téléchargée avec succès et est actuellement validée par notre système IA. Ce processus prend généralement 1 à 2 minutes. Le statut sera mis à jour automatiquement une fois le traitement terminé."
+      },
+      "error": {
+        "title": "Échec du téléchargement",
+        "message": "Une erreur s'est produite lors du téléchargement de votre facture. Veuillez réessayer."
       }
     }
   }

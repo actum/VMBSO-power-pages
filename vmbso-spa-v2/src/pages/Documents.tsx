@@ -38,6 +38,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 import { type DocumentWithBrands } from '../types/document';
+import { LoadingModal } from '../components/common/ui/LoadingModal';
 
 const ClampedDescription = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
@@ -336,33 +337,11 @@ export const Documents: React.FC = () => {
   return (
     <Layout>
       {/* Full-screen download preparing overlay */}
-      <Modal
+      <LoadingModal 
         open={isPreparingDownload}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-          sx: { backgroundColor: 'rgba(255, 255, 255, 0.95)' },
-        }}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-          }}
-        >
-          <CircularProgress size={60} sx={{ color: 'primary.main', mb: 3 }} />
-          <Typography variant="h5" sx={{ fontWeight: 500, color: 'primary.main' }}>
-            {t('download.preparing')}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-            {t('download.preparingSubtext')}
-          </Typography>
-        </Box>
-      </Modal>
+        title={t('download.preparing')}
+        subtitle={t('download.preparingSubtext')}
+      />
 
       {/* Page layout: sidebar + main */}
       <Box sx={{ display: 'flex', minHeight: '60vh', mx: -3 }}>

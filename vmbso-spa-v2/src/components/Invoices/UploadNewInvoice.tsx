@@ -7,6 +7,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Alert,
 } from "@mui/material";
 import {
   CloudUploadOutlined,
@@ -17,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { dataverseService } from "../../services/dataverseService";
 import type { Invoice } from '../../types/invoice';
+import { LoadingModal } from '../common/ui/LoadingModal';
 
 export const MAX_FILE_SIZE_MB = 10;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -39,6 +41,7 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const [isUploading, setIsUploading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -69,6 +72,7 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
   const onDropAccepted = React.useCallback((acceptedFiles: File[]) => {
     setSelectedFile(acceptedFiles[0] ?? null);
     setErrorMessage(null);
+    setSuccessMessage(null);
   }, []);
 
   const onDropRejected = React.useCallback((rejections: FileRejection[]) => {
@@ -115,6 +119,11 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
       return;
     }
 
+    console.log('[UPLOAD] Starting upload...');
+    console.log('[UPLOAD] Contact ID:', currentUser.contactid);
+    console.log('[UPLOAD] Account ID:', accountId);
+    console.log('[UPLOAD] File:', selectedFile.name, selectedFile.type, selectedFile.size);
+
     try {
       setErrorMessage(null);
       setIsUploading(true);
@@ -125,14 +134,20 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
         file: selectedFile,
       });
 
-      onUploaded?.(uploadedInvoice);
-
-      // Reset fields only after successful backend upload.
+      console.log('[UPLOAD] Success:', uploadedInvoice);
+      
+      // Reset form
       setSelectedFile(null);
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      
+      // Notify parent component
+      onUploaded?.(uploadedInvoice);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to upload invoice";
+      console.error('[UPLOAD] Error:', error);
+      const message = error instanceof Error ? error.message : t("error.message");
       setErrorMessage(message);
-      console.error("Error uploading invoice:", error);
+      setSuccessMessage(null);
     } finally {
       setIsUploading(false);
     }
@@ -141,10 +156,17 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setErrorMessage(null);
+    setSuccessMessage(null);
   };
 
   return (
     <>
+      <LoadingModal 
+        open={isUploading}
+        title={t("uploading.title")}
+        subtitle={t("uploading.subtitle")}
+      />
+      
       <Typography variant="h4" sx={{ mb: 1 }}>
         {t("title")}
       </Typography>
@@ -152,6 +174,12 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
         <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>
           {t("subtitle")}
         </Typography>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccessMessage(null)}>
+          {successMessage}
+        </Alert>
       )}
 
       <Box component={"form"} onSubmit={handleUpload}>
@@ -226,23 +254,23 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
             </Box>
 
             {errorMessage && (
-              <Typography variant="body2" color="error" sx={{ mt: 1.5 }}>
+              <Alert severity="error" sx={{ mt: 1.5 }} onClose={() => setErrorMessage(null)}>
                 {errorMessage}
-              </Typography>
+              </Alert>
             )}
           </Box>
         )}
-      </Box>
 
-      <Button
-        variant="contained"
-        type="submit"
-        sx={{ display: "flex", mt: 3, ml: "auto" }}
-        fullWidth={isMobile}
-        disabled={!selectedFile || isUploading}
-      >
-        {isUploading ? "Uploading..." : t("actions.upload")}
-      </Button>
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ display: "flex", mt: 3, ml: "auto" }}
+          fullWidth={isMobile}
+          disabled={!selectedFile || isUploading}
+        >
+          {isUploading ? "Uploading..." : t("actions.upload")}
+        </Button>
+      </Box>
     </>
   );
 }
