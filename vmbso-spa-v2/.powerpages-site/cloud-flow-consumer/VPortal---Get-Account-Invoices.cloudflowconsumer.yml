@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/6c50a0de-323a-f111-88b5-000d3aba4b13
+flowtriggerurl: ''
+id: 4d3fdeac-373a-f111-88b5-000d3aba4b13
+metadata: ''
+name: VPortal - Get Account Invoices
+processid: 6c50a0de-323a-f111-88b5-000d3aba4b13

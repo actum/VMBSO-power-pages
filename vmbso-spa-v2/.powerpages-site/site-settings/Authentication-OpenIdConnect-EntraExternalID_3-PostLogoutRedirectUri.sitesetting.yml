@@ -1,4 +1,4 @@
-id: f90df03f-f329-f111-8342-000d3aba4b13
+id: 24fe9871-e934-f111-88b5-7ced8d42822b
 name: Authentication/OpenIdConnect/EntraExternalID_3/PostLogoutRedirectUri
 source: 0
-value: https://customerportal-dev.powerappsportals.com/
+value: https://customerportal-test.powerappsportals.com/

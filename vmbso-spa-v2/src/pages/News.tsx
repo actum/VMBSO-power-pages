@@ -93,7 +93,7 @@ export const News: React.FC = () => {
   };
 
   const brandChipRow = (brands: NewsArticle['brands'], publishDate?: string) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.75, mb: '15px', mt: '10px' }}>
       {brands.filter(b => brandColorMap.has(b.id)).map(brand => {
         const colors = brandColorMap.get(brand.id) ?? BRAND_CHIP_COLORS[0];
         return (
@@ -206,7 +206,9 @@ export const News: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: 3,
-              p: 3,
+              px: 5,
+              py: 3,
+              pb: 8,
               cursor: 'pointer',
               transition: 'box-shadow 0.15s',
               '&:hover': {
@@ -216,7 +218,7 @@ export const News: React.FC = () => {
             }}
           >
             {/* Left: meta + title + excerpt */}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box sx={{ flex: 1, minWidth: 0, px: 3 }}>
               {brandChipRow(article.brands, article.actum_publishdate || article.createdon)}
 
               <Typography
@@ -246,7 +248,7 @@ export const News: React.FC = () => {
             </Box>
 
             {/* Right: Read more button — outlined, transparent bg, icon */}
-            <Box sx={{ flexShrink: 0, display: { xs: 'none', sm: 'block' } }}>
+            <Box sx={{ flexShrink: 0, px: 3, display: { xs: 'none', sm: 'block' } }}>
               <Button
                 variant="outlined"
                 color="primary"
@@ -271,7 +273,7 @@ export const News: React.FC = () => {
       >
         {openArticle && (
           <>
-            <DialogTitle sx={{ px: 4, pt: 3, pb: 2, pr: 7 }}>
+            <DialogTitle sx={{ px: 8, pt: 3, pb: 2, pr: 7 }}>
               {/* Brand chips + date row */}
               {brandChipRow(openArticle.brands, openArticle.actum_publishdate || openArticle.createdon)}
               {/* Title */}
@@ -291,7 +293,7 @@ export const News: React.FC = () => {
 
             <Divider />
 
-            <DialogContent sx={{ px: 4, py: 3 }}>
+            <DialogContent sx={{ px: 8, py: 3 }}>
               {openArticle.actum_body ? (
                 <Box
                   sx={{
@@ -322,7 +324,7 @@ export const News: React.FC = () => {
                   alignItems: 'center',
                   flexWrap: 'wrap',
                   gap: 1.5,
-                  px: 4,
+                  px: 8,
                   py: 2.5,
                   bgcolor: 'grey.50',
                   borderTop: '1px solid',
@@ -346,7 +348,7 @@ export const News: React.FC = () => {
               </Box>
             )}
 
-            <DialogActions sx={{ px: 4, py: 2.5, justifyContent: 'space-between' }}>
+            <DialogActions sx={{ px: 8, py: 2.5, justifyContent: 'space-between' }}>
               <Typography variant="caption" color="text.secondary">
                 {t('modal.published')} {formatDate(openArticle.actum_publishdate || openArticle.createdon)}
               </Typography>

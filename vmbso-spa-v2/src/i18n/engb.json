@@ -109,7 +109,10 @@
     "navigation": {
       "home": "Home",
       "documents": "Documents",
-      "news": "News"
+      "news": "News",
+      "invoices": "Invoices",
+      "rewards": "Rewards",
+      "vouchers": "Vouchers"
     },
     "menu": {
       "profile": "Profile",
@@ -373,23 +376,51 @@
   },
 
   "invoicesPage": {
+    "pageTitle": "Invoices | VMBSO Customer Portal",
     "title": "My invoices",
+    "loading": "Loading invoices...",
+    "noInvoices": "No invoices found",
+    "invoiceDate": "Invoice Date",
+    "uploaded": "Uploaded",
+    "uploadedBy": "Uploaded by",
+    "company": "Company",
+    "rejectionReason": "Rejection Reason",
+    "loyaltyPoints": "Loyalty Points",
+
+    "tabs": {
+      "myInvoices": "My Invoices",
+      "uploadNew": "Upload New Invoice"
+    },
+
+    "search": {
+      "placeholder": "Search by invoice number, name or email..."
+    },
+
+    "filter": {
+      "status": "Status",
+      "all": "All Statuses"
+    },
 
     "states": {
+      "draft": "Draft",
       "submitted": "Submitted",
+      "extracted": "Processed",
+      "review": "In Review",
       "rejected": "Rejected",
-      "credited": "Credited"
+      "credited": "Approved",
+      "canceled": "Canceled",
+      "unknown": "Unknown"
     },
 
     "uploadNewInvoice": {
       "pageTitle": "Invoice | VMBSO Customer Portal",
       "title": "Upload new invoice",
-      "subtitle": "Drop your invoice PDF below or browse from your device.",
+      "subtitle": "Drop your invoice PDF, JPG or UBL file below or browse from your device.",
       "dropzone": {
         "mobileTitle": "Browse for invoice files on your device.",
-        "idle": "Drag and drop your PDF here",
-        "active": "Drop the PDF to attach it",
-        "hint": "Single PDF file, up to {{maxSizeMb}} MB"
+        "idle": "Drag and drop your PDF, JPG or UBL (.xml) file here",
+        "active": "Drop the file to attach it",
+        "hint": "Single PDF, JPG or UBL file, up to {{maxSizeMb}} MB"
       },
       "selected": {
         "label": "Selected file"
@@ -401,11 +432,155 @@
         "upload": "Upload invoice"
       },
       "validation": {
-        "required": "Please add a PDF before uploading.",
-        "invalidType": "Only PDF files are allowed.",
+        "required": "Please add a file before uploading.",
+        "invalidType": "Only PDF, JPG and UBL (.xml) files are allowed.",
         "fileTooLarge": "The file must be {{maxSizeMb}} MB or smaller.",
-        "tooManyFiles": "Please upload only one PDF file."
+        "tooManyFiles": "Please upload only one file."
+      },
+      "uploading": {
+        "title": "Uploading your invoice",
+        "subtitle": "This may take a few moments..."
+      },
+      "success": {
+        "title": "Invoice uploaded successfully!",
+        "message": "Your invoice has been uploaded and is being processed."
+      },
+      "processing": {
+        "title": "Your invoice is being processed",
+        "message": "Your invoice has been successfully uploaded and is currently being validated by our AI system. This process typically takes 1-2 minutes. The status will update automatically once processing is complete."
+      },
+      "error": {
+        "title": "Upload failed",
+        "message": "There was an error uploading your invoice. Please try again."
       }
+    }
+  },
+
+  "rewardsPage": {
+    "pageTitle": "Rewards | VMBSO Customer Portal",
+    "title": "Loyalty Rewards",
+    "subtitle": "Redeem your loyalty points for exclusive rewards",
+
+    "loading": "Loading rewards...",
+    "error": "Failed to load rewards. Please try again.",
+
+    "pointsBalance": {
+      "title": "Your Points Balance",
+      "available": "Available Points",
+      "points": "{{count}} points",
+      "earnMore": "Earn more points by uploading invoices!"
+    },
+
+    "catalog": {
+      "title": "Reward Catalog",
+      "noRewards": "No rewards available at this time.",
+      "cost": "{{points}} points",
+      "insufficientPoints": "Insufficient points",
+      "available": "Available"
+    },
+
+    "actions": {
+      "claim": "Claim Reward",
+      "claiming": "Processing...",
+      "close": "Close",
+      "claimAnother": "Claim Another Reward"
+    },
+
+    "claimModal": {
+      "title": "Claim Reward",
+      "confirmMessage": "You are about to claim the following reward:",
+      "rewardName": "Reward",
+      "cost": "Cost",
+      "currentBalance": "Current Balance",
+      "newBalance": "Balance After Claim",
+      "points": "{{count}} points",
+      "confirmButton": "Confirm Claim",
+      "cancelButton": "Cancel"
+    },
+
+    "success": {
+      "title": "Reward Claimed Successfully!",
+      "message": "Your voucher has been created and sent by email.",
+      "emailSent": "Email sent to",
+      "newBalance": "New Balance",
+      "points": "{{count}} points"
+    },
+
+    "errorMessages": {
+      "insufficientPoints": "You don't have enough points to claim this reward.",
+      "claimFailed": "Failed to claim reward. Please try again.",
+      "invalidResponse": "Received an invalid response from the server.",
+      "networkError": "Network error. Please check your connection and try again."
+    }
+  },
+
+  "vouchersPage": {
+    "pageTitle": "Vouchers | VMBSO Customer Portal",
+    "title": "My Vouchers",
+    "subtitle": "View and manage vouchers generated from your reward claims",
+    "subtitleDistributor": "Redeem vouchers for installers and view your redemption history",
+
+    "redemption": {
+      "title": "Redeem Voucher",
+      "inputLabel": "Voucher Code",
+      "inputPlaceholder": "Enter voucher code",
+      "validateButton": "Validate",
+      "redeemButton": "Redeem",
+      "validating": "Validating...",
+      "redeeming": "Redeeming...",
+      "redeemingSubtext": "Please wait while we process your redemption...",
+      "confirmTitle": "Confirm Voucher Redemption",
+      "confirmMessage": "Are you sure you want to redeem this voucher?",
+      "confirmDetails": "Voucher Code: {{code}}",
+      "confirmButton": "Confirm Redemption",
+      "cancelButton": "Cancel",
+      "successMessage": "Voucher {{code}} redeemed successfully!",
+      "validVoucher": "Valid voucher found!",
+      "errors": {
+        "notFound": "Voucher code not found",
+        "alreadyRedeemed": "This voucher has already been redeemed",
+        "expired": "This voucher has expired",
+        "invalid": "Invalid voucher code",
+        "unauthorized": "You are not authorized to redeem this voucher",
+        "emptyCode": "Please enter a voucher code",
+        "validationFailed": "Voucher validation failed",
+        "redemptionFailed": "Failed to redeem voucher. Please try again."
+      }
+    },
+
+    "filters": {
+      "searchPlaceholder": "Search by voucher code or name...",
+      "statusAll": "All Statuses",
+      "statusIssued": "Issued",
+      "statusRedeemed": "Redeemed",
+      "statusExpired": "Expired",
+      "statusCanceled": "Canceled"
+    },
+
+    "list": {
+      "voucherCode": "Voucher Code",
+      "reward": "Reward",
+      "status": "Status",
+      "claimedBy": "Claimed By",
+      "redeemedBy": "Redeemed By",
+      "distributor": "Distributor",
+      "generatedDate": "Generated",
+      "expiryDate": "Expires",
+      "redeemedDate": "Redeemed",
+      "noVouchers": "No vouchers found",
+      "noRedeemedVouchers": "You haven't redeemed any vouchers yet"
+    },
+
+    "detail": {
+      "title": "Voucher Details",
+      "voucherName": "Name",
+      "copyCode": "Copy Code",
+      "copiedSuccess": "Voucher code copied to clipboard!",
+      "close": "Close"
+    },
+
+    "errorMessages": {
+      "loadFailed": "Failed to load vouchers"
     }
   }
 }

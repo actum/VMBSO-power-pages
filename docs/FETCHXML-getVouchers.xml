@@ -1,0 +1,43 @@
+<fetch>
+  <entity name="actum_voucher">
+    <attribute name="actum_voucherid" />
+    <attribute name="actum_name" />
+    <attribute name="actum_vouchercode" />
+    <attribute name="actum_expirationdate" />
+    <attribute name="actum_account" />
+    <attribute name="actum_contactid" />
+    <attribute name="actum_loyaltytransaction" />
+    <attribute name="actum_rewardclaimlineid" />
+    <attribute name="actum_redeemedby" />
+    <attribute name="actum_distributorid" />
+    <attribute name="statecode" />
+    <attribute name="statuscode" />
+    <attribute name="createdon" />
+    <attribute name="modifiedon" />
+    
+    <!-- OR filter: vouchers owned by account OR redeemed by distributor account -->
+    <filter type="or">
+      <condition attribute="actum_account" operator="eq" value="@{triggerBody()['text']}" />
+      <condition attribute="actum_distributorid" operator="eq" value="@{triggerBody()['text']}" />
+    </filter>
+    
+    <!-- Link to Contact who claimed the voucher (installer) -->
+    <link-entity name="contact" from="contactid" to="actum_contactid" link-type="outer" alias="claimedBy">
+      <attribute name="fullname" />
+      <attribute name="emailaddress1" alias="claimedByEmail" />
+    </link-entity>
+    
+    <!-- Link to Contact who redeemed the voucher (distributor) -->
+    <link-entity name="contact" from="contactid" to="actum_redeemedby" link-type="outer" alias="redeemedBy">
+      <attribute name="fullname" />
+      <attribute name="emailaddress1" alias="redeemedByEmail" />
+      <!-- Get the distributor's account name -->
+      <link-entity name="account" from="accountid" to="parentcustomerid" link-type="outer" alias="redeemedByAccount">
+        <attribute name="name" alias="accountName" />
+      </link-entity>
+    </link-entity>
+    
+    <!-- Order by most recently modified first -->
+    <order attribute="modifiedon" descending="true" />
+  </entity>
+</fetch>

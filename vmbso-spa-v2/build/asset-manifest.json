@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.eeb10c5e.css",
-    "main.js": "/static/js/main.423ef5f2.js",
+    "main.js": "/static/js/main.7019c76a.js",
     "static/media/UlmGrotesk-Regular.woff2": "/static/media/UlmGrotesk-Regular.13798099e106882a871f.woff2",
     "static/media/UlmGrotesk-Bold.woff2": "/static/media/UlmGrotesk-Bold.db5fe127536df185d67d.woff2",
     "static/media/UlmGrotesk-Medium.woff2": "/static/media/UlmGrotesk-Medium.ada4f4fcd9d1c5b9b560.woff2",
@@ -11,6 +11,6 @@
   },
   "entrypoints": [
     "static/css/main.eeb10c5e.css",
-    "static/js/main.423ef5f2.js"
+    "static/js/main.7019c76a.js"
   ]
 }

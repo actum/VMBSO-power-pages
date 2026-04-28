@@ -16,6 +16,8 @@ import { Home } from './pages/Home';
 import { News } from './pages/News';
 import LangHandler from './components/LangHandler';
 import { Invoices } from './pages/Invoices';
+import { Rewards } from './pages/Rewards';
+import { Vouchers } from './pages/Vouchers';
 
 /**
  * Catches Entra External ID cancel/error redirects (e.g. /signin-entraexternalid_2?error=...)
@@ -80,6 +82,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Invoices />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/rewards"
+                element={
+                  <ProtectedRoute>
+                    <Rewards />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/vouchers"
+                element={
+                  <ProtectedRoute>
+                    <Vouchers />
                   </ProtectedRoute>
                 }
               />

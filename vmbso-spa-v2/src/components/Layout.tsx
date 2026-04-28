@@ -28,6 +28,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from './common/LanguagePicker';
+import { canAccessInvoices } from '../utils/accessControl';
+import { canAccessRewards } from '../utils/accessControl';
+import { canAccessVouchers } from '../utils/accessControl';
 // import { CookiesContext } from '../contexts/CookiesContext';
 
 interface LayoutProps {
@@ -83,6 +86,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     { label: t('header:navigation.home'), path: '/' },
     { label: t('header:navigation.documents'), path: '/documents' },
     { label: t('header:navigation.news'), path: '/news' },
+    ...(canAccessInvoices(currentUser) 
+      ? [{ label: t('header:navigation.invoices'), path: '/invoices' }] 
+      : []),
+    ...(canAccessRewards(currentUser) 
+      ? [{ label: t('header:navigation.rewards'), path: '/rewards' }] 
+      : []),
+    ...(canAccessVouchers(currentUser) 
+      ? [{ label: t('header:navigation.vouchers'), path: '/vouchers' }] 
+      : []),
   ];
 
   return (
@@ -147,7 +159,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* User name + avatar */}
             <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', ml: 2 }}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', ml: 4 }}
               onClick={handleUserMenuOpen}
             >
               {currentUser && (

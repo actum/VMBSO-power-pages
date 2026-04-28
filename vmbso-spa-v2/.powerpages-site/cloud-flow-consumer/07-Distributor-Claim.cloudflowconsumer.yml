@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/2d0ace0c-ca26-f111-8341-000d3a66f792
+flowtriggerurl: ''
+id: dec14d17-2142-f111-88b5-7ced8d42822b
+metadata: ''
+name: 07/Distributor Claim
+processid: 2d0ace0c-ca26-f111-8341-000d3a66f792

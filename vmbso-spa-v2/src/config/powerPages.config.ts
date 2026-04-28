@@ -83,9 +83,15 @@ export const config = {
     /** Fetch documents flow — returns list of product documentation for contact. */
     fetchDocuments: '/_api/cloudflow/v1.0/trigger/a276b369-b11e-f111-8341-000d3a66f974',
     /** Fetch invoices flow — returns invoice rows for the authenticated contact. */
-    fetchInvoices: 'TODO: add endpoint',
-    /** Upload invoice flow — accepts multipart form data with PDF + form fields. */
-    uploadInvoicePdf: 'TODO: add endpoint',
+    fetchInvoices: '/_api/cloudflow/v1.0/trigger/6c50a0de-323a-f111-88b5-000d3aba4b13',
+    /** Claim rewards flow — validates balance, creates deduction transaction, and generates vouchers. */
+    claimRewards: '/_api/cloudflow/v1.0/trigger/245c5b01-f216-f111-8341-000d3a688605',
+    /** Get vouchers flow — returns vouchers for account (installers) or redeemed by account (distributors). */
+    getVouchers: '/_api/cloudflow/v1.0/trigger/31b4d0c8-e33f-f111-88b5-000d3aba4b13',
+    /** Validate voucher code — checks if voucher is valid and can be redeemed (distributor only). */
+    validateVoucher: '/_api/cloudflow/v1.0/trigger/cfac8c6d-e226-f111-8341-000d3a688605',
+    /** Redeem voucher — marks voucher as redeemed by distributor (distributor only). */
+    redeemVoucher: '/_api/cloudflow/v1.0/trigger/2d0ace0c-ca26-f111-8341-000d3a66f792',
   },
 
   /** Static asset paths. */
