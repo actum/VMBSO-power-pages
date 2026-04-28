@@ -208,11 +208,6 @@ export const Invoices: React.FC = () => {
                           {t('company')}: {invoice['account.name']}
                         </Typography>
                       )}
-                      {invoice.actum_rejectionreason && (
-                        <Typography variant="caption" color="error" sx={{ mt: 1 }}>
-                          {t('rejectionReason')}: {invoice.actum_rejectionreason}
-                        </Typography>
-                      )}
                     </Stack>
                     <Box display="flex" flexDirection="column" alignItems="flex-end" alignSelf="flex-start" gap="0.5rem">
                       <Box display="flex" alignItems="center" gap="0.5rem">
@@ -233,8 +228,11 @@ export const Invoices: React.FC = () => {
                         </Typography>
                       )}
                       <Typography variant="caption" color="text.secondary">
-                        {t('uploaded')}: {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
-                         new Date(invoice.createdon).toLocaleDateString()}
+                        {t('uploaded')}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
+                         new Date(invoice.createdon).toLocaleString()}
                       </Typography>
                     </Box>
                   </Box>
