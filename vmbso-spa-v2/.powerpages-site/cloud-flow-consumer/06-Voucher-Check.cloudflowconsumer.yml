@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/cfac8c6d-e226-f111-8341-000d3a688605
+flowtriggerurl: ''
+id: ab7d5511-2142-f111-88b5-7ced8d42822b
+metadata: ''
+name: 06/Voucher Check
+processid: cfac8c6d-e226-f111-8341-000d3a688605

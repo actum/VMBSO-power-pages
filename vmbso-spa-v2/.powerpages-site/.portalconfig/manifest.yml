@@ -1,34 +1,10 @@
 adx_webfile:
-- RecordId: 145d8577-a42d-43f6-b96c-52523c0de1b9
-  DisplayName: main.3caf6a96.js
-  CheckSum: 
-  IsDeleted: true
-- RecordId: 21309113-aa11-4793-94b7-b18f72cb0d74
-  DisplayName: 21309113-aa11-4793-94b7-b18f72cb0d74
-  CheckSum: 
-  IsDeleted: true
-- RecordId: 809e7d72-5919-41a3-a1df-ff271b563e2f
-  DisplayName: main.43712be0.js
-  CheckSum: 
-  IsDeleted: true
-- RecordId: b4ed11e6-3f28-498b-8789-18eb8602e585
-  DisplayName: main.69f40494.js
-  CheckSum: 
-  IsDeleted: true
-- RecordId: e9ee32bc-9ba0-4b8e-9c3e-515dc97f6b1f
-  DisplayName: e9ee32bc-9ba0-4b8e-9c3e-515dc97f6b1f
+- RecordId: a6c45bbd-539d-4cf8-8a84-fa40b199d190
+  DisplayName: main.83f67a2f.js
   CheckSum: 
   IsDeleted: true
 annotation:
-- RecordId: 21309113-aa11-4793-94b7-b18f72cb0d74
-  DisplayName: main.43712be0.js.LICENSE.txt
-  CheckSum: 
-  IsDeleted: true
-- RecordId: 809e7d72-5919-41a3-a1df-ff271b563e2f
-  DisplayName: main.43712be0.js
-  CheckSum: 
-  IsDeleted: true
-- RecordId: e9ee32bc-9ba0-4b8e-9c3e-515dc97f6b1f
-  DisplayName: main.69f40494.js.LICENSE.txt
+- RecordId: a6c45bbd-539d-4cf8-8a84-fa40b199d190
+  DisplayName: main.83f67a2f.js
   CheckSum: 
   IsDeleted: true

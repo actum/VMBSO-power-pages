@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/31b4d0c8-e33f-f111-88b5-000d3aba4b13
+flowtriggerurl: ''
+id: 96dbe99a-2142-f111-88b5-7ced8d42822b
+metadata: ''
+name: VPortal - Get Vouchers by Account
+processid: 31b4d0c8-e33f-f111-88b5-000d3aba4b13

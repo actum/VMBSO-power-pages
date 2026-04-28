@@ -1,0 +1,14 @@
+accountrelationship: actum_voucher_Account
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_voucher
+entityname: Vouchers
+id: 3ad83bb0-4ef4-4e8e-811b-dbf82f065841
+parententitypermission: 
+read: true
+scope: 756150002
+write: false

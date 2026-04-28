@@ -1,0 +1,8 @@
+adx_CloudFlowConsumer_adx_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+flowapiurl: /_api/cloudflow/v1.0/trigger/245c5b01-f216-f111-8341-000d3a688605
+flowtriggerurl: ''
+id: e06759e1-903d-f111-88b5-000d3aba4179
+metadata: ''
+name: 04/Voucher Generation
+processid: 245c5b01-f216-f111-8341-000d3a688605

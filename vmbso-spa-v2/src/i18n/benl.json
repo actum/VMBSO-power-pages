@@ -108,7 +108,9 @@
       "home": "Home",
       "documents": "Documenten",
       "news": "Nieuws",
-      "invoices": "Facturen"
+      "invoices": "Facturen",
+      "rewards": "Beloningen",
+      "vouchers": "Vouchers"
     },
     "menu": {
       "profile": "Profiel",
@@ -372,6 +374,7 @@
   },
 
   "invoicesPage": {
+    "pageTitle": "Facturen | VMBSO Klantenportaal",
     "title": "Mijn facturen",
     "loading": "Facturen laden...",
     "noInvoices": "Geen facturen gevonden",
@@ -400,7 +403,7 @@
       "draft": "Concept",
       "submitted": "Ingediend",      "extracted": "Verwerkt",      "review": "In Beoordeling",
       "rejected": "Afgewezen",
-      "credited": "Gecrediteerd",
+      "credited": "Goedgekeurd",
       "canceled": "Geannuleerd",
       "unknown": "Onbekend"
     },
@@ -446,6 +449,134 @@
         "title": "Upload mislukt",
         "message": "Er is een fout opgetreden bij het uploaden van uw factuur. Probeer het opnieuw."
       }
+    }
+  },
+
+  "rewardsPage": {
+    "pageTitle": "Beloningen | VMBSO Klantenportaal",
+    "title": "Loyaliteitsbeloningen",
+    "subtitle": "Wissel uw loyaliteitspunten in voor exclusieve beloningen",
+
+    "loading": "Beloningen laden...",
+    "error": "Kan beloningen niet laden. Probeer het opnieuw.",
+
+    "pointsBalance": {
+      "title": "Uw puntensaldo",
+      "available": "Beschikbare punten",
+      "points": "{{count}} punten",
+      "earnMore": "Verdien meer punten door facturen te uploaden!"
+    },
+
+    "catalog": {
+      "title": "Beloningscatalogus",
+      "noRewards": "Momenteel geen beloningen beschikbaar.",
+      "cost": "{{points}} punten",
+      "insufficientPoints": "Onvoldoende punten",
+      "available": "Beschikbaar"
+    },
+
+    "actions": {
+      "claim": "Beloning claimen",
+      "claiming": "Verwerken...",
+      "close": "Sluiten",
+      "claimAnother": "Nog een beloning claimen"
+    },
+
+    "claimModal": {
+      "title": "Beloning claimen",
+      "confirmMessage": "U staat op het punt de volgende beloning te claimen:",
+      "rewardName": "Beloning",
+      "cost": "Kosten",
+      "currentBalance": "Huidig saldo",
+      "newBalance": "Saldo na claim",
+      "points": "{{count}} punten",
+      "confirmButton": "Claim bevestigen",
+      "cancelButton": "Annuleren"
+    },
+
+    "success": {
+      "title": "Beloning succesvol geclaimd!",
+      "message": "Uw voucher is aangemaakt en per e-mail verzonden.",
+      "emailSent": "E-mail verzonden naar",
+      "newBalance": "Nieuw saldo",
+      "points": "{{count}} punten"
+    },
+
+    "errorMessages": {
+      "insufficientPoints": "U heeft niet genoeg punten om deze beloning te claimen.",
+      "claimFailed": "Claim mislukt. Probeer het opnieuw.",
+      "invalidResponse": "Ongeldig antwoord ontvangen van de server.",
+      "networkError": "Netwerkfout. Controleer uw verbinding en probeer het opnieuw."
+    }
+  },
+
+  "vouchersPage": {
+    "pageTitle": "Vouchers | VMBSO Klantenportaal",
+    "title": "Mijn Vouchers",
+    "subtitle": "Bekijk en beheer vouchers gegenereerd uit uw beloningsclaims",
+    "subtitleDistributor": "Wissel vouchers in voor installateurs en bekijk uw inwisselgeschiedenis",
+
+    "redemption": {
+      "title": "Voucher inwisselen",
+      "inputLabel": "Vouchercode",
+      "inputPlaceholder": "Voer vouchercode in",
+      "validateButton": "Valideren",
+      "redeemButton": "Inwisselen",
+      "validating": "Valideren...",
+      "redeeming": "Inwisselen...",
+      "redeemingSubtext": "Een moment geduld terwijl we uw inwisseling verwerken...",
+      "confirmTitle": "Bevestig voucher inwisseling",
+      "confirmMessage": "Weet u zeker dat u deze voucher wilt inwisselen?",
+      "confirmDetails": "Vouchercode: {{code}}",
+      "confirmButton": "Bevestig inwisseling",
+      "cancelButton": "Annuleren",
+      "successMessage": "Voucher {{code}} succesvol ingewisseld!",
+      "validVoucher": "Geldige voucher gevonden!",
+      "errors": {
+        "notFound": "Vouchercode niet gevonden",
+        "alreadyRedeemed": "Deze voucher is al ingewisseld",
+        "expired": "Deze voucher is verlopen",
+        "invalid": "Ongeldige vouchercode",
+        "unauthorized": "U bent niet geautoriseerd om deze voucher in te wisselen",
+        "emptyCode": "Voer een vouchercode in",
+        "validationFailed": "Validatie van voucher mislukt",
+        "redemptionFailed": "Inwisselen van voucher mislukt. Probeer het opnieuw."
+      }
+    },
+
+    "filters": {
+      "searchPlaceholder": "Zoeken op vouchercode of naam...",
+      "statusAll": "Alle statussen",
+      "statusIssued": "Uitgegeven",
+      "statusRedeemed": "Ingewisseld",
+      "statusExpired": "Verlopen",
+      "statusCanceled": "Geannuleerd"
+    },
+
+    "list": {
+      "voucherCode": "Vouchercode",
+      "reward": "Beloning",
+      "status": "Status",
+      "claimedBy": "Geclaimd door",
+      "redeemedBy": "Ingewisseld door",
+      "distributor": "Distributeur",
+      "generatedDate": "Gegenereerd",
+      "expiryDate": "Verloopt",
+      "redeemedDate": "Ingewisseld",
+      "noVouchers": "Geen vouchers gevonden",
+      "noRedeemedVouchers": "U heeft nog geen vouchers ingewisseld"
+    },
+
+    "detail": {
+      "title": "Voucherdetails",
+      "voucherName": "Naam",
+      "copyCode": "Kopieer code",
+      "copiedSuccess": "Vouchercode gekopieerd naar klembord!",
+      "close": "Sluiten"
+    },
+
+    "errorMessages": {
+      "loadFailed": "Laden van vouchers mislukt"
     }
   }
 }

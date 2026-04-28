@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { config } from "../config/powerPages.config";
-import { canAccessInvoices } from "../utils/accessControl";
+import { canAccessInvoices, canAccessVouchers } from "../utils/accessControl";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -66,6 +66,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // - Country with actum_uploadinvoicesallowed = true
   if (location.pathname.startsWith("/invoices")) {
     if (!canAccessInvoices(currentUser)) {
+      return <Navigate to="/documents" replace />;
+    }
+  }
+
+  // Rule 4: /vouchers is available to approved installers and distributors
+  // - Installers: must have invoice upload permissions
+  // - Distributors: role name = "Distributor"
+  if (location.pathname.startsWith("/vouchers")) {
+    if (!canAccessVouchers(currentUser)) {
       return <Navigate to="/documents" replace />;
     }
   }

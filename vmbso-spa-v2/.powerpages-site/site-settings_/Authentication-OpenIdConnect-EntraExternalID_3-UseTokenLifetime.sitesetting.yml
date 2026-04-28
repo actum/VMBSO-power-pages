@@ -1,0 +1,3 @@
+id: bf6ea869-40b0-4a8c-9935-7254610ac09c
+name: Authentication/OpenIdConnect/EntraExternalID_3/UseTokenLifetime
+value: false

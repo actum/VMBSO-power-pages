@@ -1,0 +1,14 @@
+accountrelationship: actum_loyaltytransaction_Account
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_loyaltytransaction
+entityname: Loyalty Transaction
+id: ea37a4c0-52f2-4968-8ff1-ee5cb9d1a706
+parententitypermission: 
+read: true
+scope: 756150002
+write: false

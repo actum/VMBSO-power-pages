@@ -11,6 +11,9 @@ import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
 import type { Invoice } from '../types/invoice';
+import type { Reward } from '../types/reward';
+import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
+import type { Voucher } from '../types/voucher';
 import type { LandingPageContent, LandingPageCta } from '../types/homePage';
 import { config } from '../config/powerPages.config';
 
@@ -770,11 +773,8 @@ export const dataverseService = {
 
       console.log('[UPLOAD SERVICE] Step 2 success. File uploaded.');
 
-      // Return the created invoice with file reference
-      return {
-        ...createdInvoice,
-        actum_invoicedocument: file,
-      };
+      // Return the created invoice
+      return createdInvoice;
     },
   },
 
@@ -1010,6 +1010,632 @@ export const dataverseService = {
         }
       );
       return response;
+    },
+  },
+
+  /**
+   * Rewards operations
+   */
+  rewards: {
+    /**
+     * Fetch active rewards catalog
+     */
+    async getCatalog(): Promise<Reward[]> {
+      if (config.devMode) {
+        // Mock data for development
+        return [
+          {
+            actum_rewardid: 'mock-reward-1',
+            actum_name: '€10 Coffee Gift Card',
+            actum_description: 'Enjoy a €10 gift card redeemable at popular coffee shops and cafés',
+            actum_pointamount: 100,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-2',
+            actum_name: '€25 Restaurant Voucher',
+            actum_description: 'Dine out with a €25 voucher valid at participating restaurants',
+            actum_pointamount: 250,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-3',
+            actum_name: 'Premium Tool Set Discount',
+            actum_description: '€50 discount on professional construction tools and equipment',
+            actum_pointamount: 500,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-4',
+            actum_name: 'Training Workshop Pass',
+            actum_description: 'Free admission to a professional development training workshop',
+            actum_pointamount: 750,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-5',
+            actum_name: '€100 Equipment Voucher',
+            actum_description: '€100 voucher for specialized building materials and equipment',
+            actum_pointamount: 1000,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-6',
+            actum_name: 'Annual Conference Ticket',
+            actum_description: 'Complimentary ticket to the annual industry conference and expo',
+            actum_pointamount: 1500,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+          {
+            actum_rewardid: 'mock-reward-7',
+            actum_name: '€250 Premium Package',
+            actum_description: 'Exclusive package with high-value tools, materials, and bonus items',
+            actum_pointamount: 2500,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-01-01T00:00:00Z',
+            modifiedon: '2026-01-01T00:00:00Z',
+          },
+        ];
+      }
+
+      try {
+        const query = buildODataQuery({
+          select: ['actum_rewardid', 'actum_name', 'actum_description', 'actum_pointamount', 'statecode', 'statuscode'],
+          filter: 'statecode eq 0', // Active only
+          orderby: 'actum_pointamount asc', // Lowest cost first
+        });
+
+        const response = await apiClient.odata<{ value: Reward[] }>(
+          `/actum_rewards${query}`
+        );
+        
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Fetch loyalty points balance for an account
+     * Calculates: SUM(credits) - SUM(debits) from active transactions
+     */
+    async getBalance(accountId: string): Promise<number> {
+      if (config.devMode) {
+        // Mock balance for development
+        return 1500;
+      }
+
+      if (!accountId) {
+        return 0;
+      }
+
+      try {
+        // Cache-busting: use a timestamp that changes each request
+        const futureTimestamp = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString();
+        
+        const query = buildODataQuery({
+          select: ['actum_loyaltypoints', 'actum_transactiontype'],
+          filter: `_actum_account_value eq ${accountId} and statecode eq 0 and modifiedon lt '${futureTimestamp}'`, // Active transactions only + cache buster
+        });
+
+        const response = await apiClient.odata<{ value: LoyaltyTransaction[] }>(
+          `/actum_loyaltytransactions${query}`,
+          {
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+          }
+        );
+
+        const transactions = response.value ?? [];
+
+        // Calculate balance: credits (type=1) minus debits (type=2)
+        const credits = transactions
+          .filter(t => t.actum_transactiontype === 1) // Addition
+          .reduce((sum, t) => sum + (t.actum_loyaltypoints || 0), 0);
+
+        const debits = transactions
+          .filter(t => t.actum_transactiontype === 2) // Deletion
+          .reduce((sum, t) => sum + (t.actum_loyaltypoints || 0), 0);
+
+        return credits - debits;
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return 0;
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Submit reward claim via Power Automate flow
+     * Flow validates balance, creates transactions, and generates vouchers
+     */
+    async claimRewards(data: {
+      accountId: string;
+      contactId: string;
+      pointAmount: number;
+      rewards: Array<{ rewardId: string; quantity: number }>;
+    }): Promise<{
+      status: string;
+      balance?: number;
+      items?: Array<Array<{ rewardId: string; voucherCode: string }>>;
+    }> {
+      if (config.devMode) {
+        // Mock successful claim in dev mode
+        return {
+          status: 'success',
+          balance: 1500 - data.pointAmount,
+          items: [
+            data.rewards.map(r => ({
+              rewardId: r.rewardId,
+              voucherCode: `DEV-${Math.random().toString(36).substring(7).toUpperCase()}`,
+            })),
+          ],
+        };
+      }
+
+      try {
+        // Construct the request payload with rewardsJson as a JSON string
+        const rewardsJson = JSON.stringify({
+          accountId: data.accountId,
+          contactId: data.contactId,
+          pointAmount: data.pointAmount,
+          rewards: data.rewards,
+        });
+
+        // Use apiClient.flow() which sends eventData with rewardsJson nested inside
+        const response = await apiClient.flow<{ resultjson: string }>(config.flows.claimRewards, {
+          rewardsJson,
+        });
+
+        // Parse the resultjson string to get the actual result
+        const result = JSON.parse(response.resultjson) as {
+          status: string;
+          balance?: number;
+          items?: Array<Array<{ rewardId: string; voucherCode: string }>>;
+        };
+
+        return result;
+      } catch (error) {
+        console.error('Error claiming rewards:', error);
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Voucher operations
+   */
+  vouchers: {
+    /**
+     * Get all vouchers for a specific Account
+     * - For installers: Returns vouchers where actum_account = accountId
+     * - For distributors: Returns vouchers where actum_distributorid = accountId
+     * @param accountId - Account GUID
+     * @returns Array of vouchers with expanded Contact and Reward info
+     */
+    async getByAccount(accountId: string): Promise<Voucher[]> {
+      if (config.devMode) {
+        // Dev mode: return mock vouchers with varying statuses
+        return [
+          {
+            actum_voucherid: 'voucher-001',
+            actum_name: 'Reward Voucher 202603261301',
+            actum_vouchercode: 'DEEF25161B',
+            actum_expirationdate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-001',
+            _actum_loyaltytransaction_value: 'transaction-001',
+            _actum_rewardclaimlineid_value: 'claimline-001',
+            _actum_redeemedby_value: null,
+            _actum_distributorid_value: null,
+            statecode: 0,
+            statuscode: 182980001, // Issued
+            createdon: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Lotte De Smet',
+            'claimedBy.email': 'lotte.desmet@example.com',
+            'redeemedBy.fullname': undefined,
+            'redeemedBy.email': undefined,
+            'redeemedBy.account': undefined,
+          },
+          {
+            actum_voucherid: 'voucher-002',
+            actum_name: 'Reward Voucher 202603201145',
+            actum_vouchercode: 'AB12CD34EF',
+            actum_expirationdate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-002',
+            _actum_loyaltytransaction_value: 'transaction-002',
+            _actum_rewardclaimlineid_value: 'claimline-002',
+            _actum_redeemedby_value: 'contact-002',
+            _actum_distributorid_value: null,
+            statecode: 0,
+            statuscode: 182980002, // Redeemed
+            createdon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Bram Van den Broeck',
+            'claimedBy.email': 'bram.broeck@example.com',
+            'redeemedBy.fullname': 'Good Company',
+            'redeemedBy.email': 'contact@goodcompany.com',
+            'redeemedBy.account': 'Good Distributor Ltd',
+          },
+          {
+            actum_voucherid: 'voucher-003',
+            actum_name: 'Reward Voucher 202602150930',
+            actum_vouchercode: 'XYZ9876543',
+            actum_expirationdate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-001',
+            _actum_loyaltytransaction_value: 'transaction-003',
+            _actum_rewardclaimlineid_value: 'claimline-003',
+            _actum_redeemedby_value: null,
+            _actum_distributorid_value: null,
+            statecode: 1,
+            statuscode: 182980003, // Expired
+            createdon: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Lotte De Smet',
+            'claimedBy.email': 'lotte.desmet@example.com',
+            'redeemedBy.fullname': undefined,
+            'redeemedBy.email': undefined,
+            'redeemedBy.account': undefined,
+          },
+          {
+            actum_voucherid: 'voucher-004',
+            actum_name: 'Reward Voucher 202603150800',
+            actum_vouchercode: 'QWER123456',
+            actum_expirationdate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-003',
+            _actum_loyaltytransaction_value: 'transaction-004',
+            _actum_rewardclaimlineid_value: 'claimline-004',
+            _actum_redeemedby_value: null,
+            _actum_distributorid_value: null,
+            statecode: 1,
+            statuscode: 2, // Canceled
+            createdon: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Nina Verstraeten',
+            'claimedBy.email': 'nina.v@example.com',
+            'redeemedBy.fullname': undefined,
+            'redeemedBy.email': undefined,
+            'redeemedBy.account': undefined,
+          },
+          {
+            actum_voucherid: 'voucher-005',
+            actum_name: 'Reward Voucher 202604011200',
+            actum_vouchercode: 'LMNOP78901',
+            actum_expirationdate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-001',
+            _actum_loyaltytransaction_value: 'transaction-005',
+            _actum_rewardclaimlineid_value: 'claimline-005',
+            _actum_redeemedby_value: 'contact-001',
+            _actum_distributorid_value: null,
+            statecode: 0,
+            statuscode: 182980002, // Redeemed
+            createdon: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Lotte De Smet',
+            'claimedBy.email': 'lotte.desmet@example.com',
+            'redeemedBy.fullname': 'Roofers inc.',
+            'redeemedBy.email': 'info@roofers.com',
+            'redeemedBy.account': 'Roofers Distribution BVBA',
+          },
+          {
+            actum_voucherid: 'voucher-006',
+            actum_name: 'Reward Voucher 202604101500',
+            actum_vouchercode: 'ASDF456789',
+            actum_expirationdate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: accountId,
+            _actum_contactid_value: 'contact-002',
+            _actum_loyaltytransaction_value: 'transaction-006',
+            _actum_rewardclaimlineid_value: 'claimline-006',
+            _actum_redeemedby_value: null,
+            _actum_distributorid_value: null,
+            statecode: 0,
+            statuscode: 182980001, // Issued
+            createdon: new Date().toISOString(),
+            modifiedon: new Date().toISOString(),
+            'claimedBy.fullname': 'Bram Van den Broeck',
+            'claimedBy.email': 'bram.broeck@example.com',
+            'redeemedBy.fullname': undefined,
+            'redeemedBy.email': undefined,
+            'redeemedBy.account': undefined,
+          },
+        ];
+      }
+
+      if (!config.flows.getVouchers || config.flows.getVouchers === 'TODO: add endpoint') {
+        throw new Error('Vouchers fetch flow URL is not configured.');
+      }
+
+      try {
+        // Use Power Automate flow to fetch vouchers with contact names
+        // (Direct OData queries can't expand contacts due to permissions)
+        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getVouchers, {
+          accountId: accountId,
+        });
+
+        // Flow returns { status: "200", data: "[...]" } where data is a JSON string
+        if (response?.status === 'Success' || response?.status === '200') {
+          const rawVouchers = parseFlowArrayData<any>(response, 'vouchers');
+          
+          // Transform the data: convert string numbers to actual numbers and map FetchXML aliases
+          const vouchers: Voucher[] = rawVouchers.map((v: any) => ({
+            ...v,
+            statecode: typeof v.statecode === 'string' ? parseInt(v.statecode, 10) : v.statecode,
+            statuscode: typeof v.statuscode === 'string' ? parseInt(v.statuscode, 10) : v.statuscode,
+            'claimedBy.fullname': v['claimedBy.fullname'] || null,
+            'claimedBy.email': v['claimedBy.claimedByEmail'] || null,
+            'redeemedBy.fullname': v['redeemedBy.fullname'] || null,
+            'redeemedBy.email': v['redeemedBy.redeemedByEmail'] || null,
+            'redeemedBy.account': v['redeemedByAccount.accountName'] || null,
+          }));
+          
+          return vouchers;
+        } else if (response?.status === '500') {
+          throw new Error(response.message || 'Failed to fetch vouchers');
+        }
+        
+        return [];
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * Get all vouchers redeemed by a specific distributor contact (distributors only)
+     * @param contactId - Distributor Contact GUID
+     * @returns Array of vouchers redeemed by this distributor across all installer accounts
+     */
+    async getRedeemedByDistributor(contactId: string): Promise<Voucher[]> {
+      if (config.devMode) {
+        // Dev mode: return mock redeemed vouchers
+        return [
+          {
+            actum_voucherid: 'voucher-002',
+            actum_name: 'Reward Voucher 202603201145',
+            actum_vouchercode: 'AB12CD34EF',
+            actum_expirationdate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: 'installer-account-001',
+            _actum_contactid_value: 'installer-contact-002',
+            _actum_loyaltytransaction_value: 'transaction-002',
+            _actum_rewardclaimlineid_value: 'claimline-002',
+            _actum_redeemedby_value: contactId,
+            _actum_distributorid_value: 'distributor-account-001',
+            statecode: 0,
+            statuscode: 182980002, // Redeemed
+            createdon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Bram Van den Broeck',
+            'claimedBy.email': 'bram.broeck@example.com',
+            'redeemedBy.fullname': 'Current Distributor',
+            'redeemedBy.email': 'distributor@example.com',
+            'redeemedBy.account': 'My Distribution Company',
+          },
+          {
+            actum_voucherid: 'voucher-005',
+            actum_name: 'Reward Voucher 202604011200',
+            actum_vouchercode: 'LMNOP78901',
+            actum_expirationdate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+            _actum_account_value: 'installer-account-002',
+            _actum_contactid_value: 'installer-contact-001',
+            _actum_loyaltytransaction_value: 'transaction-005',
+            _actum_rewardclaimlineid_value: 'claimline-005',
+            _actum_redeemedby_value: contactId,
+            _actum_distributorid_value: 'distributor-account-001',
+            statecode: 0,
+            statuscode: 182980002, // Redeemed
+            createdon: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+            modifiedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+            'claimedBy.fullname': 'Lotte De Smet',
+            'claimedBy.email': 'lotte.desmet@example.com',
+            'redeemedBy.fullname': 'Current Distributor',
+            'redeemedBy.email': 'distributor@example.com',
+            'redeemedBy.account': 'My Distribution Company',
+          },
+        ];
+      }
+
+      if (!config.flows.getRedeemedVouchersByDistributor || config.flows.getRedeemedVouchersByDistributor === 'TODO: add endpoint') {
+        throw new Error('Get redeemed vouchers by distributor flow URL is not configured.');
+      }
+
+      try {
+        // Use Power Automate flow to fetch redeemed vouchers
+        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getRedeemedVouchersByDistributor, {
+          contactId: contactId,
+        });
+
+        // Flow returns { status: "200", data: "[...]" } where data is a JSON string
+        if (response?.status === 'Success' || response?.status === '200') {
+          const rawVouchers = parseFlowArrayData<any>(response, 'vouchers');
+          
+          // Transform the data: convert string numbers to actual numbers and empty strings to null
+          const vouchers: Voucher[] = rawVouchers.map((v: any) => ({
+            ...v,
+            statecode: typeof v.statecode === 'string' ? parseInt(v.statecode, 10) : v.statecode,
+            statuscode: typeof v.statuscode === 'string' ? parseInt(v.statuscode, 10) : v.statuscode,
+            'claimedBy.fullname': v['claimedBy.fullname'] || null,
+            'claimedBy.email': v['claimedBy.email'] || null,
+            'redeemedBy.fullname': v['redeemedBy.fullname'] || null,
+            'redeemedBy.email': v['redeemedBy.email'] || null,
+            'redeemedBy.account': v['redeemedBy.account'] || null,
+          }));
+          
+          return vouchers;
+        } else if (response?.status === '500') {
+          throw new Error(response.message || 'Failed to fetch redeemed vouchers');
+        }
+        
+        return [];
+      } catch (error) {
+        console.error('Error fetching redeemed vouchers:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * Validate a voucher code (distributor only)
+     * @param voucherCode - The voucher code to validate
+     * @param accountId - Distributor's account ID
+     * @param contactId - Distributor's contact ID
+     * @returns Validation result with voucher details if valid
+     */
+    async validateVoucher(
+      voucherCode: string,
+      accountId: string,
+      contactId: string
+    ): Promise<{
+      valid: boolean;
+      voucherId?: string;
+      message?: string;
+      voucher?: any;
+    }> {
+      if (config.devMode) {
+        // Dev mode: simulate validation
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        
+        // Check if code exists in mock data
+        const mockVouchers = await this.getByAccount(accountId);
+        const found = mockVouchers.find(v => v.actum_vouchercode === voucherCode);
+        
+        if (!found) {
+          return {
+            valid: false,
+            message: 'Voucher code not found',
+          };
+        }
+        
+        if (found.statuscode === 182980002) {
+          return {
+            valid: false,
+            message: 'This voucher has already been redeemed',
+          };
+        }
+        
+        if (found.statuscode === 182980003) {
+          return {
+            valid: false,
+            message: 'This voucher has expired',
+          };
+        }
+        
+        return {
+          valid: true,
+          voucherId: found.actum_voucherid,
+          voucher: found,
+        };
+      }
+
+      if (!config.flows.validateVoucher) {
+        throw new Error('Validate voucher flow URL is not configured.');
+      }
+
+      try {
+        const response = await apiClient.flow<any>(config.flows.validateVoucher, {
+          voucherCode,
+          accountId,
+          contactId,
+        });
+
+        if (response?.status === 'success' || response?.status === 'Success') {
+          return {
+            valid: true,
+            // Handle both voucherId (camelCase) and voucherid (lowercase) from flow
+            voucherId: response.voucherId || response.voucherid,
+            voucher: response.voucher,
+          };
+        } else {
+          return {
+            valid: false,
+            message: response?.message || 'Invalid voucher code',
+          };
+        }
+      } catch (error) {
+        console.error('Error validating voucher:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * Redeem a voucher (distributor only)
+     * @param voucherId - The voucher ID from validation
+     * @param accountId - Distributor's account ID
+     * @param contactId - Distributor's contact ID
+     * @returns Redemption result
+     */
+    async redeemVoucher(
+      voucherId: string,
+      accountId: string,
+      contactId: string
+    ): Promise<{
+      success: boolean;
+      message?: string;
+    }> {
+      if (config.devMode) {
+        // Dev mode: simulate redemption
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        
+        return {
+          success: true,
+          message: 'Voucher redeemed successfully',
+        };
+      }
+
+      if (!config.flows.redeemVoucher) {
+        throw new Error('Redeem voucher flow URL is not configured.');
+      }
+
+      try {
+        const response = await apiClient.flow<any>(config.flows.redeemVoucher, {
+          voucherId,
+          accountId,
+          contactId,
+        });
+
+        if (response?.status === 'success' || response?.status === 'Success') {
+          return {
+            success: true,
+            message: 'Voucher redeemed successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: response?.message || 'Failed to redeem voucher',
+          };
+        }
+      } catch (error) {
+        console.error('Error redeeming voucher:', error);
+        throw error;
+      }
     },
   },
 };

@@ -108,7 +108,9 @@
       "home": "Accueil",
       "documents": "Documents",
       "news": "Actualités",
-      "invoices": "Factures"
+      "invoices": "Factures",
+      "rewards": "Récompenses",
+      "vouchers": "Bons d'achat"
     },
     "menu": {
       "profile": "Profil",
@@ -372,6 +374,7 @@
   },
 
   "invoicesPage": {
+    "pageTitle": "Factures | Portail client VMBSO",
     "title": "Mes factures",
     "loading": "Chargement des factures...",
     "noInvoices": "Aucune facture trouvée",
@@ -400,7 +403,7 @@
       "draft": "Brouillon",
       "submitted": "Soumis",      "extracted": "Traité",      "review": "En Révision",
       "rejected": "Rejeté",
-      "credited": "Crédité",
+      "credited": "Approuvé",
       "canceled": "Annulé",
       "unknown": "Inconnu"
     },
@@ -446,6 +449,132 @@
         "title": "Échec du téléchargement",
         "message": "Une erreur s'est produite lors du téléchargement de votre facture. Veuillez réessayer."
       }
+    }
+  },
+
+  "rewardsPage": {
+    "pageTitle": "Récompenses | Portail client VMBSO",
+    "title": "Récompenses de fidélité",
+    "subtitle": "Échangez vos points de fidélité contre des récompenses exclusives",
+
+    "loading": "Chargement des récompenses...",
+    "error": "Échec du chargement des récompenses. Veuillez réessayer.",
+
+    "pointsBalance": {
+      "title": "Votre solde de points",
+      "available": "Points disponibles",
+      "points": "{{count}} points",
+      "earnMore": "Gagnez plus de points en téléchargeant des factures !"
+    },
+
+    "catalog": {
+      "title": "Catalogue de récompenses",
+      "noRewards": "Aucune récompense disponible pour le moment.",
+      "cost": "{{points}} points",
+      "insufficientPoints": "Points insuffisants",
+      "available": "Disponible"
+    },
+
+    "actions": {
+      "claim": "Réclamer la récompense",
+      "claiming": "Traitement en cours...",
+      "close": "Fermer",
+      "claimAnother": "Réclamer une autre récompense"
+    },
+
+    "claimModal": {
+      "title": "Réclamer une récompense",
+      "confirmMessage": "Vous êtes sur le point de réclamer la récompense suivante :",
+      "rewardName": "Récompense",
+      "cost": "Coût",
+      "currentBalance": "Solde actuel",
+      "newBalance": "Solde après réclamation",
+      "points": "{{count}} points",
+      "confirmButton": "Confirmer la réclamation",
+      "cancelButton": "Annuler"
+    },
+
+    "success": {
+      "title": "Récompense réclamée avec succès !",
+      "message": "Votre bon d'achat a été créé et envoyé par email.",
+      "emailSent": "Email envoyé à",
+      "newBalance": "Nouveau solde",
+      "points": "{{count}} points"
+    },
+
+    "errorMessages": {
+      "insufficientPoints": "Vous n'avez pas assez de points pour réclamer cette récompense.",
+      "claimFailed": "Échec de la réclamation de la récompense. Veuillez réessayer.",
+      "invalidResponse": "Réponse invalide reçue du serveur.",
+      "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+    }
+  },
+
+  "vouchersPage": {
+    "pageTitle": "Bons d'achat | Portail Client VMBSO",
+    "title": "Mes Bons d'achat",
+    "subtitle": "Consultez et gérez les bons d'achat générés à partir de vos réclamations de récompenses",
+    "subtitleDistributor": "Échangez des bons pour les installateurs et consultez votre historique d'échange",
+
+    "redemption": {
+      "title": "Échanger un bon d'achat",
+      "inputLabel": "Code du bon",
+      "inputPlaceholder": "Entrez le code du bon",
+      "validateButton": "Valider",
+      "redeemButton": "Échanger",
+      "validating": "Validation en cours...",
+      "redeeming": "Échange en cours...",      "redeemingSubtext": "Veuillez patienter pendant que nous traitons votre échange...",      "confirmTitle": "Confirmer l'échange du bon",
+      "confirmMessage": "Êtes-vous sûr de vouloir échanger ce bon ?",
+      "confirmDetails": "Code du bon : {{code}}",
+      "confirmButton": "Confirmer l'échange",
+      "cancelButton": "Annuler",
+      "successMessage": "Bon {{code}} échangé avec succès !",
+      "validVoucher": "Bon valide trouvé !",
+      "errors": {
+        "notFound": "Code du bon introuvable",
+        "alreadyRedeemed": "Ce bon a déjà été échangé",
+        "expired": "Ce bon a expiré",
+        "invalid": "Code du bon invalide",
+        "unauthorized": "Vous n'êtes pas autorisé à échanger ce bon",
+        "emptyCode": "Veuillez entrer un code de bon",
+        "validationFailed": "Échec de la validation du bon",
+        "redemptionFailed": "Échec de l'échange du bon. Veuillez réessayer."
+      }
+    },
+
+    "filters": {
+      "searchPlaceholder": "Rechercher par code ou nom de bon...",
+      "statusAll": "Tous les statuts",
+      "statusIssued": "Émis",
+      "statusRedeemed": "Utilisé",
+      "statusExpired": "Expiré",
+      "statusCanceled": "Annulé"
+    },
+
+    "list": {
+      "voucherCode": "Code du bon",
+      "reward": "Récompense",
+      "status": "Statut",
+      "claimedBy": "Réclamé par",
+      "redeemedBy": "Utilisé par",
+      "distributor": "Distributeur",
+      "generatedDate": "Généré le",
+      "expiryDate": "Expire le",
+      "redeemedDate": "Utilisé le",
+      "noVouchers": "Aucun bon d'achat trouvé",
+      "noRedeemedVouchers": "Vous n'avez pas encore échangé de bons"
+    },
+
+    "detail": {
+      "title": "Détails du bon d'achat",
+      "voucherName": "Nom",
+      "copyCode": "Copier le code",
+      "copiedSuccess": "Code du bon copié dans le presse-papiers !",
+      "close": "Fermer"
+    },
+
+    "errorMessages": {
+      "loadFailed": "Échec du chargement des bons d'achat"
     }
   }
 }

@@ -4,7 +4,8 @@ create: false
 delete: false
 entitylogicalname: actum_newspagecontent
 entityname: News Page Content
-id: c0c78315-3928-f111-8342-000d3aba4b13
+id: 323b634f-3928-f111-8342-7ced8d42822b
+parententitypermission: 
 read: true
 scope: 756150000
 write: false

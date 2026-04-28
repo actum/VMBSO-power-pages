@@ -29,6 +29,10 @@ export const Invoices: React.FC = () => {
 
   const { t } = useTranslation("invoicesPage");
   const { invoices: fetchedInvoices, loading, error, refetch } = useInvoices();
+
+  React.useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t]);
   const [tabValue, setTabValue] = React.useState(0);
   const [searchText, setSearchText] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
