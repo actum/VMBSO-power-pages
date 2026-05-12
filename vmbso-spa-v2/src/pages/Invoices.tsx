@@ -14,16 +14,31 @@ import {
   MenuItem,
   FormControl,
   InputAdornment,
-  Alert
+  Alert,
+  Collapse,
+  Divider,
+  IconButton
 } from "@mui/material";
 import { 
   CheckCircle as CheckCircleIcon, 
   Cancel as CancelIcon, 
   EuroSymbol as EuroSymbolIcon,
-  Search as SearchIcon 
+  Search as SearchIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useInvoices } from "../hooks/useInvoices";
+
+// --- MOCK DATA (to be replaced by real flow data) ---
+const MOCK_POINT_LINES: Record<string, { name: string; points: number }[]> = {
+  // Keyed by actum_invoiceid — attach to whichever invoice is "Credited" in your test data
+  '__MOCK_CREDITED__': [
+    { name: 'RESITRIX SKW FULL BOND 1X10M', points: 12000 },
+    { name: 'VM ZINK MEMBRAAN MET KLEEFSTROOK 75M²/ROL', points: 4800 },
+    { name: 'ZETCA52R750', points: 600 },
+  ],
+};
 
 export const Invoices: React.FC = () => {
 
@@ -37,6 +52,22 @@ export const Invoices: React.FC = () => {
   const [searchText, setSearchText] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
   const [showProcessingNotification, setShowProcessingNotification] = React.useState(false);
+  const [expandedLines, setExpandedLines] = React.useState<Record<string, boolean>>({});
+
+  const toggleLines = (invoiceId: string) => {
+    setExpandedLines(prev => ({ ...prev, [invoiceId]: !prev[invoiceId] }));
+  };
+
+  // For mock: use the first credited invoice found to attach mock lines
+  const mockCreditedId = React.useMemo(() => {
+    return fetchedInvoices.find(i => getInvoiceStatus(i.statuscode) === 'credited')?.actum_invoiceid ?? null;
+  }, [fetchedInvoices]);
+
+  const getPointLines = (invoiceId: string) => {
+    // Real implementation will look up lines by invoiceId from flow data
+    if (invoiceId === mockCreditedId) return MOCK_POINT_LINES['__MOCK_CREDITED__'];
+    return [];
+  };
 
   // Filter invoices based on search and status
   const filteredInvoices = React.useMemo(() => {
@@ -230,6 +261,63 @@ export const Invoices: React.FC = () => {
                       </Typography>
                     </Box>
                   </Box>
+
+                  {/* Point lines breakdown — credited invoices only */}
+                  {getInvoiceStatus(invoice.statuscode) === 'credited' && (() => {
+                    const lines = getPointLines(invoice.actum_invoiceid);
+                    const isOpen = !!expandedLines[invoice.actum_invoiceid];
+                    return (
+                      <Box sx={{ mt: 2 }}>
+                        <Divider sx={{ mb: 1.5 }} />
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          sx={{ cursor: 'pointer', userSelect: 'none' }}
+                          onClick={() => toggleLines(invoice.actum_invoiceid)}
+                        >
+                          <Typography variant="body2" color="primary" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                            Point details {lines.length > 0 ? `(${lines.length} lines)` : ''}
+                          </Typography>
+                          <IconButton size="small" color="primary">
+                            {isOpen ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                          </IconButton>
+                        </Box>
+                        <Collapse in={isOpen}>
+                          <Box sx={{ mt: 1.5 }}>
+                            {lines.length === 0 ? (
+                              <Typography variant="body2" color="text.secondary">
+                                No point-earning lines available.
+                              </Typography>
+                            ) : (
+                              <Stack spacing={1}>
+                                {lines.map((line, idx) => (
+                                  <Box
+                                    key={idx}
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{
+                                      py: 0.75,
+                                      px: 1.5,
+                                      borderRadius: 1,
+                                      bgcolor: 'grey.50',
+                                    }}
+                                  >
+                                    <Typography variant="body2" sx={{ textTransform: 'capitalize', fontWeight: 500 }}>
+                                      {line.name.toLowerCase()}
+                                    </Typography>
+                                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 700, ml: 2, whiteSpace: 'nowrap' }}>
+                                      {line.points.toLocaleString()} pts
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              </Stack>
+                            )}
+                          </Box>
+                        </Collapse>
+                      </Box>
+                    );
+                  })()}
                 </Paper>
               ))}
             </Box>

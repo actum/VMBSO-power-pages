@@ -1,3 +1,13 @@
+// --- MOCK DATA (to be replaced by real flow data) ---
+const MOCK_TRANSACTIONS = [
+  { id: '1', type: 1, status: 'Completed',   points: 12000, date: '2026-04-21', description: 'Invoice VF26/04-00123 — credited' },
+  { id: '2', type: 2, status: 'Completed',   points: 500,   date: '2026-04-15', description: 'Reward claimed: Gift voucher €25' },
+  { id: '3', type: 1, status: 'Completed',   points: 4800,  date: '2026-03-30', description: 'Invoice VF26/03-00089 — credited' },
+  { id: '4', type: 1, status: 'Completed',   points: 1200,  date: '2026-03-12', description: 'Manual adjustment — loyalty bonus Q1' },
+  { id: '5', type: 2, status: 'Completed',   points: 1000,  date: '2026-02-28', description: 'Reward claimed: Webshop voucher €50' },
+  { id: '6', type: 1, status: 'Completed',   points: 3600,  date: '2026-02-14', description: 'Invoice VF26/02-00041 — credited' },
+];
+
 /**
  * Rewards page component
  * Displays loyalty points balance, reward catalog, and claim functionality
@@ -23,10 +33,18 @@ import {
   Stack,
   Chip,
   Paper,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
 } from '@mui/material';
 import {
   Redeem as GiftIcon,
   CheckCircle as CheckIcon,
+  History as HistoryIcon,
+  AddCircleOutline as AddIcon,
+  RemoveCircleOutline as RemoveIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import * as ReactGA from 'react-ga';
@@ -49,6 +67,7 @@ export const Rewards: React.FC = () => {
   const [voucherInfo, setVoucherInfo] = useState<{
     voucherCodes: string[];
   } | null>(null);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -238,6 +257,16 @@ export const Rewards: React.FC = () => {
               <Typography variant="body2" color="text.secondary">
                 {t('pointsBalance.earnMore')}
               </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  variant="text"
+                  size="small"
+                  startIcon={<HistoryIcon />}
+                  onClick={() => setHistoryModalOpen(true)}
+                >
+                  View transaction history
+                </Button>
+              </Box>
             </Paper>
 
             {/* Reward Catalog */}
@@ -522,6 +551,87 @@ export const Rewards: React.FC = () => {
           <DialogActions sx={{ p: 2 }}>
             <Button onClick={handleCloseSuccessModal} variant="contained">
               {t('actions.close')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Transaction History Modal */}
+        <Dialog
+          open={historyModalOpen}
+          onClose={() => setHistoryModalOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <HistoryIcon color="primary" />
+              <Typography variant="h6">Transaction history</Typography>
+            </Stack>
+          </DialogTitle>
+          <DialogContent dividers sx={{ p: 0 }}>
+            {MOCK_TRANSACTIONS.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No transactions found.
+                </Typography>
+              </Box>
+            ) : (
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700 }}>Type</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Points</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Description</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {MOCK_TRANSACTIONS.map((tx) => (
+                    <TableRow key={tx.id} hover>
+                      <TableCell>
+                        <Stack direction="row" spacing={0.75} alignItems="center">
+                          {tx.type === 1
+                            ? <AddIcon fontSize="small" color="success" />
+                            : <RemoveIcon fontSize="small" color="error" />}
+                          <Typography variant="body2">
+                            {tx.type === 1 ? 'Addition' : 'Deduction'}
+                          </Typography>
+                        </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          {tx.status}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 700 }}
+                          color={tx.type === 1 ? 'success.main' : 'error.main'}
+                        >
+                          {tx.type === 1 ? '+' : '-'}{tx.points.toLocaleString()}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          {new Date(tx.date).toLocaleDateString()}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {tx.description}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={() => setHistoryModalOpen(false)} variant="outlined">
+              Close
             </Button>
           </DialogActions>
         </Dialog>
