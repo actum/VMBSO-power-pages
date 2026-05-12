@@ -1,5 +1,0 @@
-description: Enables inner error details in API responses (optional).
-id: 4545d93a-141c-f111-8341-000d3a688605
-name: Webapi/error/innererror
-source: 0
-value: true

@@ -1,3 +1,0 @@
-id: 304635a3-e838-439f-96f9-2c9f39920b22
-name: Authentication/OpenIdConnect/EntraExternalID_3/RegistrationClaimsMapping
-value: firstname=given_name,lastname=family_name

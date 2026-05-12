@@ -44,10 +44,10 @@ export const useVouchers = (): UseVouchersReturn => {
       setLoading(true);
       setError(null);
 
-      // Single flow for both roles:
-      // - Installers: returns vouchers where actum_account = accountId
-      // - Distributors: returns vouchers where actum_distributorid = accountId
-      const vouchersData = await dataverseService.vouchers.getByAccount(accountId);
+      // Pass role so the flow uses the correct FetchXML and only returns
+      // the personal contact data the viewer is entitled to see.
+      const role = isDistributorUser ? 'distributor' : 'installer';
+      const vouchersData = await dataverseService.vouchers.getByAccount(accountId, role);
       setVouchers(vouchersData);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch vouchers';

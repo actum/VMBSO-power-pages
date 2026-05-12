@@ -1,4 +1,0 @@
-id: 7cfdce6e-4bf0-4323-829b-c540de3723e2
-name: Authentication/OpenIdConnect/EntraExternalID_3/RedirectUri
-source: 0
-value: https://customerportal-dev.powerappsportals.com/signin-entraexternalid_3

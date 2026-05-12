@@ -1238,9 +1238,59 @@ export const dataverseService = {
      * @param accountId - Account GUID
      * @returns Array of vouchers with expanded Contact and Reward info
      */
-    async getByAccount(accountId: string): Promise<Voucher[]> {
+    async getByAccount(accountId: string, role: 'installer' | 'distributor' = 'installer'): Promise<Voucher[]> {
       if (config.devMode) {
-        // Dev mode: return mock vouchers with varying statuses
+        // Dev mode: mock vouchers branched by role to mirror the two-FetchXML flow design.
+        // Installer sees: claimedBy contact name (peer) + distributorAccount name only.
+        // Distributor sees: installerAccount name only + redeemedBy contact name (peer).
+        if (role === 'distributor') {
+          return [
+            {
+              actum_voucherid: 'voucher-002',
+              actum_name: 'Reward Voucher 202603201145',
+              actum_vouchercode: 'AB12CD34EF',
+              actum_expirationdate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+              _actum_account_value: 'installer-account-001',
+              _actum_contactid_value: 'contact-002',
+              _actum_loyaltytransaction_value: 'transaction-002',
+              _actum_rewardclaimlineid_value: 'claimline-002',
+              _actum_redeemedby_value: 'contact-dist-001',
+              _actum_distributorid_value: accountId,
+              statecode: 0,
+              statuscode: 182980002, // Redeemed
+              createdon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+              modifiedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+              actum_redeemedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+              'installerAccount.name': 'PePe Roofing BVBA',
+              'redeemedBy.fullname': 'Marc Dubois',
+              'reward.name': 'Premium Tool Set',
+              'reward.pointamount': 500,
+            },
+            {
+              actum_voucherid: 'voucher-005',
+              actum_name: 'Reward Voucher 202604011200',
+              actum_vouchercode: 'LMNOP78901',
+              actum_expirationdate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+              _actum_account_value: 'installer-account-002',
+              _actum_contactid_value: 'contact-001',
+              _actum_loyaltytransaction_value: 'transaction-005',
+              _actum_rewardclaimlineid_value: 'claimline-005',
+              _actum_redeemedby_value: 'contact-dist-002',
+              _actum_distributorid_value: accountId,
+              statecode: 0,
+              statuscode: 182980002, // Redeemed
+              createdon: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+              modifiedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+              actum_redeemedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+              'installerAccount.name': 'Vandenberghe Dak NV',
+              'redeemedBy.fullname': 'Sophie Lecomte',
+              'reward.name': 'Safety Kit XL',
+              'reward.pointamount': 300,
+            },
+          ];
+        }
+
+        // Installer mock data
         return [
           {
             actum_voucherid: 'voucher-001',
@@ -1257,11 +1307,11 @@ export const dataverseService = {
             statuscode: 182980001, // Issued
             createdon: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
             modifiedon: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            actum_redeemedon: null,
             'claimedBy.fullname': 'Lotte De Smet',
-            'claimedBy.email': 'lotte.desmet@example.com',
-            'redeemedBy.fullname': undefined,
-            'redeemedBy.email': undefined,
-            'redeemedBy.account': undefined,
+            'distributorAccount.name': null,
+            'reward.name': 'Premium Tool Set',
+            'reward.pointamount': 500,
           },
           {
             actum_voucherid: 'voucher-002',
@@ -1272,17 +1322,17 @@ export const dataverseService = {
             _actum_contactid_value: 'contact-002',
             _actum_loyaltytransaction_value: 'transaction-002',
             _actum_rewardclaimlineid_value: 'claimline-002',
-            _actum_redeemedby_value: 'contact-002',
-            _actum_distributorid_value: null,
+            _actum_redeemedby_value: 'contact-dist-001',
+            _actum_distributorid_value: 'dist-account-001',
             statecode: 0,
             statuscode: 182980002, // Redeemed
             createdon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
             modifiedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            actum_redeemedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
             'claimedBy.fullname': 'Bram Van den Broeck',
-            'claimedBy.email': 'bram.broeck@example.com',
-            'redeemedBy.fullname': 'Good Company',
-            'redeemedBy.email': 'contact@goodcompany.com',
-            'redeemedBy.account': 'Good Distributor Ltd',
+            'distributorAccount.name': 'Good Distributor Ltd',
+            'reward.name': 'Safety Kit XL',
+            'reward.pointamount': 300,
           },
           {
             actum_voucherid: 'voucher-003',
@@ -1299,56 +1349,14 @@ export const dataverseService = {
             statuscode: 182980003, // Expired
             createdon: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
             modifiedon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            actum_redeemedon: null,
             'claimedBy.fullname': 'Lotte De Smet',
-            'claimedBy.email': 'lotte.desmet@example.com',
-            'redeemedBy.fullname': undefined,
-            'redeemedBy.email': undefined,
-            'redeemedBy.account': undefined,
+            'distributorAccount.name': null,
+            'reward.name': 'Workshop Voucher',
+            'reward.pointamount': 250,
           },
           {
             actum_voucherid: 'voucher-004',
-            actum_name: 'Reward Voucher 202603150800',
-            actum_vouchercode: 'QWER123456',
-            actum_expirationdate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
-            _actum_account_value: accountId,
-            _actum_contactid_value: 'contact-003',
-            _actum_loyaltytransaction_value: 'transaction-004',
-            _actum_rewardclaimlineid_value: 'claimline-004',
-            _actum_redeemedby_value: null,
-            _actum_distributorid_value: null,
-            statecode: 1,
-            statuscode: 2, // Canceled
-            createdon: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-            modifiedon: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-            'claimedBy.fullname': 'Nina Verstraeten',
-            'claimedBy.email': 'nina.v@example.com',
-            'redeemedBy.fullname': undefined,
-            'redeemedBy.email': undefined,
-            'redeemedBy.account': undefined,
-          },
-          {
-            actum_voucherid: 'voucher-005',
-            actum_name: 'Reward Voucher 202604011200',
-            actum_vouchercode: 'LMNOP78901',
-            actum_expirationdate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-            _actum_account_value: accountId,
-            _actum_contactid_value: 'contact-001',
-            _actum_loyaltytransaction_value: 'transaction-005',
-            _actum_rewardclaimlineid_value: 'claimline-005',
-            _actum_redeemedby_value: 'contact-001',
-            _actum_distributorid_value: null,
-            statecode: 0,
-            statuscode: 182980002, // Redeemed
-            createdon: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-            modifiedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-            'claimedBy.fullname': 'Lotte De Smet',
-            'claimedBy.email': 'lotte.desmet@example.com',
-            'redeemedBy.fullname': 'Roofers inc.',
-            'redeemedBy.email': 'info@roofers.com',
-            'redeemedBy.account': 'Roofers Distribution BVBA',
-          },
-          {
-            actum_voucherid: 'voucher-006',
             actum_name: 'Reward Voucher 202604101500',
             actum_vouchercode: 'ASDF456789',
             actum_expirationdate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
@@ -1362,11 +1370,11 @@ export const dataverseService = {
             statuscode: 182980001, // Issued
             createdon: new Date().toISOString(),
             modifiedon: new Date().toISOString(),
-            'claimedBy.fullname': 'Bram Van den Broeck',
-            'claimedBy.email': 'bram.broeck@example.com',
-            'redeemedBy.fullname': undefined,
-            'redeemedBy.email': undefined,
-            'redeemedBy.account': undefined,
+            actum_redeemedon: null,
+            'claimedBy.fullname': 'Nina Verstraeten',
+            'distributorAccount.name': null,
+            'reward.name': 'Premium Tool Set',
+            'reward.pointamount': 500,
           },
         ];
       }
@@ -1380,6 +1388,7 @@ export const dataverseService = {
         // (Direct OData queries can't expand contacts due to permissions)
         const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getVouchers, {
           accountId: accountId,
+          role: role,
         });
 
         // Flow returns { status: "200", data: "[...]" } where data is a JSON string
@@ -1396,6 +1405,13 @@ export const dataverseService = {
             'redeemedBy.fullname': v['redeemedBy.fullname'] || null,
             'redeemedBy.email': v['redeemedBy.redeemedByEmail'] || null,
             'redeemedBy.account': v['redeemedByAccount.accountName'] || null,
+            'installerAccount.name': v['installerAccount.name'] || null,
+            'distributorAccount.name': v['distributorAccount.name'] || null,
+            'reward.name': v['reward.actum_name'] || null,
+            'reward.pointamount': v['reward.actum_pointamount'] != null
+              ? (typeof v['reward.actum_pointamount'] === 'string' ? parseInt(v['reward.actum_pointamount'], 10) : v['reward.actum_pointamount'])
+              : null,
+            actum_redeemedon: v.actum_redeemedon || null,
           }));
           
           return vouchers;

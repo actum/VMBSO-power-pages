@@ -511,31 +511,28 @@ export const Vouchers: React.FC = () => {
                           {t('list.claimedBy')}
                         </Typography>
                         <Typography variant="body2">
-                          {voucher['claimedBy.fullname'] || '-'}
+                          {isDistributorUser
+                            ? (voucher['installerAccount.name'] || '-')
+                            : (voucher['claimedBy.fullname'] || '-')}
                         </Typography>
-                        {voucher['claimedBy.email'] && (
-                          <Typography variant="caption" color="text.secondary" display="block">
-                            {voucher['claimedBy.email']}
-                          </Typography>
-                        )}
                       </Grid>
                       <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="caption" color="text.secondary" display="block">
                           {t('list.redeemedBy')}
                         </Typography>
                         <Typography variant="body2">
-                          {voucher['redeemedBy.fullname'] || '-'}
+                          {isDistributorUser
+                            ? (voucher['redeemedBy.fullname'] || '-')
+                            : (voucher['distributorAccount.name'] || '-')}
                         </Typography>
-                        {voucher['redeemedBy.email'] && (
-                          <Typography variant="caption" color="text.secondary" display="block">
-                            {voucher['redeemedBy.email']}
-                          </Typography>
-                        )}
-                        {voucher['redeemedBy.account'] && (
-                          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                            {voucher['redeemedBy.account']}
-                          </Typography>
-                        )}
+                      </Grid>
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Typography variant="caption" color="text.secondary" display="block">
+                          {t('list.reward')}
+                        </Typography>
+                        <Typography variant="body2">
+                          {voucher['reward.name'] || '-'}
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="caption" color="text.secondary" display="block">
@@ -553,6 +550,16 @@ export const Vouchers: React.FC = () => {
                           {formatDate(voucher.actum_expirationdate)}
                         </Typography>
                       </Grid>
+                      {getVoucherStatus(voucher.statuscode) === 'redeemed' && (
+                        <Grid item xs={12} sm={6} md={3}>
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            {t('list.redeemedDate')}
+                          </Typography>
+                          <Typography variant="body2">
+                            {formatDate(voucher.actum_redeemedon)}
+                          </Typography>
+                        </Grid>
+                      )}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -639,39 +646,43 @@ export const Vouchers: React.FC = () => {
                   </Box>
                 </Box>
 
-                {/* Contact Info */}
                 <Box>
                   <Typography variant="caption" color="text.secondary" gutterBottom>
                     {t('list.claimedBy')}
                   </Typography>
                   <Typography variant="body1">
-                    {selectedVoucher['claimedBy.fullname'] || '-'}
+                    {isDistributorUser
+                      ? (selectedVoucher['installerAccount.name'] || '-')
+                      : (selectedVoucher['claimedBy.fullname'] || '-')}
                   </Typography>
-                  {selectedVoucher['claimedBy.email'] && (
-                    <Typography variant="body2" color="text.secondary">
-                      {selectedVoucher['claimedBy.email']}
-                    </Typography>
-                  )}
                 </Box>
 
-                {(selectedVoucher['redeemedBy.fullname'] || selectedVoucher['redeemedBy.email'] || selectedVoucher['redeemedBy.account']) && (
+                {(isDistributorUser ? selectedVoucher['redeemedBy.fullname'] : selectedVoucher['distributorAccount.name']) && (
                   <Box>
                     <Typography variant="caption" color="text.secondary" gutterBottom>
                       {t('list.redeemedBy')}
                     </Typography>
                     <Typography variant="body1">
-                      {selectedVoucher['redeemedBy.fullname'] || '-'}
+                      {isDistributorUser
+                        ? selectedVoucher['redeemedBy.fullname']
+                        : selectedVoucher['distributorAccount.name']}
                     </Typography>
-                    {selectedVoucher['redeemedBy.email'] && (
-                      <Typography variant="body2" color="text.secondary">
-                        {selectedVoucher['redeemedBy.email']}
-                      </Typography>
-                    )}
-                    {selectedVoucher['redeemedBy.account'] && (
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        {selectedVoucher['redeemedBy.account']}
-                      </Typography>
-                    )}
+                  </Box>
+                )}
+
+                {selectedVoucher['reward.name'] && (
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" gutterBottom>
+                      {t('list.reward')}
+                    </Typography>
+                    <Typography variant="body1">
+                      {selectedVoucher['reward.name']}
+                      {selectedVoucher['reward.pointamount'] != null && (
+                        <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                          ({selectedVoucher['reward.pointamount']} pts)
+                        </Typography>
+                      )}
+                    </Typography>
                   </Box>
                 )}
 
@@ -707,7 +718,7 @@ export const Vouchers: React.FC = () => {
                       {t('list.redeemedDate')}
                     </Typography>
                     <Typography variant="body1">
-                      {formatDate(selectedVoucher.modifiedon)}
+                      {formatDate(selectedVoucher.actum_redeemedon)}
                     </Typography>
                   </Box>
                 )}

@@ -19,7 +19,7 @@ import {
 import { 
   CheckCircle as CheckCircleIcon, 
   Cancel as CancelIcon, 
-  Paid as PaidIcon,
+  EuroSymbol as EuroSymbolIcon,
   Search as SearchIcon 
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
@@ -31,7 +31,7 @@ export const Invoices: React.FC = () => {
   const { invoices: fetchedInvoices, loading, error, refetch } = useInvoices();
 
   React.useEffect(() => {
-    document.title = t('pageTitle');
+    document.title = t('pageTitle', 'Invoices | VMBSO Customer Portal');
   }, [t]);
   const [tabValue, setTabValue] = React.useState(0);
   const [searchText, setSearchText] = React.useState("");
@@ -90,7 +90,7 @@ export const Invoices: React.FC = () => {
       case "review":
         return <CheckCircleIcon color="warning" fontSize="large" />;
       case "credited":
-        return <PaidIcon color="success" fontSize="large" />;
+        return <EuroSymbolIcon color="primary" fontSize="large" />;
       case "rejected":
         return <CancelIcon color="error" fontSize="large" />;
       case "canceled":
@@ -208,11 +208,6 @@ export const Invoices: React.FC = () => {
                           {t('company')}: {invoice['account.name']}
                         </Typography>
                       )}
-                      {invoice.actum_rejectionreason && (
-                        <Typography variant="caption" color="error" sx={{ mt: 1 }}>
-                          {t('rejectionReason')}: {invoice.actum_rejectionreason}
-                        </Typography>
-                      )}
                     </Stack>
                     <Box display="flex" flexDirection="column" alignItems="flex-end" alignSelf="flex-start" gap="0.5rem">
                       <Box display="flex" alignItems="center" gap="0.5rem">
@@ -221,20 +216,17 @@ export const Invoices: React.FC = () => {
                         </Typography>
                         {getStatusIcon(getInvoiceStatus(invoice.statuscode))}
                       </Box>
-                      {invoice.actum_totalamount !== undefined && (
-                        <Typography variant="h6">
-                          {invoice['actum_totalamount@OData.Community.Display.V1.FormattedValue'] || 
-                           `€${invoice.actum_totalamount.toFixed(2)}`}
-                        </Typography>
-                      )}
                       {getInvoiceStatus(invoice.statuscode) === 'credited' && invoice.actum_loaltypointsgranted !== undefined && (
-                        <Typography variant="body2" color="success.main" sx={{ fontWeight: 600 }}>
-                          {t('loyaltyPoints')}: {invoice['actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue'] || invoice.actum_loaltypointsgranted}
+                        <Typography variant="h5" color="primary.main" sx={{ fontWeight: 700 }}>
+                          {invoice.actum_loaltypointsgranted} {t('loyaltyPoints')}
                         </Typography>
                       )}
                       <Typography variant="caption" color="text.secondary">
-                        {t('uploaded')}: {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
-                         new Date(invoice.createdon).toLocaleDateString()}
+                        {t('uploaded')}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
+                         new Date(invoice.createdon).toLocaleString()}
                       </Typography>
                     </Box>
                   </Box>

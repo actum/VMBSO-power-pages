@@ -1,0 +1,148 @@
+<!-- ============================================================
+     GetDocuments Flow — FetchXML queries
+     
+     Flow structure (Power Automate):
+       Try
+         ├─ Get Contact with Account Details       (FetchXML: contact + account join)
+         ├─ First Result Contact with Account      (compose: outputs()[0])
+         ├─ Get Contact's Brands (N:N)             (FetchXML: see BRANDS query below)
+         ├─ Create Brand Conditions                (compose: build OR conditions string)
+         ├─ List Visible Documents                 (FetchXML: see DOCUMENTS query below)
+         ├─ Visible Documents                      (compose: parse results)
+         ├─ Remove items based on approved status  (filter array: actum_unapprovedaccess)
+         └─ Final Result                           (compose: return JSON)
+     
+     Flow input: contactId (string)
+     ============================================================ -->
+
+
+<!-- ========================
+     BRANDS FetchXML
+     Fetches the brands linked to the contact's account via the N:N
+     actum_account_actum_brand intersect table.
+     Used to build the BrandConditions variable for the Documents query.
+     Output: list of actum_brandid values
+     ======================== -->
+<fetch>
+  <entity name="actum_brand">
+    <attribute name="actum_brandid" />
+    <link-entity name="actum_account_actum_brand" from="actum_brandid" to="actum_brandid" intersect="true">
+      <link-entity name="account" from="accountid" to="accountid">
+        <filter>
+          <condition attribute="accountid" operator="eq" value="@{outputs('First_Result_Contact_with_Account')?['account.accountid']}" />
+          <condition attribute="statecode" operator="eq" value="0" />
+        </filter>
+      </link-entity>
+    </link-entity>
+  </entity>
+</fetch>
+
+<!-- ⚠️ NOTE: The brands FetchXML filters the ACCOUNT by statecode eq 0, but does NOT
+     filter the actum_brand record itself by statecode. If an inactive brand remains
+     linked to an active account, it may still appear.
+     To fully exclude inactive brands, add a filter on the actum_brand entity:
+     
+     <filter>
+       <condition attribute="statecode" operator="eq" value="0" />
+     </filter>
+     
+     This should be confirmed and added in the flow if not already present. -->
+
+
+<!-- ========================
+     DOCUMENTS FetchXML
+     Fetches visible documents matching the contact's:
+       - Role  (inner join — must match)
+       - Brand (inner join — must be one of the account's brands, via BrandConditions variable)
+       - Country (inner join — must match account's primary country)
+       - Language (inner join — must match contact's preferred language)
+     Also expands document types via outer join for display in the UI.
+     ======================== -->
+<fetch distinct="true">
+  <entity name="actum_productdocumentation">
+    <attribute name="actum_productdocumentationid" />
+    <attribute name="actum_name" />
+    <attribute name="actum_description" />
+    <attribute name="actum_filename" />
+    <attribute name="actum_unapprovedaccess" />
+    <attribute name="actum_visible" />
+    <attribute name="createdon" />
+    <attribute name="actum_fileextension" />
+
+    <order attribute="createdon" descending="true" />
+
+    <!-- Base filter: only active and visible documents -->
+    <filter type="and">
+      <condition attribute="statecode" operator="eq" value="0" />
+      <condition attribute="actum_visible" operator="eq" value="1" />
+    </filter>
+
+    <!-- Filter 1: Role Match -->
+    <link-entity name="actum_productdocumentation_actum_role" from="actum_productdocumentationid" to="actum_productdocumentationid" link-type="inner" intersect="true">
+      <link-entity name="actum_role" from="actum_roleid" to="actum_roleid" link-type="inner" alias="role">
+        <filter>
+          <condition attribute="actum_roleid" operator="eq" value="@{outputs('First_Result_Contact_with_Account')?['account.actum_roleid']}" />
+        </filter>
+      </link-entity>
+    </link-entity>
+
+    <!-- Filter 2: Brand Match -->
+    <!-- BrandConditions variable is built by "Create Brand Conditions" compose step -->
+    <!-- It generates one <condition> per brand: -->
+    <!--   <condition attribute="actum_brandid" operator="eq" value="{guid}" /> -->
+    <link-entity name="actum_productdocumentation_actum_brand" from="actum_productdocumentationid" to="actum_productdocumentationid" link-type="inner">
+      <link-entity name="actum_brand" from="actum_brandid" to="actum_brandid" link-type="inner" alias="brand">
+        <attribute name="actum_name" />
+        <attribute name="actum_brandid" />
+        <filter type="or">
+          @{variables('BrandConditions')}
+        </filter>
+      </link-entity>
+    </link-entity>
+
+    <!-- Filter 3: Country Match -->
+    <link-entity name="actum_productdocumentation_actum_countr" from="actum_productdocumentationid" to="actum_productdocumentationid" link-type="inner" intersect="true">
+      <link-entity name="actum_country" from="actum_countryid" to="actum_countryid" link-type="inner" alias="country">
+        <filter>
+          <condition attribute="actum_countryid" operator="eq" value="@{outputs('First_Result_Contact_with_Account')?['account.actum_primarycountryid']}" />
+        </filter>
+      </link-entity>
+    </link-entity>
+
+    <!-- Filter 4: Language Match -->
+    <link-entity name="actum_productdocumentation_actum_langua" from="actum_productdocumentationid" to="actum_productdocumentationid" link-type="inner" intersect="true">
+      <link-entity name="actum_language" from="actum_languageid" to="actum_languageid" link-type="inner" alias="language">
+        <filter>
+          <condition attribute="actum_languageid" operator="eq" value="@{outputs('First_Result_Contact_with_Account')?['_actum_languageid_value']}" />
+        </filter>
+      </link-entity>
+    </link-entity>
+
+    <!-- Document Types via M2M (outer join — document may have zero types) -->
+    <!-- Frontend aliases: doctype.actum_documenttypeid, doctype.actum_name, doctype.actum_code -->
+    <link-entity name="actum_documenttype_actum_productdocumen"
+                 from="actum_productdocumentationid"
+                 to="actum_productdocumentationid"
+                 link-type="outer"
+                 intersect="true">
+      <link-entity name="actum_documenttype"
+                   from="actum_documenttypeid"
+                   to="actum_documenttypeid"
+                   link-type="outer"
+                   alias="doctype">
+        <attribute name="actum_documenttypeid" />
+        <attribute name="actum_name" />
+        <attribute name="actum_code" />
+      </link-entity>
+    </link-entity>
+  </entity>
+</fetch>
+
+<!-- ========================
+     POST-FLOW FILTERING (done in Power Automate, not FetchXML)
+     
+     "Remove items based on approved status":
+       Filters out documents where actum_unapprovedaccess = true
+       UNLESS the contact's account has approved access.
+       Logic is handled in the flow after the FetchXML query.
+     ======================== -->

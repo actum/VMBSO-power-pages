@@ -8,6 +8,7 @@ export interface Voucher {
   actum_name: string;                           // Name (e.g., "Reward Voucher 202603261301")
   actum_vouchercode: string;                    // Voucher code (e.g., "DEEF25161B")
   actum_expirationdate: string;                 // Expiration date (ISO timestamp)
+  actum_redeemedon?: string | null;             // Redemption date (set by flow when redeemed)
   _actum_account_value: string;                 // Lookup to Account
   _actum_contactid_value?: string | null;       // Lookup to Contact (nullable)
   _actum_loyaltytransaction_value: string;      // Lookup to Loyalty Transaction (deduction)
@@ -25,6 +26,14 @@ export interface Voucher {
   'redeemedBy.fullname'?: string;               // Contact who redeemed
   'redeemedBy.email'?: string;                  // Email of contact who redeemed
   'redeemedBy.account'?: string;                // Distributor account of contact who redeemed
+
+  // Account names (from FetchXML direct account link-entities)
+  'installerAccount.name'?: string | null;      // Installer company name (actum_account → account.name)
+  'distributorAccount.name'?: string | null;    // Distributor company name (actum_distributorid → account.name)
+
+  // Reward info (from rewardclaimline → reward link)
+  'reward.name'?: string | null;                // Reward name (actum_reward.actum_name)
+  'reward.pointamount'?: number | null;         // Points cost of the reward
 }
 
 /**
