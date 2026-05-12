@@ -179,7 +179,7 @@ function buildNewsODataUrl(languageId?: string, countryId?: string): string {
     'actum_newspagecontents'
     + '?$select=actum_newspagecontentid,actum_name,actum_title,actum_summary,actum_body,actum_publishdate,createdon'
     + `&$filter=${filters.join(' and ')}`
-    + `&$expand=${BRAND_NAV_PROP}($select=actum_brandid,actum_name),${ROLE_NAV_PROP}($select=actum_roleid)`
+    + `&$expand=${BRAND_NAV_PROP}($select=actum_brandid,actum_name;$filter=statecode eq 0),${ROLE_NAV_PROP}($select=actum_roleid)`
     + '&$orderby=actum_publishdate desc'
   );
 }

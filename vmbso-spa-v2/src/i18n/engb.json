@@ -126,9 +126,9 @@
 
   "languages": {
     "options": {
-      "en-GB": "English",
-      "fr-FR": "French",
-      "be-NL": "Dutch"
+      "en-GB": "EN",
+      "fr-FR": "FR",
+      "be-NL": "NL"
     }
   },
 
@@ -268,7 +268,7 @@
 
     "fields": {
       "companyBrand": {
-        "label": "COMPANY BRAND",
+        "label": "BRAND",
         "aria": "Select your company brand",
         "options": {
           "resitrix": "Resitrix",
@@ -291,7 +291,7 @@
         "placeholder": "email@email.com"
       },
       "phoneNumber": {
-        "label": "PHONE NUMBER",
+        "label": "TEL NUMBER (WILL BE USED FOR WHATSAPP)",
         "placeholder": "+44 7700 900000"
       },
       "companyName": {
@@ -385,7 +385,7 @@
     "uploadedBy": "Uploaded by",
     "company": "Company",
     "rejectionReason": "Rejection Reason",
-    "loyaltyPoints": "Loyalty Points",
+    "loyaltyPoints": "points",
 
     "tabs": {
       "myInvoices": "My Invoices",

@@ -36,6 +36,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Show loading spinner while checking authentication
   if (loading) {
+    document.title = 'VMBSO Customer Portal';
     return (
       <Box
         sx={{

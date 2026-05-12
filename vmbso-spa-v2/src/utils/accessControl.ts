@@ -146,9 +146,12 @@ export const canAccessVouchers = (user: Contact | null): boolean => {
  * @returns true if user is a distributor, false otherwise
  */
 export const isDistributor = (user: Contact | null): boolean => {
-  // In dev mode, allow for testing
+  // In dev mode, allow toggling via REACT_APP_DEV_ROLE env var:
+  //   REACT_APP_DEV_ROLE=installer → installer view
+  //   REACT_APP_DEV_ROLE=distributor (default) → distributor view
   if (config.devMode) {
-    return true;
+    const devRole = process.env.REACT_APP_DEV_ROLE ?? 'distributor';
+    return devRole === 'distributor';
   }
 
   // Must be authenticated

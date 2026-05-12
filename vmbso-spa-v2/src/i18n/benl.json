@@ -124,9 +124,9 @@
 
   "languages": {
     "options": {
-      "en-GB": "Engels",
-      "fr-FR": "Frans",
-      "be-NL": "Nederlands"
+      "en-GB": "EN",
+      "fr-FR": "FR",
+      "be-NL": "NL"
     }
   },
 
@@ -266,7 +266,7 @@
 
     "fields": {
       "companyBrand": {
-        "label": "BEDRIJFSMERK",
+        "label": "MERK",
         "aria": "Selecteer uw merk",
         "options": {
           "resitrix": "Resitrix",
@@ -289,7 +289,7 @@
         "placeholder": "email@email.com"
       },
       "phoneNumber": {
-        "label": "TELEFOONNUMMER",
+        "label": "TEL NUMMER (WORDT GEBRUIKT VOOR WHATSAPP)",
         "placeholder": "+32 6 12345678"
       },
       "companyName": {
@@ -383,7 +383,7 @@
     "uploadedBy": "Geüpload door",
     "company": "Bedrijf",
     "rejectionReason": "Reden voor afwijzing",
-    "loyaltyPoints": "Loyaliteitspunten",
+    "loyaltyPoints": "punten",
 
     "tabs": {
       "myInvoices": "Mijn Facturen",

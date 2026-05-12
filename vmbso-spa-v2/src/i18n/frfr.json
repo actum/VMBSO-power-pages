@@ -124,9 +124,9 @@
 
   "languages": {
     "options": {
-      "en-GB": "Anglais",
-      "fr-FR": "Français",
-      "be-NL": "Néerlandais"
+      "en-GB": "EN",
+      "fr-FR": "FR",
+      "be-NL": "NL"
     }
   },
 
@@ -266,7 +266,7 @@
 
     "fields": {
       "companyBrand": {
-        "label": "MARQUE DE L'ENTREPRISE",
+        "label": "MARQUE",
         "aria": "Sélectionnez votre marque",
         "options": {
           "resitrix": "Resitrix",
@@ -289,7 +289,7 @@
         "placeholder": "email@email.com"
       },
       "phoneNumber": {
-        "label": "NUMÉRO DE TÉLÉPHONE",
+        "label": "NUMÉRO DE TEL (SERA UTILISÉ POUR WHATSAPP)",
         "placeholder": "+33 6 12 34 56 78"
       },
       "companyName": {
@@ -383,7 +383,7 @@
     "uploadedBy": "Téléchargé par",
     "company": "Entreprise",
     "rejectionReason": "Raison du rejet",
-    "loyaltyPoints": "Points de Fidélité",
+    "loyaltyPoints": "points",
 
     "tabs": {
       "myInvoices": "Mes Factures",
