@@ -10,7 +10,7 @@ import type { Brand } from '../types/brand';
 import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
-import type { Invoice } from '../types/invoice';
+import type { Invoice, InvoiceItem } from '../types/invoice';
 import type { Reward } from '../types/reward';
 import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
 import type { Voucher } from '../types/voucher';
@@ -776,6 +776,45 @@ export const dataverseService = {
       // Return the created invoice
       return createdInvoice;
     },
+
+    /**
+     * Fetch point-earning invoice lines for a specific invoice via Power Automate flow.
+     * Only returns lines where actum_loaltypointsgranted > 0.
+     */
+    async getItemsByInvoice(invoiceId: string, contactId: string): Promise<InvoiceItem[]> {
+      if (config.devMode) {
+        return [
+          {
+            actum_invoiceitemid: 'mock-item-1',
+            actum_name: 'RESITRIX SKW FULL BOND 1X10M',
+            actum_loaltypointsgranted: 1200,
+            'actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue': '1,200',
+          },
+          {
+            actum_invoiceitemid: 'mock-item-2',
+            actum_name: 'VM ZINK MEMBRAAN MET KLEEFSTROOK 75m²/rol',
+            actum_loaltypointsgranted: 450,
+            'actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue': '450',
+          },
+        ];
+      }
+
+      if (!invoiceId || !contactId) {
+        return [];
+      }
+
+      try {
+        const response = await apiClient.flow<FlowArrayResponse<InvoiceItem>>(config.flows.getInvoiceItems, {
+          invoiceId,
+          contactId,
+        });
+
+        return parseFlowArrayData(response, 'invoice items');
+      } catch (error) {
+        console.error('Error fetching invoice items:', error);
+        throw error;
+      }
+    },
   },
 
   /**
@@ -1222,6 +1261,100 @@ export const dataverseService = {
         return result;
       } catch (error) {
         console.error('Error claiming rewards:', error);
+        throw error;
+      }
+    },
+  },
+
+  /**
+   * Loyalty transaction operations
+   */
+  loyaltyTransactions: {
+    /**
+     * Fetch all loyalty transactions for an account (for transaction history display)
+     */
+    async getByAccount(accountId: string): Promise<LoyaltyTransaction[]> {
+      if (config.devMode) {
+        return [
+          {
+            actum_loyaltytransactionid: 'mock-tx-1',
+            actum_name: 'Invoice VF25/02-18500',
+            actum_loyaltypoints: 850,
+            actum_transactiontype: 1,
+            actum_description: 'Points earned from invoice VF25/02-18500',
+            actum_expirationdate: null,
+            _actum_account_value: 'mock-account-1',
+            _actum_invoice_value: 'mock-invoice-2',
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-03-31T18:36:11Z',
+            modifiedon: '2026-03-31T18:36:11Z',
+          },
+          {
+            actum_loyaltytransactionid: 'mock-tx-2',
+            actum_name: 'Invoice VF25/04-30245',
+            actum_loyaltypoints: 650,
+            actum_transactiontype: 1,
+            actum_description: 'Points earned from invoice VF25/04-30245',
+            actum_expirationdate: null,
+            _actum_account_value: 'mock-account-1',
+            _actum_invoice_value: 'mock-invoice-4',
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-04-05T14:42:10Z',
+            modifiedon: '2026-04-05T14:42:10Z',
+          },
+          {
+            actum_loyaltytransactionid: 'mock-tx-3',
+            actum_name: 'Reward Claim - €25 Restaurant Voucher',
+            actum_loyaltypoints: 250,
+            actum_transactiontype: 2,
+            actum_description: 'Points spent on €25 Restaurant Voucher',
+            actum_expirationdate: null,
+            _actum_account_value: 'mock-account-1',
+            _actum_invoice_value: null,
+            statecode: 0,
+            statuscode: 1,
+            createdon: '2026-04-10T09:30:00Z',
+            modifiedon: '2026-04-10T09:30:00Z',
+          },
+        ];
+      }
+
+      if (!accountId) {
+        return [];
+      }
+
+      try {
+        const query = buildODataQuery({
+          select: [
+            'actum_loyaltytransactionid',
+            'actum_name',
+            'actum_loyaltypoints',
+            'actum_transactiontype',
+            'actum_description',
+            'statecode',
+            'statuscode',
+            'createdon',
+          ],
+          filter: `_actum_account_value eq ${accountId} and statecode eq 0`,
+          orderby: 'createdon desc',
+        });
+
+        const response = await apiClient.odata<{ value: LoyaltyTransaction[] }>(
+          `/actum_loyaltytransactions${query}`,
+          {
+            headers: {
+              Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
+            },
+          }
+        );
+
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
         throw error;
       }
     },

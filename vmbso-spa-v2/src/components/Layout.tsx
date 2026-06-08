@@ -133,7 +133,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   sx={{
                     fontSize: '1.4rem',
                     color: 'primary.main',
-                    fontWeight: 400,
+                    fontWeight: 700,
                     textTransform: 'none',
                     px: 2,
                   }}
@@ -218,8 +218,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Box>
               )}
               <Divider />
-              <MenuItem onClick={handleProfile}>{t('header:menu.profile')}</MenuItem>
-              <MenuItem onClick={handleLogout}>{t('header:menu.logout')}</MenuItem>
+              <MenuItem onClick={handleProfile} sx={{ fontWeight: 700 }}>{t('header:menu.profile')}</MenuItem>
+              <MenuItem onClick={handleLogout} sx={{ fontWeight: 700 }}>{t('header:menu.logout')}</MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -246,7 +246,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontSize: '1.6rem',
-                      fontWeight: 500,
+                      fontWeight: 700,
                     }}
                   />
                 </ListItemButton>

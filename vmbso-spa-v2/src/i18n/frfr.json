@@ -384,6 +384,16 @@
     "company": "Entreprise",
     "rejectionReason": "Raison du rejet",
     "loyaltyPoints": "points",
+    "viewDocument": "Voir le document",
+
+    "pointDetails": {
+      "toggle": "Voir le détail des points",
+      "loading": "Chargement des détails...",
+      "empty": "Aucune ligne génératrice de points disponible",
+      "error": "Échec du chargement des détails",
+      "columnItem": "Article",
+      "columnPoints": "Points"
+    },
 
     "tabs": {
       "myInvoices": "Mes Factures",
@@ -443,7 +453,7 @@
       },
       "processing": {
         "title": "Votre facture est en cours de traitement",
-        "message": "Votre facture a été téléchargée avec succès et est actuellement validée par notre système IA. Ce processus prend généralement 1 à 2 minutes. Le statut sera mis à jour automatiquement une fois le traitement terminé."
+        "message": "Votre facture a été téléchargée avec succès et est actuellement validée par notre système IA. Ce processus prend généralement 1 à 2 minutes. Veuilliez actualiser la page pour le dernier statut. Vous pouvez télécharger une nouvelle facture entretemps. "
       },
       "error": {
         "title": "Échec du téléchargement",
@@ -507,6 +517,30 @@
       "claimFailed": "Échec de la réclamation de la récompense. Veuillez réessayer.",
       "invalidResponse": "Réponse invalide reçue du serveur.",
       "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+    },
+
+    "transactionHistory": {
+      "viewButton": "Voir l'historique des transactions",
+      "title": "Historique des transactions",
+      "empty": "Aucune transaction trouvée",
+      "error": "Échec du chargement de l'historique",
+      "typeAddition": "Points gagnés",
+      "typeDeletion": "Points dépensés",
+      "statuses": {
+        "active": "Actif",
+        "freezed": "Gelé",
+        "cleared": "Soldé",
+        "inactive": "Inactif",
+        "canceled": "Annulé",
+        "expired": "Expiré"
+      },
+      "columns": {
+        "type": "Type",
+        "status": "Statut",
+        "points": "Points",
+        "date": "Date",
+        "description": "Description"
+      }
     }
   },
 

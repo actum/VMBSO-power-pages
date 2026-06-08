@@ -1,3 +1,13 @@
+/**
+ * Invoice line item — represents a product line that generated loyalty points
+ */
+export interface InvoiceItem {
+  actum_invoiceitemid: string;
+  actum_name: string;
+  actum_loaltypointsgranted: number;
+  'actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue'?: string;
+}
+
 export interface Invoice {
   // Primary fields
   actum_invoiceid: string;

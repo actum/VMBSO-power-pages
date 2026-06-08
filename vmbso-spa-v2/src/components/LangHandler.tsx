@@ -18,7 +18,7 @@ const LangHandler = () => {
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
   const [userLanguageLoaded, setUserLanguageLoaded] = useState(false);
 
   // Handle URL parameter language override
@@ -38,6 +38,12 @@ const LangHandler = () => {
   // Handle user's saved language preference
   useEffect(() => {
     const loadUserLanguage = async () => {
+      // Wait until auth bootstrap is done; otherwise we may lock to browser EN
+      // before currentUser (and preferred language) is available.
+      if (loading) {
+        return;
+      }
+
       // Only load once and only if no URL param is set
       if (userLanguageLoaded || searchParams.get("lang")) {
         return;
@@ -75,7 +81,7 @@ const LangHandler = () => {
     };
 
     loadUserLanguage();
-  }, [currentUser, userLanguageLoaded, searchParams, i18n, navigate]);
+  }, [currentUser, loading, userLanguageLoaded, searchParams, i18n, navigate]);
 
   return null;
 };

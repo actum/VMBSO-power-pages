@@ -23,10 +23,19 @@ import {
   Stack,
   Chip,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
 import {
   Redeem as GiftIcon,
   CheckCircle as CheckIcon,
+  History as HistoryIcon,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import * as ReactGA from 'react-ga';
@@ -35,6 +44,8 @@ import { useRewards } from '../hooks/useRewards';
 import { useAuth } from '../contexts/AuthContext';
 import { dataverseService } from '../services/dataverseService';
 import type { Reward } from '../types/reward';
+import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
+import { TransactionType } from '../types/loyaltyTransaction';
 
 export const Rewards: React.FC = () => {
   const { t } = useTranslation('rewardsPage');
@@ -49,6 +60,58 @@ export const Rewards: React.FC = () => {
   const [voucherInfo, setVoucherInfo] = useState<{
     voucherCodes: string[];
   } | null>(null);
+
+  // Story 4: Transaction history state
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+  const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsError, setTransactionsError] = useState<string | null>(null);
+
+  const getTransactionStatusLabel = (transaction: LoyaltyTransaction): string => {
+    const formattedStatus = transaction['statuscode@OData.Community.Display.V1.FormattedValue'];
+    if (!formattedStatus) {
+      return String(transaction.statuscode);
+    }
+
+    const normalizedStatus = formattedStatus.trim().toLowerCase();
+    const statusKeyMap: Record<string, string> = {
+      active: 'active',
+      freezed: 'freezed',
+      cleared: 'cleared',
+      inactive: 'inactive',
+      canceled: 'canceled',
+      expired: 'expired',
+    };
+
+    const statusKey = statusKeyMap[normalizedStatus];
+    if (!statusKey) {
+      return formattedStatus;
+    }
+
+    const translationKey = `transactionHistory.statuses.${statusKey}`;
+    const translated = t(translationKey);
+    return translated === translationKey ? formattedStatus : translated;
+  };
+
+  const handleOpenTransactionHistory = async () => {
+    setTransactionModalOpen(true);
+    setTransactionsError(null);
+
+    if (transactions.length > 0) return; // Already loaded
+
+    const accountId = currentUser?._parentcustomerid_value;
+    if (!accountId) return;
+
+    setTransactionsLoading(true);
+    try {
+      const data = await dataverseService.loyaltyTransactions.getByAccount(accountId);
+      setTransactions(data);
+    } catch (err) {
+      setTransactionsError(t('transactionHistory.error'));
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -238,6 +301,16 @@ export const Rewards: React.FC = () => {
               <Typography variant="body2" color="text.secondary">
                 {t('pointsBalance.earnMore')}
               </Typography>
+              {/* Story 4: Transaction history button */}
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<HistoryIcon />}
+                onClick={handleOpenTransactionHistory}
+                sx={{ mt: 2 }}
+              >
+                {t('transactionHistory.viewButton')}
+              </Button>
             </Paper>
 
             {/* Reward Catalog */}
@@ -521,6 +594,98 @@ export const Rewards: React.FC = () => {
           </DialogContent>
           <DialogActions sx={{ p: 2 }}>
             <Button onClick={handleCloseSuccessModal} variant="contained">
+              {t('actions.close')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Story 4: Transaction History Modal */}
+        <Dialog
+          open={transactionModalOpen}
+          onClose={() => setTransactionModalOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>{t('transactionHistory.title')}</DialogTitle>
+          <DialogContent>
+            {transactionsLoading && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            )}
+            {transactionsError && (
+              <Alert severity="error" sx={{ mb: 2 }}>{transactionsError}</Alert>
+            )}
+            {!transactionsLoading && !transactionsError && transactions.length === 0 && (
+              <Typography variant="body2" color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
+                {t('transactionHistory.empty')}
+              </Typography>
+            )}
+            {!transactionsLoading && transactions.length > 0 && (
+              <TableContainer sx={{ maxHeight: 400 }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>{t('transactionHistory.columns.description')}</TableCell>
+                      <TableCell>{t('transactionHistory.columns.date')}</TableCell>
+                      <TableCell>{t('transactionHistory.columns.type')}</TableCell>
+                      <TableCell>{t('transactionHistory.columns.status')}</TableCell>
+                      <TableCell align="right">{t('transactionHistory.columns.points')}</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {transactions.map((tx, idx) => (
+                      <TableRow
+                        key={tx.actum_loyaltytransactionid}
+                        sx={{ bgcolor: idx % 2 === 1 ? 'grey.50' : 'transparent' }}
+                      >
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {tx.actum_description || '—'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {new Date(tx.createdon).toLocaleDateString()}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            {tx.actum_transactiontype === TransactionType.Addition ? (
+                              <TrendingUpIcon fontSize="small" color="success" />
+                            ) : (
+                              <TrendingDownIcon fontSize="small" color="error" />
+                            )}
+                            <Typography variant="body2">
+                              {tx.actum_transactiontype === TransactionType.Addition
+                                ? t('transactionHistory.typeAddition')
+                                : t('transactionHistory.typeDeletion')}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {getTransactionStatusLabel(tx)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 600 }}
+                            color={tx.actum_transactiontype === TransactionType.Addition ? 'success.main' : 'error.main'}
+                          >
+                            {tx.actum_transactiontype === TransactionType.Addition ? '+' : '-'}{tx.actum_loyaltypoints}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={() => setTransactionModalOpen(false)} variant="contained">
               {t('actions.close')}
             </Button>
           </DialogActions>

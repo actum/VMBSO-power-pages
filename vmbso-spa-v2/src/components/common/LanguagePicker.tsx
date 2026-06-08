@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { dataverseService } from '../../services/dataverseService';
+import { getLanguageIdFromCode } from '../../utils/userLanguageService';
 
 const LANGUAGE_ABBREVIATIONS: Record<string, string> = {
   'en-GB': 'EN',
@@ -17,6 +20,7 @@ const LanguagePicker: React.FC = () => {
   const { i18n } = useTranslation("languages");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { currentUser, refreshUser } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -29,17 +33,32 @@ const LanguagePicker: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleChange = (newLangKey: string) => {
+  const handleChange = async (newLangKey: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("lang", newLangKey);
     navigate(`${window.location.pathname}?${newSearchParams.toString()}`, { replace: true });
     handleClose();
+
+    // Persist language preference to backend
+    if (currentUser?.contactid) {
+      try {
+        const languageId = await getLanguageIdFromCode(newLangKey);
+        if (languageId) {
+          await dataverseService.contacts.update(currentUser.contactid, {
+            'actum_languageid@odata.bind': `/actum_languages(${languageId})`,
+          } as any);
+          await refreshUser();
+        }
+      } catch (error) {
+        console.error('[LanguagePicker] Failed to save language preference:', error);
+      }
+    }
   };
 
   return (
     <>
       {!isMobile ? (
-        <Link component="button" variant="body2" onClick={handleOpen}>
+        <Link component="button" variant="body2" onClick={handleOpen} sx={{ fontWeight: 'bold' }}>
           {getLangAbbreviation(i18n.language)}
         </Link>
       ) : (

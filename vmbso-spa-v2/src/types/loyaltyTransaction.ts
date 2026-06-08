@@ -16,6 +16,7 @@ export interface LoyaltyTransaction {
   _actum_invoice_value?: string | null;    // Lookup to Invoice (nullable)
   statecode: number;                       // 0 = Active, 1 = Inactive
   statuscode: number;                      // Status reason
+  'statuscode@OData.Community.Display.V1.FormattedValue'?: string;
   createdon: string;                       // ISO timestamp
   modifiedon: string;                      // ISO timestamp
 }

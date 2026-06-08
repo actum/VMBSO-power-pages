@@ -384,6 +384,16 @@
     "company": "Bedrijf",
     "rejectionReason": "Reden voor afwijzing",
     "loyaltyPoints": "punten",
+    "viewDocument": "Document bekijken",
+
+    "pointDetails": {
+      "toggle": "Puntenoverzicht bekijken",
+      "loading": "Puntenoverzicht laden...",
+      "empty": "Geen puntengenererende lijnen beschikbaar",
+      "error": "Fout bij het laden van puntenoverzicht",
+      "columnItem": "Artikel",
+      "columnPoints": "Punten"
+    },
 
     "tabs": {
       "myInvoices": "Mijn Facturen",
@@ -443,7 +453,7 @@
       },
       "processing": {
         "title": "Uw factuur wordt verwerkt",
-        "message": "Uw factuur is succesvol geüpload en wordt momenteel gevalideerd door ons AI-systeem. Dit proces duurt doorgaans 1-2 minuten. De status wordt automatisch bijgewerkt zodra de verwerking is voltooid."
+        "message": "Uw factuur is succesvol geüpload en wordt momenteel gevalideerd door ons AI-systeem. Dit proces duurt doorgaans 1-2 minuten. Gelieve de pagina te vernieuwen voor de laatste status. Intussen kan een nieuwe factuur reeds worden opgeladen. "
       },
       "error": {
         "title": "Upload mislukt",
@@ -507,6 +517,30 @@
       "claimFailed": "Claim mislukt. Probeer het opnieuw.",
       "invalidResponse": "Ongeldig antwoord ontvangen van de server.",
       "networkError": "Netwerkfout. Controleer uw verbinding en probeer het opnieuw."
+    },
+
+    "transactionHistory": {
+      "viewButton": "Transactiegeschiedenis bekijken",
+      "title": "Transactiegeschiedenis",
+      "empty": "Geen transacties gevonden",
+      "error": "Fout bij het laden van transactiegeschiedenis",
+      "typeAddition": "Punten verdiend",
+      "typeDeletion": "Punten uitgegeven",
+      "statuses": {
+        "active": "Actief",
+        "freezed": "Bevroren",
+        "cleared": "Vereffend",
+        "inactive": "Inactief",
+        "canceled": "Geannuleerd",
+        "expired": "Verlopen"
+      },
+      "columns": {
+        "type": "Type",
+        "status": "Status",
+        "points": "Punten",
+        "date": "Datum",
+        "description": "Beschrijving"
+      }
     }
   },
 

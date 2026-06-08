@@ -92,6 +92,8 @@ export const config = {
     validateVoucher: '/_api/cloudflow/v1.0/trigger/cfac8c6d-e226-f111-8341-000d3a688605',
     /** Redeem voucher — marks voucher as redeemed by distributor (distributor only). */
     redeemVoucher: '/_api/cloudflow/v1.0/trigger/2d0ace0c-ca26-f111-8341-000d3a66f792',
+    /** Get invoice items — returns point-earning lines for a specific invoice. */
+    getInvoiceItems: '/_api/cloudflow/v1.0/trigger/ae555147-4158-f111-bec6-7ced8d428823',
   },
 
   /** Static asset paths. */

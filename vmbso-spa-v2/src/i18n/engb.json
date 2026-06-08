@@ -386,6 +386,16 @@
     "company": "Company",
     "rejectionReason": "Rejection Reason",
     "loyaltyPoints": "points",
+    "viewDocument": "View Document",
+
+    "pointDetails": {
+      "toggle": "View point details",
+      "loading": "Loading point details...",
+      "empty": "No point-earning lines available",
+      "error": "Failed to load point details",
+      "columnItem": "Item",
+      "columnPoints": "Points"
+    },
 
     "tabs": {
       "myInvoices": "My Invoices",
@@ -447,7 +457,7 @@
       },
       "processing": {
         "title": "Your invoice is being processed",
-        "message": "Your invoice has been successfully uploaded and is currently being validated by our AI system. This process typically takes 1-2 minutes. The status will update automatically once processing is complete."
+        "message": "Your invoice has been successfully uploaded and is currently being validated by our AI system. This process typically takes 1-2 minutes. Please refresh the page for the latest status. In the meantime, a new invoice can already be uploaded."
       },
       "error": {
         "title": "Upload failed",
@@ -511,6 +521,30 @@
       "claimFailed": "Failed to claim reward. Please try again.",
       "invalidResponse": "Received an invalid response from the server.",
       "networkError": "Network error. Please check your connection and try again."
+    },
+
+    "transactionHistory": {
+      "viewButton": "View transaction history",
+      "title": "Transaction History",
+      "empty": "No transactions found",
+      "error": "Failed to load transaction history",
+      "typeAddition": "Points earned",
+      "typeDeletion": "Points spent",
+      "statuses": {
+        "active": "Active",
+        "freezed": "Freezed",
+        "cleared": "Cleared",
+        "inactive": "Inactive",
+        "canceled": "Canceled",
+        "expired": "Expired"
+      },
+      "columns": {
+        "type": "Type",
+        "status": "Status",
+        "points": "Points",
+        "date": "Date",
+        "description": "Description"
+      }
     }
   },
 

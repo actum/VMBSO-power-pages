@@ -64,3 +64,35 @@ export function clearLanguageCache(): void {
   languageIdToCodeCache.clear();
   console.log('[UserLanguage] Cache cleared');
 }
+
+/**
+ * Reverse mapping: get the Dataverse language record ID from a frontend language code.
+ * Used when saving language preference from the LanguagePicker.
+ * @param frontendCode - The frontend language code (e.g., "en-GB", "fr-FR", "be-NL")
+ * @returns The actum_languageid value or null if not found
+ */
+export async function getLanguageIdFromCode(frontendCode: string): Promise<string | null> {
+  // Check if cache already has the reverse mapping
+  for (const [id, code] of languageIdToCodeCache.entries()) {
+    if (code === frontendCode) {
+      return id;
+    }
+  }
+
+  try {
+    const languages = await dataverseService.languages.getAll();
+
+    // Rebuild cache
+    languages.forEach(lang => {
+      const mapped = mapDataverseToFrontend(lang.actum_code);
+      languageIdToCodeCache.set(lang.actum_languageid, mapped);
+    });
+
+    // Find the matching language
+    const match = languages.find(lang => mapDataverseToFrontend(lang.actum_code) === frontendCode);
+    return match ? match.actum_languageid : null;
+  } catch (error) {
+    console.error('[UserLanguage] Failed to resolve language ID from code:', error);
+    return null;
+  }
+}

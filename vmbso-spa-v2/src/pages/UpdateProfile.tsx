@@ -56,9 +56,24 @@ export const UpdateProfile: React.FC = () => {
   };
 
   const translateRole = (roleName: string): string => {
-    const key = `entities.roles.${roleName}`;
+    const normalizedRole = roleName.trim().toLowerCase();
+    const roleKeyMap: Record<string, 'distributor' | 'architect' | 'installer'> = {
+      distributor: 'distributor',
+      distributeur: 'distributor',
+      architect: 'architect',
+      architecte: 'architect',
+      installer: 'installer',
+      installateur: 'installer',
+    };
+
+    const roleKey = roleKeyMap[normalizedRole];
+    if (!roleKey) {
+      return roleName;
+    }
+
+    const key = `fields.companyRole.options.${roleKey}`;
     const translated = t(key);
-    return translated === key ? roleName : translated; // Fallback to original if not found
+    return translated === key ? roleName : translated;
   };
 
   const translateLanguage = (languageCode: string): string => {
@@ -212,7 +227,6 @@ export const UpdateProfile: React.FC = () => {
 
     // Validate required fields
     const contactFieldsValid =
-      !!values.actum_language?.toString().trim() &&
       !!values.telephone1?.toString().trim() &&
       isValidE164(values.telephone1 || '');
 
@@ -249,7 +263,6 @@ export const UpdateProfile: React.FC = () => {
           hasAccount: vatSearchState === "found" ? "YES" : "NO",
           contactId: currentUser?.contactid,
           phone: values.telephone1,
-          languageId: values.actum_language,
           // found-only
           accountId: foundAccount?.accountid,
           // notFound-only (empty string when account was found)
@@ -304,13 +317,6 @@ export const UpdateProfile: React.FC = () => {
     if (!isValidE164(phone)) {
       return t(`validation.${fieldName}Format`) || 'Phone must be in E.164 format (e.g., +32123456789)';
     }
-    return undefined;
-  };
-
-  // Helper for language field errors
-  const getLanguageError = (): string | undefined => {
-    if (!submitted) return undefined;
-    if (!values.actum_language) return t("validation.language");
     return undefined;
   };
 
@@ -639,32 +645,6 @@ export const UpdateProfile: React.FC = () => {
                 </Grid>
               </>
             )}
-
-            {/* Language — filtered by selected country, saved on Contact */}
-            <Grid item xs={12} sm={6}>
-              <InputLabelField
-                select
-                label={t("fields.language.label")}
-                ariaLabel={t("fields.language.aria")}
-                value={values.actum_language || ""}
-                fullWidth
-                required
-                disableInternalValidation={true}
-                onChange={handleChange("actum_language")}
-                error={getLanguageError()}
-                disabled={!values.actum_primarycountry || languagesLoading}
-              >
-                {languagesLoading
-                  ? <MenuItem value=""><CircularProgress size={16} /></MenuItem>
-                  : languages.length === 0
-                    ? <MenuItem value="" disabled>{t("fields.language.noOptions")}</MenuItem>
-                    : languages.map(lang => (
-                        <MenuItem key={lang.actum_languageid} value={lang.actum_languageid}>
-                          {translateLanguage(lang.actum_code)}
-                        </MenuItem>
-                      ))}
-              </InputLabelField>
-            </Grid>
           </Grid>
 
           {error && (
