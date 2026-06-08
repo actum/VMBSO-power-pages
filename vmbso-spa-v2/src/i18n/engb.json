@@ -490,26 +490,26 @@
     },
 
     "actions": {
-      "claim": "Claim Reward",
-      "claiming": "Processing...",
+      "claim": "Exchange Reward",
+      "claiming": "Exchanging...",
       "close": "Close",
-      "claimAnother": "Claim Another Reward"
+      "claimAnother": "Exchange Another Reward"
     },
 
     "claimModal": {
-      "title": "Claim Reward",
-      "confirmMessage": "You are about to claim the following reward:",
+      "title": "Exchange Reward",
+      "confirmMessage": "You are about to exchange the following reward:",
       "rewardName": "Reward",
       "cost": "Cost",
       "currentBalance": "Current Balance",
-      "newBalance": "Balance After Claim",
+      "newBalance": "Balance After Exchange",
       "points": "{{count}} points",
-      "confirmButton": "Confirm Claim",
+      "confirmButton": "Confirm Exchange",
       "cancelButton": "Cancel"
     },
 
     "success": {
-      "title": "Reward Claimed Successfully!",
+      "title": "Reward Exchanged Successfully!",
       "message": "Your voucher has been created and sent by email.",
       "emailSent": "Email sent to",
       "newBalance": "New Balance",
@@ -517,8 +517,8 @@
     },
 
     "errorMessages": {
-      "insufficientPoints": "You don't have enough points to claim this reward.",
-      "claimFailed": "Failed to claim reward. Please try again.",
+      "insufficientPoints": "You don't have enough points to exchange this reward.",
+      "claimFailed": "Failed to exchange reward. Please try again.",
       "invalidResponse": "Received an invalid response from the server.",
       "networkError": "Network error. Please check your connection and try again."
     },
@@ -551,7 +551,7 @@
   "vouchersPage": {
     "pageTitle": "Vouchers | VMBSO Customer Portal",
     "title": "My Vouchers",
-    "subtitle": "View and manage vouchers generated from your reward claims",
+    "subtitle": "View and manage vouchers generated from your reward exchanges",
     "subtitleDistributor": "Redeem vouchers for installers and view your redemption history",
 
     "redemption": {
@@ -595,7 +595,7 @@
       "voucherCode": "Voucher Code",
       "reward": "Reward",
       "status": "Status",
-      "claimedBy": "Claimed By",
+      "claimedBy": "Exchanged By",
       "redeemedBy": "Redeemed By",
       "distributor": "Distributor",
       "generatedDate": "Generated",

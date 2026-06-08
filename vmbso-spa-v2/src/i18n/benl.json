@@ -486,26 +486,26 @@
     },
 
     "actions": {
-      "claim": "Beloning claimen",
+      "claim": "Beloning inwisselen",
       "claiming": "Verwerken...",
       "close": "Sluiten",
-      "claimAnother": "Nog een beloning claimen"
+      "claimAnother": "Nog een beloning inwisselen"
     },
 
     "claimModal": {
-      "title": "Beloning claimen",
-      "confirmMessage": "U staat op het punt de volgende beloning te claimen:",
+      "title": "Beloning inwisselen",
+      "confirmMessage": "U staat op het punt de volgende beloning in te wisselen:",
       "rewardName": "Beloning",
       "cost": "Kosten",
       "currentBalance": "Huidig saldo",
-      "newBalance": "Saldo na claim",
+      "newBalance": "Saldo na inwisseling",
       "points": "{{count}} punten",
-      "confirmButton": "Claim bevestigen",
+      "confirmButton": "Inwisseling bevestigen",
       "cancelButton": "Annuleren"
     },
 
     "success": {
-      "title": "Beloning succesvol geclaimd!",
+      "title": "Beloning succesvol ingewisseld!",
       "message": "Uw voucher is aangemaakt en per e-mail verzonden.",
       "emailSent": "E-mail verzonden naar",
       "newBalance": "Nieuw saldo",
@@ -513,8 +513,8 @@
     },
 
     "errorMessages": {
-      "insufficientPoints": "U heeft niet genoeg punten om deze beloning te claimen.",
-      "claimFailed": "Claim mislukt. Probeer het opnieuw.",
+      "insufficientPoints": "U heeft niet genoeg punten om deze beloning in te wisselen.",
+      "claimFailed": "Inwisselen mislukt. Probeer het opnieuw.",
       "invalidResponse": "Ongeldig antwoord ontvangen van de server.",
       "networkError": "Netwerkfout. Controleer uw verbinding en probeer het opnieuw."
     },
@@ -547,7 +547,7 @@
   "vouchersPage": {
     "pageTitle": "Vouchers | VMBSO Klantenportaal",
     "title": "Mijn Vouchers",
-    "subtitle": "Bekijk en beheer vouchers gegenereerd uit uw beloningsclaims",
+    "subtitle": "Bekijk en beheer vouchers gegenereerd uit uw beloningsinwisselingen",
     "subtitleDistributor": "Wissel vouchers in voor installateurs en bekijk uw inwisselgeschiedenis",
 
     "redemption": {
@@ -591,7 +591,7 @@
       "voucherCode": "Vouchercode",
       "reward": "Beloning",
       "status": "Status",
-      "claimedBy": "Geclaimd door",
+      "claimedBy": "Ingewisseld door",
       "redeemedBy": "Ingewisseld door",
       "distributor": "Distributeur",
       "generatedDate": "Gegenereerd",
