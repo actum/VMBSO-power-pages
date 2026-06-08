@@ -50,6 +50,10 @@ import { dataverseService } from '../services/dataverseService';
 import { useAuth } from '../contexts/AuthContext';
 
 type VoucherStatus = 'all' | 'issued' | 'redeemed' | 'expired' | 'canceled';
+type VoucherFilterStatus = Exclude<VoucherStatus, 'all'>;
+
+const INSTALLER_FILTER_STATUSES: VoucherFilterStatus[] = ['issued', 'redeemed', 'canceled', 'expired'];
+const DISTRIBUTOR_FILTER_STATUSES: VoucherFilterStatus[] = ['redeemed', 'canceled', 'expired'];
 
 export const Vouchers: React.FC = () => {
   const { t } = useTranslation('vouchersPage');
@@ -87,6 +91,17 @@ export const Vouchers: React.FC = () => {
   }, [loading, error, vouchers.length]);
 
   // Filter vouchers based on search and status
+  const availableStatusFilters = useMemo<VoucherFilterStatus[]>(
+    () => (isDistributorUser ? DISTRIBUTOR_FILTER_STATUSES : INSTALLER_FILTER_STATUSES),
+    [isDistributorUser]
+  );
+
+  useEffect(() => {
+    if (statusFilter !== 'all' && !availableStatusFilters.includes(statusFilter)) {
+      setStatusFilter('all');
+    }
+  }, [statusFilter, availableStatusFilters]);
+
   const filteredVouchers = useMemo(() => {
     let filtered = vouchers;
 
@@ -430,10 +445,11 @@ export const Vouchers: React.FC = () => {
                   onChange={(e) => handleStatusFilterChange(e.target.value as VoucherStatus)}
                 >
                   <MenuItem value="all">{t('filters.statusAll')}</MenuItem>
-                  <MenuItem value="issued">{t('filters.statusIssued')}</MenuItem>
-                  <MenuItem value="redeemed">{t('filters.statusRedeemed')}</MenuItem>
-                  <MenuItem value="expired">{t('filters.statusExpired')}</MenuItem>
-                  <MenuItem value="canceled">{t('filters.statusCanceled')}</MenuItem>
+                  {availableStatusFilters.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {t(`filters.status${status.charAt(0).toUpperCase() + status.slice(1)}`)}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
