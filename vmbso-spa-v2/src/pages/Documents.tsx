@@ -39,6 +39,7 @@ import { dataverseService } from '../services/dataverseService';
 import { useTranslation } from 'react-i18next';
 import { type DocumentWithBrands } from '../types/document';
 import { LoadingModal } from '../components/common/ui/LoadingModal';
+import { formatDateEU } from '../utils/dateUtils';
 
 const ClampedDescription = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
@@ -170,15 +171,7 @@ export const Documents: React.FC = () => {
     });
   }, [documents, selectedBrands, selectedDocTypes, searchText]);
 
-  const formatDate = (isoDate: string) => {
-    try {
-      return new Date(isoDate).toLocaleDateString(undefined, {
-        day: 'numeric', month: 'short', year: 'numeric',
-      });
-    } catch {
-      return isoDate;
-    }
-  };
+  const formatDate = (isoDate: string) => formatDateEU(isoDate, isoDate);
 
   const handleDownload = async (doc: DocumentWithBrands) => {
     if (!currentUser?.contactid) {

@@ -46,6 +46,7 @@ import { dataverseService } from '../services/dataverseService';
 import type { Reward } from '../types/reward';
 import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
 import { TransactionType } from '../types/loyaltyTransaction';
+import { formatDateEU } from '../utils/dateUtils';
 
 export const Rewards: React.FC = () => {
   const { t } = useTranslation('rewardsPage');
@@ -646,7 +647,7 @@ export const Rewards: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">
-                            {new Date(tx.createdon).toLocaleDateString()}
+                            {formatDateEU(tx.createdon)}
                           </Typography>
                         </TableCell>
                         <TableCell>

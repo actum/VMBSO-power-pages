@@ -22,8 +22,9 @@ import {
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { Layout } from '../components/Layout';
-import { NewsArticle } from '../types/newsArticle';
+import type { NewsArticle } from '../types/newsArticle';
 import { useNews } from '../hooks/useNews';
+import { formatDateEU } from '../utils/dateUtils';
 
 const ClampedSummary = styled('div')(({ theme }) => ({
   ...theme.typography.body2,
@@ -81,16 +82,7 @@ export const News: React.FC = () => {
     return articles.filter(a => a.brands.some(b => b.id === selectedBrand));
   }, [articles, selectedBrand]);
 
-  const formatDate = (iso?: string) => {
-    if (!iso) return '';
-    try {
-      return new Date(iso).toLocaleDateString(undefined, {
-        day: 'numeric', month: 'short', year: 'numeric',
-      });
-    } catch {
-      return iso;
-    }
-  };
+  const formatDate = (iso?: string) => formatDateEU(iso, '');
 
   const brandChipRow = (brands: NewsArticle['brands'], publishDate?: string) => (
     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.75, mb: '15px', mt: '10px' }}>

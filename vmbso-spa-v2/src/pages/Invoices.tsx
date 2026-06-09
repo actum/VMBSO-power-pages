@@ -31,6 +31,7 @@ import { useTranslation } from "react-i18next";
 import { useInvoices } from "../hooks/useInvoices";
 import { useAuth } from "../contexts/AuthContext";
 import { dataverseService } from "../services/dataverseService";
+import { formatDateEU } from '../utils/dateUtils';
 
 export const Invoices: React.FC = () => {
 
@@ -238,8 +239,7 @@ export const Invoices: React.FC = () => {
                       </Typography>
                       {invoice.actum_invoicedate && (
                         <Typography variant="body2" color="text.secondary">
-                          {t('invoiceDate')}: {invoice['actum_invoicedate@OData.Community.Display.V1.FormattedValue'] || 
-                           new Date(invoice.actum_invoicedate).toLocaleDateString()}
+                          {t('invoiceDate')}: {formatDateEU(invoice.actum_invoicedate)}
                         </Typography>
                       )}
                       <Typography variant="body2" color="text.secondary">
@@ -270,8 +270,7 @@ export const Invoices: React.FC = () => {
                         {t('uploaded')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {invoice['createdon@OData.Community.Display.V1.FormattedValue'] || 
-                         new Date(invoice.createdon).toLocaleString()}
+                        {formatDateEU(invoice.createdon)}
                       </Typography>
                     </Box>
                   </Box>

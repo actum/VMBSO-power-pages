@@ -19,7 +19,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Chip,
   Stack,
   Paper,
   Dialog,
@@ -48,6 +47,7 @@ import { getVoucherStatus, VoucherStatusCode } from '../types/voucher';
 import type { Voucher } from '../types/voucher';
 import { dataverseService } from '../services/dataverseService';
 import { useAuth } from '../contexts/AuthContext';
+import { formatDateEU } from '../utils/dateUtils';
 
 type VoucherStatus = 'all' | 'issued' | 'redeemed' | 'expired' | 'canceled';
 type VoucherFilterStatus = Exclude<VoucherStatus, 'all'>;
@@ -161,22 +161,6 @@ export const Vouchers: React.FC = () => {
     }
   };
 
-  const getStatusChipColor = (statuscode: number): 'success' | 'primary' | 'warning' | 'default' => {
-    const status = getVoucherStatus(statuscode);
-    switch (status) {
-      case 'issued':
-        return 'success';
-      case 'redeemed':
-        return 'primary';
-      case 'expired':
-        return 'warning';
-      case 'canceled':
-        return 'default';
-      default:
-        return 'default';
-    }
-  };
-
   const getStatusDotColor = (statuscode: number): string => {
     const status = getVoucherStatus(statuscode);
     switch (status) {
@@ -193,18 +177,7 @@ export const Vouchers: React.FC = () => {
     }
   };
 
-  const formatDate = (isoDate: string | null | undefined): string => {
-    if (!isoDate) return '-';
-    try {
-      return new Date(isoDate).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-    } catch {
-      return '-';
-    }
-  };
+  const formatDate = (isoDate: string | null | undefined): string => formatDateEU(isoDate);
 
   const handleStatusFilterChange = (value: VoucherStatus) => {
     setStatusFilter(value);
