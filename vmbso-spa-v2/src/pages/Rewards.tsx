@@ -641,7 +641,7 @@ export const Rewards: React.FC = () => {
                       >
                         <TableCell>
                           <Typography variant="body2" color="text.secondary">
-                            {tx.actum_description || '—'}
+                            {tx.actum_portalmessage || '---'}
                           </Typography>
                         </TableCell>
                         <TableCell>

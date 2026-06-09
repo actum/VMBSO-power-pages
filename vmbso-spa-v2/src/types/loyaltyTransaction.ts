@@ -11,6 +11,7 @@ export interface LoyaltyTransaction {
   actum_loyaltypoints: number;             // Points amount (positive number)
   actum_transactiontype: number;           // 1 = Addition (credit), 2 = Deletion (debit)
   actum_description?: string | null;       // Optional description
+  actum_portalmessage?: string | null;     // Portal-facing transaction message
   actum_expirationdate?: string | null;    // Expiration date (if used)
   _actum_account_value: string;            // Lookup to ACCOUNT (not Contact!)
   _actum_invoice_value?: string | null;    // Lookup to Invoice (nullable)
