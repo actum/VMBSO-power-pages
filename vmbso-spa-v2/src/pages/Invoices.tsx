@@ -18,14 +18,12 @@ import {
   Alert,
   Collapse,
   CircularProgress,
-  Chip,
   Divider,
 } from "@mui/material";
 import { 
   CheckCircle as CheckCircleIcon, 
   Cancel as CancelIcon, 
   Search as SearchIcon,
-  OpenInNew as OpenInNewIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
 } from "@mui/icons-material";
@@ -267,22 +265,6 @@ export const Invoices: React.FC = () => {
                         <Typography variant="h5" color="primary.main" sx={{ fontWeight: 700 }}>
                           {invoice.actum_loaltypointsgranted} {t('loyaltyPoints')}
                         </Typography>
-                      )}
-                      {/* Story 1: View Document button */}
-                      {invoice.actum_sharepointfileurl && (
-                        <Chip
-                          icon={<OpenInNewIcon sx={{ fontSize: 13 }} />}
-                          label={t('viewDocument')}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                          clickable
-                          sx={{ fontSize: '11px' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(invoice.actum_sharepointfileurl, '_blank', 'noopener,noreferrer');
-                          }}
-                        />
                       )}
                       <Typography variant="caption" color="text.secondary">
                         {t('uploaded')}
