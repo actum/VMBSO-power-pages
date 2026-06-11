@@ -396,6 +396,10 @@
       "columnItem": "Item",
       "columnPoints": "Points"
     },
+    "rejectionDetails": {
+      "toggle": "View rejection details",
+      "noReason": "No rejection reason was provided."
+    },
 
     "tabs": {
       "myInvoices": "My Invoices",

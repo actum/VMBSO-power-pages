@@ -53,7 +53,7 @@ export const Invoices: React.FC = () => {
   const [invoiceItemsLoading, setInvoiceItemsLoading] = React.useState<string | null>(null);
   const [invoiceItemsError, setInvoiceItemsError] = React.useState<string | null>(null);
 
-  const handleToggleExpand = async (invoiceId: string) => {
+  const handleToggleExpand = async (invoiceId: string, statuscode: number) => {
     if (expandedInvoiceId === invoiceId) {
       setExpandedInvoiceId(null);
       return;
@@ -61,6 +61,11 @@ export const Invoices: React.FC = () => {
 
     setExpandedInvoiceId(invoiceId);
     setInvoiceItemsError(null);
+
+    // Rejected invoices do not have point-earning line items to fetch.
+    if (statuscode === InvoiceStatusCode.REJECTED) {
+      return;
+    }
 
     // If already cached, don't re-fetch
     if (invoiceItemsCache[invoiceId]) return;
@@ -276,14 +281,16 @@ export const Invoices: React.FC = () => {
                   </Box>
 
                   {/* Story 2: Point-earning lines expandable section (credited invoices only) */}
-                  {invoice.statuscode === InvoiceStatusCode.CREDITED && (
+                  {(invoice.statuscode === InvoiceStatusCode.CREDITED || invoice.statuscode === InvoiceStatusCode.REJECTED) && (
                     <>
                       <Box
                         sx={{ mt: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 0.5 }}
-                        onClick={() => handleToggleExpand(invoice.actum_invoiceid)}
+                        onClick={() => handleToggleExpand(invoice.actum_invoiceid, invoice.statuscode)}
                       >
                         <Typography variant="body2" color="primary.main" sx={{ fontWeight: 500 }}>
-                          {t('pointDetails.toggle')}
+                          {invoice.statuscode === InvoiceStatusCode.REJECTED
+                            ? t('rejectionDetails.toggle')
+                            : t('pointDetails.toggle')}
                         </Typography>
                         {expandedInvoiceId === invoice.actum_invoiceid ? (
                           <ExpandLessIcon fontSize="small" color="primary" />
@@ -293,57 +300,80 @@ export const Invoices: React.FC = () => {
                       </Box>
                       <Collapse in={expandedInvoiceId === invoice.actum_invoiceid}>
                         <Box sx={{ mt: 2, pl: 1 }}>
-                          {invoiceItemsLoading === invoice.actum_invoiceid && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <CircularProgress size={16} />
-                              <Typography variant="caption" color="text.secondary">
-                                {t('pointDetails.loading')}
+                          {invoice.statuscode === InvoiceStatusCode.REJECTED ? (
+                            <Box
+                              sx={{
+                                borderRadius: 1,
+                                border: theme => `1px solid ${theme.palette.error.light}`,
+                                backgroundColor: theme => theme.palette.error.light + '1A',
+                                p: 2,
+                              }}
+                            >
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <CancelIcon color="error" fontSize="small" />
+                                <Typography variant="subtitle2" color="error.main" sx={{ fontWeight: 700 }}>
+                                  {t('rejectionReason')}
+                                </Typography>
+                              </Box>
+                              <Typography variant="body2" color="text.primary" sx={{ lineHeight: 1.6 }}>
+                                {invoice.actum_rejectionreason?.trim() || t('rejectionDetails.noReason')}
                               </Typography>
                             </Box>
-                          )}
-                          {invoiceItemsError && expandedInvoiceId === invoice.actum_invoiceid && (
-                            <Typography variant="caption" color="error">
-                              {invoiceItemsError}
-                            </Typography>
-                          )}
-                          {invoiceItemsCache[invoice.actum_invoiceid] && (
-                            invoiceItemsCache[invoice.actum_invoiceid].length === 0 ? (
-                              <Typography variant="body2" color="text.secondary">
-                                {t('pointDetails.empty')}
-                              </Typography>
-                            ) : (
-                              <Box>
-                                {/* Header row */}
-                                <Box
-                                  sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}
-                                >
-                                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                                    {t('pointDetails.columnItem')}
-                                  </Typography>
-                                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                                    {t('pointDetails.columnPoints')}
+                          ) : (
+                            <>
+                              {invoiceItemsLoading === invoice.actum_invoiceid && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <CircularProgress size={16} />
+                                  <Typography variant="caption" color="text.secondary">
+                                    {t('pointDetails.loading')}
                                   </Typography>
                                 </Box>
-                                <Divider />
-                                {invoiceItemsCache[invoice.actum_invoiceid].map((item, idx) => (
-                                  <React.Fragment key={item.actum_invoiceitemid}>
+                              )}
+                              {invoiceItemsError && expandedInvoiceId === invoice.actum_invoiceid && (
+                                <Typography variant="caption" color="error">
+                                  {invoiceItemsError}
+                                </Typography>
+                              )}
+                              {invoiceItemsCache[invoice.actum_invoiceid] && (
+                                invoiceItemsCache[invoice.actum_invoiceid].length === 0 ? (
+                                  <Typography variant="body2" color="text.secondary">
+                                    {t('pointDetails.empty')}
+                                  </Typography>
+                                ) : (
+                                  <Box>
+                                    {/* Header row */}
                                     <Box
-                                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', py: 1 }}
+                                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}
                                     >
-                                      <Typography variant="body2" sx={{ pr: 2 }}>
-                                        {item.actum_name}
+                                      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                                        {t('pointDetails.columnItem')}
                                       </Typography>
-                                      <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>
-                                        {item['actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue'] || item.actum_loaltypointsgranted} {t('loyaltyPoints')}
+                                      <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                                        {t('pointDetails.columnPoints')}
                                       </Typography>
                                     </Box>
-                                    {idx < invoiceItemsCache[invoice.actum_invoiceid].length - 1 && (
-                                      <Divider sx={{ borderColor: 'grey.200' }} />
-                                    )}
-                                  </React.Fragment>
-                                ))}
-                              </Box>
-                            )
+                                    <Divider />
+                                    {invoiceItemsCache[invoice.actum_invoiceid].map((item, idx) => (
+                                      <React.Fragment key={item.actum_invoiceitemid}>
+                                        <Box
+                                          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', py: 1 }}
+                                        >
+                                          <Typography variant="body2" sx={{ pr: 2 }}>
+                                            {item.actum_name}
+                                          </Typography>
+                                          <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                            {item['actum_loaltypointsgranted@OData.Community.Display.V1.FormattedValue'] || item.actum_loaltypointsgranted} {t('loyaltyPoints')}
+                                          </Typography>
+                                        </Box>
+                                        {idx < invoiceItemsCache[invoice.actum_invoiceid].length - 1 && (
+                                          <Divider sx={{ borderColor: 'grey.200' }} />
+                                        )}
+                                      </React.Fragment>
+                                    ))}
+                                  </Box>
+                                )
+                              )}
+                            </>
                           )}
                         </Box>
                       </Collapse>

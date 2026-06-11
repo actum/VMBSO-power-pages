@@ -394,6 +394,10 @@
       "columnItem": "Article",
       "columnPoints": "Points"
     },
+    "rejectionDetails": {
+      "toggle": "Voir les détails du rejet",
+      "noReason": "Aucune raison de rejet n'a été fournie."
+    },
 
     "tabs": {
       "myInvoices": "Mes Factures",
