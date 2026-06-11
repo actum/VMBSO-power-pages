@@ -168,6 +168,12 @@ export const Home: React.FC = () => {
                                 variant="h2"
                                 sx={{ color: 'white', lineHeight: 1.2 }}
                             >
+                                {homePageData.bannerSection.bannerTitle}
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{ color: 'white', mt: 3 }}
+                            >
                                 {homePageData.bannerSection.bannerImageText}
                             </Typography>
                         </Box>

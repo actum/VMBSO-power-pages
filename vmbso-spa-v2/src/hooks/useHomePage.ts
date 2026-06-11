@@ -53,6 +53,7 @@ function mapToHomePageData(
         url: row.actum_bannerimageurl?.trim() || '',
         alt: '',
       },
+      bannerTitle: row.actum_bannertitle?.trim() || '',
       bannerImageText: row.actum_bannerimagetext?.trim() || '',
     },
   };
