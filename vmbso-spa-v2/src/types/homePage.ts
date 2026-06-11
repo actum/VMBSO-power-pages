@@ -31,6 +31,7 @@ export interface BannerSection {
     url: string;
     alt: string;
   };
+  bannerTitle: string;
   bannerImageText: string;
 }
 

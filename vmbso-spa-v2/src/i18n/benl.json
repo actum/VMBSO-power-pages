@@ -394,6 +394,10 @@
       "columnItem": "Artikel",
       "columnPoints": "Punten"
     },
+    "rejectionDetails": {
+      "toggle": "Afwijsdetails bekijken",
+      "noReason": "Er werd geen reden voor afwijzing opgegeven."
+    },
 
     "tabs": {
       "myInvoices": "Mijn Facturen",
