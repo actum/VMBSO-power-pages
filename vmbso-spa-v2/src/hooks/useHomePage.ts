@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dataverseService } from '../services/dataverseService';
 import { useAuth } from '../contexts/AuthContext';
+import { getLanguageIdFromCode } from '../utils/userLanguageService';
 import type { HomePageData, LandingPageContent, LandingPageCta, CtaButton } from '../types/homePage';
 
 function interpolateGreeting(template: string | undefined, displayName: string): string {
@@ -61,7 +62,7 @@ function mapToHomePageData(
 
 export const useHomePage = () => {
   const { currentUser } = useAuth();
-  const { t } = useTranslation('homePage');
+  const { t, i18n } = useTranslation('homePage');
   const [homePageData, setHomePageData] = useState<HomePageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +77,8 @@ export const useHomePage = () => {
       setLoading(true);
       setError(null);
 
-      const languageId = currentUser._actum_languageid_value?.replace(/[{}]/g, '');
+      const languageIdFromUi = await getLanguageIdFromCode(i18n.language);
+      const languageId = languageIdFromUi ?? currentUser._actum_languageid_value?.replace(/[{}]/g, '');
 
       // Fetch account for country + role + brands
       let countryId: string | undefined;
@@ -128,11 +130,11 @@ export const useHomePage = () => {
     }
   }, [
     currentUser?.contactid,
-    currentUser?._actum_languageid_value,
     currentUser?._parentcustomerid_value,
     currentUser?.firstname,
     currentUser?.lastname,
     currentUser?.fullname,
+    i18n.language,
     t,
   ]);
 
