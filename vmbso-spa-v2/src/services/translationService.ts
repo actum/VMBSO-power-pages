@@ -6,11 +6,6 @@ import { apiClient } from './apiClient';
 import { config } from '../config/powerPages.config';
 import { mapDataverseToFrontend } from '../utils/languageMapper';
 
-// Import local translations for dev mode and fallback
-import engbTranslations from '../i18n/engb.json';
-import frfrTranslations from '../i18n/frfr.json';
-import benlTranslations from '../i18n/benl.json';
-
 interface TranslationRecord {
   actum_translationid: string;
   actum_translationname: string;
@@ -34,13 +29,43 @@ const LANGUAGE_NAME_MAP: Record<string, string> = {
 };
 
 /**
- * Local fallback translations
+ * Lazy loaders for local fallback translations, keyed by frontend language code.
+ * Dynamic imports keep these JSON payloads out of the main bundle — they are only
+ * fetched (as a separate chunk) when Dataverse is unavailable or in dev mode.
  */
-const LOCAL_TRANSLATIONS: TranslationResources = {
-  'en-GB': engbTranslations,
-  'fr-FR': frfrTranslations,
-  'be-NL': benlTranslations,
+const LOCAL_TRANSLATION_LOADERS: Record<string, () => Promise<any>> = {
+  'en-GB': () => import('../i18n/engb.json').then((m) => m.default),
+  'fr-FR': () => import('../i18n/frfr.json').then((m) => m.default),
+  'be-NL': () => import('../i18n/benl.json').then((m) => m.default),
 };
+
+let localTranslationsCache: TranslationResources | null = null;
+
+/**
+ * Load a single local fallback translation by frontend language code.
+ */
+async function loadLocalTranslation(languageCode: string): Promise<any | undefined> {
+  const loader = LOCAL_TRANSLATION_LOADERS[languageCode];
+  return loader ? loader() : undefined;
+}
+
+/**
+ * Load all local fallback translations (used for dev mode / total Dataverse failure).
+ */
+async function loadLocalTranslations(): Promise<TranslationResources> {
+  if (localTranslationsCache) {
+    return localTranslationsCache;
+  }
+
+  const entries = await Promise.all(
+    Object.entries(LOCAL_TRANSLATION_LOADERS).map(
+      async ([code, loader]) => [code, await loader()] as const
+    )
+  );
+
+  localTranslationsCache = Object.fromEntries(entries);
+  return localTranslationsCache;
+}
 
 /**
  * Cache for translations to avoid repeated fetches
@@ -89,8 +114,9 @@ async function loadTranslationsFromDataverse(): Promise<TranslationResources> {
       } catch (error) {
         console.error(`[Translation] ✗ Failed to parse ${record.actum_translationname}:`, error);
         // Use local fallback for this language
-        if (LOCAL_TRANSLATIONS[frontendLanguageCode]) {
-          resources[frontendLanguageCode] = LOCAL_TRANSLATIONS[frontendLanguageCode];
+        const fallback = await loadLocalTranslation(frontendLanguageCode);
+        if (fallback) {
+          resources[frontendLanguageCode] = fallback;
           console.log(`[Translation] → Using local fallback for ${frontendLanguageCode}`);
         }
       }
@@ -99,7 +125,7 @@ async function loadTranslationsFromDataverse(): Promise<TranslationResources> {
     // Ensure we have at least the fallback language
     if (!resources['en-GB']) {
       console.warn('[Translation] Missing English translations, using local fallback');
-      resources['en-GB'] = LOCAL_TRANSLATIONS['en-GB'];
+      resources['en-GB'] = await loadLocalTranslation('en-GB');
     }
 
     console.log(`[Translation] Successfully loaded ${successCount}/${response.value?.length || 0} translations from Dataverse`);
@@ -119,7 +145,7 @@ async function loadTranslationsFromDataverse(): Promise<TranslationResources> {
 export async function loadTranslations(): Promise<TranslationResources> {
   if (config.devMode) {
     console.log('[Translation] 🔧 DEV MODE: Using local JSON files');
-    return LOCAL_TRANSLATIONS;
+    return loadLocalTranslations();
   }
 
   console.log('[Translation] 🌐 PRODUCTION MODE: Loading from Dataverse');
@@ -128,7 +154,7 @@ export async function loadTranslations(): Promise<TranslationResources> {
   } catch (error) {
     console.error('[Translation] ⚠️  Dataverse load failed, falling back to local files');
     // Fallback to local files if Dataverse fails
-    return LOCAL_TRANSLATIONS;
+    return loadLocalTranslations();
   }
 }
 
