@@ -22,7 +22,6 @@ import { type Contact } from "../types/contact";
 import { type Account } from "../types/account";
 import { type Brand } from "../types/brand";
 import { type Country } from "../types/country";
-import { type Language } from "../types/language";
 import { type Role } from "../types/role";
 import { dataverseService } from "../services/dataverseService";
 import { apiClient } from "../services/apiClient";
@@ -31,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import InputLabelField from "../components/common/ui/InputLabelField";
-import { mapDataverseToFrontend } from "../utils/languageMapper";
 import { isValidE164, autoFormatPhone } from "../utils/phoneUtils";
 
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
@@ -76,14 +74,6 @@ export const UpdateProfile: React.FC = () => {
     return translated === key ? roleName : translated;
   };
 
-  const translateLanguage = (languageCode: string): string => {
-    // Map Dataverse code (nl-NL) to frontend code (be-NL) before translation lookup
-    const frontendCode = mapDataverseToFrontend(languageCode);
-    const key = `languages:options.${frontendCode}`;
-    const translated = t(key);
-    return translated === key ? languageCode : translated; // Fallback to original if not found
-  };
-
   // Set page title from translation
   useEffect(() => { 
     document.title = t('updateProfilePage:pageTitle');
@@ -97,11 +87,9 @@ export const UpdateProfile: React.FC = () => {
   // Dynamic lookup data
   const [brands, setBrands] = useState<Brand[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [countriesLoading, setCountriesLoading] = useState(true);
-  const [languagesLoading, setLanguagesLoading] = useState(false);
   const [rolesLoading, setRolesLoading] = useState(true);
 
   useEffect(() => {
@@ -148,23 +136,18 @@ export const UpdateProfile: React.FC = () => {
     }).catch(() => setRolesLoading(false));
   }, [currentUser]);
 
-  // Fetch languages filtered by selected country
+  // Clear the selected language if it no longer belongs to the newly selected country
   useEffect(() => {
     const countryId = values.actum_primarycountry;
     if (!countryId) {
-      setLanguages([]);
       return;
     }
-    setLanguagesLoading(true);
     dataverseService.languages.getByCountry(countryId).then(data => {
-      setLanguages(data);
-      // Clear language if it no longer belongs to the newly selected country
       setValues(prev => {
         const stillValid = data.some(l => l.actum_languageid === prev.actum_language);
         return stillValid ? prev : { ...prev, actum_language: undefined };
       });
-      setLanguagesLoading(false);
-    }).catch(() => setLanguagesLoading(false));
+    });
   }, [values.actum_primarycountry]);
 
   const handleChange = (field: keyof Contact) => (

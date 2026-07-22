@@ -147,7 +147,7 @@ export const useDocuments = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.contactid, currentUser?._actum_languageid_value]);
+  }, [currentUser?.contactid]);
 
   useEffect(() => {
     fetchDocuments();

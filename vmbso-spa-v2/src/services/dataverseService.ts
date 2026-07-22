@@ -55,14 +55,6 @@ function parseFlowArrayData<T>(response: FlowArrayResponse<T>, entityName: strin
   return payload;
 }
 
-function isFlowArrayResponse<T>(value: unknown): value is FlowArrayResponse<T> {
-  if (!value || typeof value !== 'object') {
-    return false;
-  }
-
-  return 'status' in value || 'data' in value || 'message' in value;
-}
-
 /**
  * OData query builder
  */

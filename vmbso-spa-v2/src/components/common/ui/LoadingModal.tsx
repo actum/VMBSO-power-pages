@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Box, CircularProgress, Typography, Paper } from '@mui/material';
+import { Modal, CircularProgress, Typography, Paper } from '@mui/material';
 
 type LoadingModalProps = {
   open: boolean;

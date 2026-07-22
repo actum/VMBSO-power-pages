@@ -131,6 +131,7 @@ export const useHomePage = () => {
   }, [
     currentUser?.contactid,
     currentUser?._parentcustomerid_value,
+    currentUser?._actum_languageid_value,
     currentUser?.firstname,
     currentUser?.lastname,
     currentUser?.fullname,

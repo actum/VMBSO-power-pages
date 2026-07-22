@@ -4,7 +4,6 @@
 
 import { apiClient } from './apiClient';
 import { config } from '../config/powerPages.config';
-import { mapDataverseToFrontend } from '../utils/languageMapper';
 
 interface TranslationRecord {
   actum_translationid: string;

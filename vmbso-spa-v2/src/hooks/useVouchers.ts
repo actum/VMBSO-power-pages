@@ -56,7 +56,7 @@ export const useVouchers = (): UseVouchersReturn => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?._parentcustomerid_value]);
+  }, [currentUser?._parentcustomerid_value, isDistributorUser]);
 
   useEffect(() => {
     fetchData();
