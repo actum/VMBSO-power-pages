@@ -1,11 +1,43 @@
 # Clean up old build artifacts from web-files directory
-# Keeps only the files referenced in asset-manifest.json
+# Keeps only the files matching the hashes of the freshly-built Vite output in ./build
+# (npm run deploy always runs `npm run build` immediately before this script).
 
 $webFilesPaths = @(
     ".powerpages-site\web-files"
 )
 
+$buildPath = "build"
 $totalDeleted = 0
+
+if (-not (Test-Path $buildPath)) {
+    Write-Host "WARNING: build folder not found at: $buildPath" -ForegroundColor Yellow
+    Write-Host "Run 'npm run build' before 'npm run cleanup' so current hashes can be determined." -ForegroundColor Yellow
+    exit 0
+}
+
+# Determine current hashes directly from the freshly-built output, since Vite/Rollup
+# hashes are mixed-case + digits + '_'/'-' (e.g. main.Bz9X80SW.js) and there is no
+# asset-manifest.json to parse (that was a CRA/webpack artifact).
+$currentHashes = @()
+$buildAssets = Get-ChildItem -Path "$buildPath\static\js", "$buildPath\static\css" -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -match "main\.([A-Za-z0-9_-]+)\.(js|css)" }
+
+foreach ($file in $buildAssets) {
+    if ($file.Name -match "main\.([A-Za-z0-9_-]+)\.(js|css)") {
+        $currentHashes += $matches[1]
+    }
+}
+
+$currentHashes = $currentHashes | Select-Object -Unique
+
+if ($currentHashes.Count -eq 0) {
+    Write-Host "WARNING: no main.*.js/css files found under $buildPath\static" -ForegroundColor Yellow
+    Write-Host "Run 'npm run build' before 'npm run cleanup' so current hashes can be determined." -ForegroundColor Yellow
+    exit 0
+}
+
+Write-Host "`nCurrent build hashes to KEEP:" -ForegroundColor Green
+$currentHashes | ForEach-Object { Write-Host "  main.$_.*" -ForegroundColor Green }
 
 foreach ($webFilesPath in $webFilesPaths) {
     if (-not (Test-Path $webFilesPath)) {
@@ -13,37 +45,13 @@ foreach ($webFilesPath in $webFilesPaths) {
         continue
     }
 
-    $manifestPath = "$webFilesPath\asset-manifest.json\asset-manifest.json"
-    
-    if (-not (Test-Path $manifestPath)) {
-        Write-Host "WARNING: asset-manifest.json not found at: $manifestPath" -ForegroundColor Yellow
-        continue
-    }
-
     Write-Host "`n========================================" -ForegroundColor Cyan
     Write-Host "Cleaning: $webFilesPath" -ForegroundColor Cyan
     Write-Host "========================================" -ForegroundColor Cyan
 
-    # Read the manifest to find current files
-    $manifest = Get-Content $manifestPath | ConvertFrom-Json
-    $currentHashes = @()
-
-    # Extract current file hashes from the manifest
-    foreach ($file in $manifest.files.PSObject.Properties.Value) {
-        if ($file -match "main\.([a-f0-9]+)\.(js|css)") {
-            $hash = $matches[1]
-            $currentHashes += $hash
-        }
-    }
-
-    $currentHashes = $currentHashes | Select-Object -Unique
-
-    Write-Host "`nCurrent build hashes to KEEP:" -ForegroundColor Green
-    $currentHashes | ForEach-Object { Write-Host "  main.$_.*" -ForegroundColor Green }
-
     # Find all main.* directories in web-files
-    $allMainFiles = Get-ChildItem -Path $webFilesPath -Directory | 
-        Where-Object { $_.Name -match "^main\.([a-f0-9]+)\." }
+    $allMainFiles = Get-ChildItem -Path $webFilesPath -Directory |
+        Where-Object { $_.Name -match "^main\.([A-Za-z0-9_-]+)\." }
 
     Write-Host "`nTotal main.* files found: $($allMainFiles.Count)" -ForegroundColor Cyan
 
@@ -52,7 +60,7 @@ foreach ($webFilesPath in $webFilesPaths) {
     foreach ($dir in $allMainFiles) {
         $filename = $dir.Name
         # Extract hash from filename
-        if ($filename -match "main\.([a-f0-9]+)\.") {
+        if ($filename -match "^main\.([A-Za-z0-9_-]+)\.") {
             $fileHash = $matches[1]
             if ($currentHashes -notcontains $fileHash) {
                 $toDelete += $dir
