@@ -150,7 +150,7 @@ export const isDistributor = (user: Contact | null): boolean => {
   //   REACT_APP_DEV_ROLE=installer → installer view
   //   REACT_APP_DEV_ROLE=distributor (default) → distributor view
   if (config.devMode) {
-    const devRole = process.env.REACT_APP_DEV_ROLE ?? 'distributor';
+    const devRole = import.meta.env.REACT_APP_DEV_ROLE ?? 'distributor';
     return devRole === 'distributor';
   }
 

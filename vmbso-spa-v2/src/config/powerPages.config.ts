@@ -12,21 +12,21 @@
  *                        the Entra External ID session (single sign-out)
  */
 
-const PORTAL_URL = process.env.REACT_APP_PORTAL_URL ?? '';
+const PORTAL_URL = import.meta.env.REACT_APP_PORTAL_URL ?? '';
 
 console.log('[CONFIG DEBUG] PORTAL_URL:', PORTAL_URL);
-console.log('[CONFIG DEBUG] NODE_ENV:', process.env.NODE_ENV);
-console.log('[CONFIG DEBUG] devMode will be:', process.env.NODE_ENV === 'development');
-console.log('[CONFIG DEBUG] REACT_APP_ENTRA_PROVIDER:', process.env.REACT_APP_ENTRA_PROVIDER);
+console.log('[CONFIG DEBUG] NODE_ENV:', import.meta.env.MODE);
+console.log('[CONFIG DEBUG] devMode will be:', import.meta.env.DEV);
+console.log('[CONFIG DEBUG] REACT_APP_ENTRA_PROVIDER:', import.meta.env.REACT_APP_ENTRA_PROVIDER);
 
 export const config = {
   /**
    * Whether the app is running in local development mode.
-   * Uses NODE_ENV which CRA sets automatically: 'development' for `npm start`,
-   * 'production' for `npm run build`. Cannot be overridden from .env files by design,
-   * so this can never accidentally be true in a production build.
+   * Vite sets import.meta.env.DEV to true for `vite dev` / `npm run dev`,
+   * and false for `vite build` / `npm run build`. Cannot be overridden from
+   * .env files by design, so this can never accidentally be true in a production build.
    */
-  devMode: process.env.NODE_ENV === 'development',
+  devMode: import.meta.env.DEV,
 
   /** Power Pages / Entra External ID redirect endpoints. */
   auth: {
@@ -47,7 +47,7 @@ export const config = {
      *   3. Copy the `value` attribute (looks like https://vmbsodev.ciamlogin.com/<tenant>/)
      *   4. Set it in REACT_APP_ENTRA_PROVIDER in .env.production
      */
-    providerScheme: process.env.REACT_APP_ENTRA_PROVIDER ?? '',
+    providerScheme: import.meta.env.REACT_APP_ENTRA_PROVIDER ?? '',
     /** Where Power Pages should redirect after successful authentication. */
     returnUrl: '/login',
     /** Federated logout URL — clears both Power Pages and Entra sessions. */

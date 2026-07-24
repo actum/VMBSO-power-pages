@@ -61,8 +61,8 @@ export function CookiesProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    if (process.env.REACT_APP_GOOGLE_ANALYTICS_ID) {
-      ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+    if (import.meta.env.REACT_APP_GOOGLE_ANALYTICS_ID) {
+      ReactGA.initialize(import.meta.env.REACT_APP_GOOGLE_ANALYTICS_ID);
     }
 
     setOpen(true);
