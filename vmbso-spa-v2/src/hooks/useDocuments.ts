@@ -7,7 +7,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../services/apiClient';
 import { config } from '../config/powerPages.config';
-import { ProductDocument, DocumentWithBrands } from '../types/document';
+import type { ProductDocument, DocumentWithBrands } from '../types/document';
 import { useAuth } from '../contexts/AuthContext';
 
 const DEV_MOCK_DOCUMENTS: DocumentWithBrands[] = [

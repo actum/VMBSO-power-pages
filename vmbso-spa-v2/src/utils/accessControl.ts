@@ -1,4 +1,4 @@
-import { Contact } from '../types/contact';
+import type { Contact } from '../types/contact';
 import { config } from '../config/powerPages.config';
 
 // Approval status codes from Dataverse
