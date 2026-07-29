@@ -4,9 +4,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ReactGA from 'react-ga4';
 import theme from './theme/theme';
 import { AuthProvider } from './contexts/AuthContext';
-// import { CookiesProvider } from './contexts/CookiesContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Documents } from './pages/Documents';
@@ -30,6 +30,24 @@ const CatchAll: React.FC = () => {
     location.pathname.startsWith('/signin-') ||
     new URLSearchParams(location.search).has('error');
   return isEntraCallback ? <Navigate to="/login" replace /> : <NotFound />;
+};
+
+const GA_MEASUREMENT_ID = import.meta.env.REACT_APP_GOOGLE_ANALYTICS_ID;
+
+/**
+ * Sends a GA4 pageview on every route change.
+ * No-ops entirely when GA_MEASUREMENT_ID isn't set (main.tsx never
+ * initialized ReactGA in that case, so nothing fires and no cookie is set).
+ */
+const PageViewTracker: React.FC = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!GA_MEASUREMENT_ID) return;
+    ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search });
+  }, [location]);
+
+  return null;
 };
 
 function App() {
@@ -61,9 +79,9 @@ function App() {
         pauseOnHover
       />
       <Router>
-        {/* <CookiesProvider> */}
           <AuthProvider>
             <LangHandler />
+            <PageViewTracker />
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
@@ -133,7 +151,6 @@ function App() {
               <Route path="*" element={<CatchAll />} />
             </Routes>
           </AuthProvider>
-        {/* </CookiesProvider> */}
       </Router>
     </ThemeProvider>
   );

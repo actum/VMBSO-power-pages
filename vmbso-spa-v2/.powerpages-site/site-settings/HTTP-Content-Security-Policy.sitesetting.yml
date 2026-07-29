@@ -1,4 +1,4 @@
 id: bc7da2d7-7023-f111-8341-7ced8d428823
 name: HTTP/Content-Security-Policy
 source: 0
-value: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://content.powerapps.com;
+value: script-src 'self' content.powerapps.com content.powerapps.us content.appsplatform.us content.powerapps.cn 'nonce'; style-src 'unsafe-inline' https:;

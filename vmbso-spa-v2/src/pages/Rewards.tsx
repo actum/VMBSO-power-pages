@@ -38,7 +38,7 @@ import {
   TrendingDown as TrendingDownIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import * as ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import { Layout } from '../components/Layout';
 import { useRewards } from '../hooks/useRewards';
 import { useAuth } from '../contexts/AuthContext';
@@ -121,12 +121,11 @@ export const Rewards: React.FC = () => {
   // Track when rewards catalog is viewed
   useEffect(() => {
     if (!loading && !error && rewards.length > 0) {
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Rewards',
-        eventAction: 'View Catalog',
-        eventLabel: `${rewards.length} rewards available, ${balance} points`,
-        eventValue: balance,
+      ReactGA.event({
+        category: 'Rewards',
+        action: 'View Catalog',
+        label: `${rewards.length} rewards available, ${balance} points`,
+        value: balance,
       });
     }
   }, [loading, error, rewards.length, balance]);
@@ -137,12 +136,11 @@ export const Rewards: React.FC = () => {
     setClaimModalOpen(true);
 
     // Track when user opens claim modal
-    ReactGA.send({
-      hitType: 'event',
-      eventCategory: 'Rewards',
-      eventAction: 'Open Claim Modal',
-      eventLabel: reward.actum_name,
-      eventValue: reward.actum_pointamount,
+    ReactGA.event({
+      category: 'Rewards',
+      action: 'Open Claim Modal',
+      label: reward.actum_name,
+      value: reward.actum_pointamount,
     });
   };
 
@@ -204,12 +202,11 @@ export const Rewards: React.FC = () => {
         });
 
         // Track successful reward claim
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Rewards',
-          eventAction: 'Claim Success',
-          eventLabel: selectedReward.actum_name,
-          eventValue: selectedReward.actum_pointamount,
+        ReactGA.event({
+          category: 'Rewards',
+          action: 'Claim Success',
+          label: selectedReward.actum_name,
+          value: selectedReward.actum_pointamount,
         });
 
         // Close claim modal and open success modal
@@ -217,11 +214,10 @@ export const Rewards: React.FC = () => {
         setSuccessModalOpen(true);
       } else {
         // Track claim failure
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Rewards',
-          eventAction: 'Claim Failed',
-          eventLabel: `${selectedReward.actum_name} - Unknown error`,
+        ReactGA.event({
+          category: 'Rewards',
+          action: 'Claim Failed',
+          label: `${selectedReward.actum_name} - Unknown error`,
         });
 
         setClaimError(t('errorMessages.claimFailed'));
@@ -231,11 +227,10 @@ export const Rewards: React.FC = () => {
       const errorMessage = err instanceof Error ? err.message : t('errorMessages.networkError');
       
       // Track claim error
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Rewards',
-        eventAction: 'Claim Error',
-        eventLabel: `${selectedReward.actum_name} - ${errorMessage}`,
+      ReactGA.event({
+        category: 'Rewards',
+        action: 'Claim Error',
+        label: `${selectedReward.actum_name} - ${errorMessage}`,
       });
 
       setClaimError(errorMessage);

@@ -5,12 +5,19 @@ import './i18n';
 import { initializeTranslations } from './i18n';
 import App from './App';
 import { TranslationLoader } from './components/TranslationLoader';
-import * as ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 const MEASUREMENT_ID = import.meta.env.REACT_APP_GOOGLE_ANALYTICS_ID;
 
 if (MEASUREMENT_ID) {
-  ReactGA.initialize(MEASUREMENT_ID);
+  // Only initializes (and only sets GA cookies) when the env var is present.
+  // gtagOptions.cookie_flags forces the _ga cookie to be Secure, fixing the
+  // "Cookie Without Secure Flag" finding from the Power Pages security scan.
+  ReactGA.initialize(MEASUREMENT_ID, {
+    gtagOptions: {
+      cookie_flags: 'SameSite=Strict;Secure',
+    },
+  });
 } else {
   console.warn('Google Analytics ID is not set.');
 }

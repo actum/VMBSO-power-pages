@@ -17,14 +17,11 @@ import { getCsrfToken } from '../services/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import LanguagePicker from '../components/common/LanguagePicker';
-// import { Cookie as CookieIcon } from '@mui/icons-material'
-// import { CookiesContext } from '../contexts/CookiesContext';
 
 export const Login: React.FC = () => {
   const { isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(["loginPage", "cookies"]);
-  //const { setDialogOpen } = useContext(CookiesContext);
   const [loginLoading, setLoginLoading] = React.useState(false);
 
   React.useEffect(() => { 
@@ -225,20 +222,6 @@ export const Login: React.FC = () => {
         </Grid>
       </Container>
 
-      {/* <Tooltip arrow title={t("cookies:actions.openCookiesTooltip")}>
-        <IconButton
-          onClick={() => setDialogOpen(prev => !prev)}
-          sx={{
-            position: "fixed",
-            bottom: "1rem",
-            left: "1rem",
-            width: "4rem",
-            height: "4rem"
-          }}
-        >
-          <CookieIcon color="secondary" sx={{ width: "4rem", height: "4rem" }}/>
-        </IconButton>
-      </Tooltip> */}
     </Box>
   );
 };

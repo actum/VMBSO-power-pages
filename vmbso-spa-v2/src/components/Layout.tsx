@@ -31,7 +31,6 @@ import LanguagePicker from './common/LanguagePicker';
 import { canAccessInvoices } from '../utils/accessControl';
 import { canAccessRewards } from '../utils/accessControl';
 import { canAccessVouchers } from '../utils/accessControl';
-// import { CookiesContext } from '../contexts/CookiesContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -49,7 +48,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  // const { setDialogOpen } = useContext(CookiesContext);
 
   const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -308,16 +306,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Typography variant="body2" color="white">
             {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
-          {/* <Link
-            color="primary.contrastText"
-            component="a"
-            variant="caption"
-            underline="always"
-            onClick={() => setDialogOpen(prev => !prev)}
-            sx={{ cursor: "pointer" }}
-          >
-            {t('footer:cookieSettings')}
-          </Link> */}
         </Container>
       </Box>
     </Box>

@@ -39,7 +39,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import * as ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import { Layout } from '../components/Layout';
 import { LoadingModal } from '../components/common/ui/LoadingModal';
 import { useVouchers } from '../hooks/useVouchers';
@@ -80,12 +80,11 @@ export const Vouchers: React.FC = () => {
   // Track page view when vouchers load
   useEffect(() => {
     if (!loading && !error && vouchers.length >= 0) {
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Vouchers',
-        eventAction: 'View Vouchers List',
-        eventLabel: `${vouchers.length} vouchers`,
-        eventValue: vouchers.length,
+      ReactGA.event({
+        category: 'Vouchers',
+        action: 'View Vouchers List',
+        label: `${vouchers.length} vouchers`,
+        value: vouchers.length,
       });
     }
   }, [loading, error, vouchers.length]);
@@ -130,11 +129,10 @@ export const Vouchers: React.FC = () => {
     setDetailModalOpen(true);
 
     // Track detail view
-    ReactGA.send({
-      hitType: 'event',
-      eventCategory: 'Vouchers',
-      eventAction: 'Open Voucher Detail',
-      eventLabel: getVoucherStatus(voucher.statuscode),
+    ReactGA.event({
+      category: 'Vouchers',
+      action: 'Open Voucher Detail',
+      label: getVoucherStatus(voucher.statuscode),
     });
   };
 
@@ -149,11 +147,10 @@ export const Vouchers: React.FC = () => {
       toast.success(t('detail.copiedSuccess'));
 
       // Track copy action
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Vouchers',
-        eventAction: 'Copy Voucher Code',
-        eventLabel: code,
+      ReactGA.event({
+        category: 'Vouchers',
+        action: 'Copy Voucher Code',
+        label: code,
       });
     } catch (err) {
       toast.error('Failed to copy code');
@@ -183,11 +180,10 @@ export const Vouchers: React.FC = () => {
     setStatusFilter(value);
 
     // Track filter action
-    ReactGA.send({
-      hitType: 'event',
-      eventCategory: 'Vouchers',
-      eventAction: 'Filter Vouchers',
-      eventLabel: `status: ${value}`,
+    ReactGA.event({
+      category: 'Vouchers',
+      action: 'Filter Vouchers',
+      label: `status: ${value}`,
     });
   };
 
@@ -222,20 +218,18 @@ export const Vouchers: React.FC = () => {
         setConfirmModalOpen(true);
         toast.success(t('redemption.validVoucher'));
 
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Vouchers',
-          eventAction: 'Validate Voucher Success',
-          eventLabel: redemptionCode,
+        ReactGA.event({
+          category: 'Vouchers',
+          action: 'Validate Voucher Success',
+          label: redemptionCode,
         });
       } else {
         toast.error(result.message || t('redemption.errors.validationFailed'));
 
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Vouchers',
-          eventAction: 'Validate Voucher Failed',
-          eventLabel: result.message || 'Unknown error',
+        ReactGA.event({
+          category: 'Vouchers',
+          action: 'Validate Voucher Failed',
+          label: result.message || 'Unknown error',
         });
       }
     } catch (err) {
@@ -243,11 +237,10 @@ export const Vouchers: React.FC = () => {
       toast.error(message);
       console.error('Error validating voucher:', err);
 
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Vouchers',
-        eventAction: 'Validate Voucher Error',
-        eventLabel: message,
+      ReactGA.event({
+        category: 'Vouchers',
+        action: 'Validate Voucher Error',
+        label: message,
       });
     } finally {
       setValidating(false);
@@ -291,20 +284,18 @@ export const Vouchers: React.FC = () => {
         // Refresh voucher list
         await refetch();
 
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Vouchers',
-          eventAction: 'Redeem Voucher Success',
-          eventLabel: redemptionCode,
+        ReactGA.event({
+          category: 'Vouchers',
+          action: 'Redeem Voucher Success',
+          label: redemptionCode,
         });
       } else {
         toast.error(result.message || t('redemption.errors.redemptionFailed'));
 
-        ReactGA.send({
-          hitType: 'event',
-          eventCategory: 'Vouchers',
-          eventAction: 'Redeem Voucher Failed',
-          eventLabel: result.message || 'Unknown error',
+        ReactGA.event({
+          category: 'Vouchers',
+          action: 'Redeem Voucher Failed',
+          label: result.message || 'Unknown error',
         });
       }
     } catch (err) {
@@ -312,11 +303,10 @@ export const Vouchers: React.FC = () => {
       toast.error(message);
       console.error('Error redeeming voucher:', err);
 
-      ReactGA.send({
-        hitType: 'event',
-        eventCategory: 'Vouchers',
-        eventAction: 'Redeem Voucher Error',
-        eventLabel: message,
+      ReactGA.event({
+        category: 'Vouchers',
+        action: 'Redeem Voucher Error',
+        label: message,
       });
     } finally {
       setRedeeming(false);
