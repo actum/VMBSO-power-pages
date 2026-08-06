@@ -461,7 +461,8 @@
       },
       "error": {
         "title": "Upload mislukt",
-        "message": "Er is een fout opgetreden bij het uploaden van uw factuur. Probeer het opnieuw."
+        "message": "Er is een fout opgetreden bij het uploaden van uw factuur. Probeer het opnieuw.",
+        "attachFailed": "We konden uw bestand niet aan de factuur koppelen. Probeer het opnieuw en neem contact op met support als het probleem blijft aanhouden."
       }
     }
   },

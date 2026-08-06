@@ -461,7 +461,8 @@
       },
       "error": {
         "title": "Échec du téléchargement",
-        "message": "Une erreur s'est produite lors du téléchargement de votre facture. Veuillez réessayer."
+        "message": "Une erreur s'est produite lors du téléchargement de votre facture. Veuillez réessayer.",
+        "attachFailed": "Nous n'avons pas pu joindre votre fichier à la facture. Veuillez réessayer et, si le problème persiste, contactez le support."
       }
     }
   },

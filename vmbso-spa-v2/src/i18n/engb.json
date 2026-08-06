@@ -465,7 +465,8 @@
       },
       "error": {
         "title": "Upload failed",
-        "message": "There was an error uploading your invoice. Please try again."
+        "message": "There was an error uploading your invoice. Please try again.",
+        "attachFailed": "We could not attach your file to the invoice. Please try again, and if the problem continues, contact support."
       }
     }
   },
