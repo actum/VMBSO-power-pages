@@ -11,6 +11,7 @@ import type { Country } from '../types/country';
 import type { Language } from '../types/language';
 import type { Role } from '../types/role';
 import type { Invoice, InvoiceItem } from '../types/invoice';
+import { InvoiceStatusCode } from '../types/invoice';
 import type { Reward } from '../types/reward';
 import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
 import type { Voucher } from '../types/voucher';
@@ -28,6 +29,19 @@ type UploadInvoiceArgs = {
   accountId: string;
   file: File;
 };
+
+/**
+ * Thrown when the invoice record was created but the file could not be attached.
+ * Carries no user-facing text itself — callers map it to a translated message,
+ * since this service layer has no access to i18n.
+ */
+export class InvoiceAttachError extends Error {
+  constructor(cause: unknown) {
+    super('Failed to attach file to invoice');
+    this.name = 'InvoiceAttachError';
+    this.cause = cause;
+  }
+}
 
 function parseFlowArrayData<T>(response: FlowArrayResponse<T>, entityName: string): T[] {
   if (response?.status === '500') {
@@ -53,6 +67,34 @@ function parseFlowArrayData<T>(response: FlowArrayResponse<T>, entityName: strin
   }
 
   return payload;
+}
+
+/**
+ * HTTP header values must be ISO-8859-1 (Latin-1); characters outside that range
+ * (smart quotes, en/em dashes, CJK/Cyrillic/Arabic scripts, emoji, etc.) make the
+ * browser throw synchronously when the filename is used as a header value, so
+ * upload never reaches the network. Strip/replace anything outside Latin-1 while
+ * keeping the name readable and preserving the extension.
+ */
+function sanitizeFileNameForHeader(fileName: string): string {
+  const lastDotIndex = fileName.lastIndexOf('.');
+  const hasExtension = lastDotIndex > 0 && lastDotIndex < fileName.length - 1;
+  const base = hasExtension ? fileName.slice(0, lastDotIndex) : fileName;
+  const extension = hasExtension ? fileName.slice(lastDotIndex) : '';
+
+  /* eslint-disable no-control-regex -- Latin-1/control-char ranges are intentional here */
+  const sanitize = (value: string) =>
+    value
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '') // drop combining diacritics left after NFKD normalization
+      .replace(/[^\x00-\xFF]/g, '_') // replace remaining non-Latin-1 chars
+      .replace(/[\x00-\x1F\x7F]/g, ''); // strip control characters
+  /* eslint-enable no-control-regex */
+
+  const sanitizedBase = sanitize(base).trim() || 'invoice';
+  const sanitizedExtension = sanitize(extension);
+
+  return `${sanitizedBase}${sanitizedExtension}`;
 }
 
 /**
@@ -738,32 +780,59 @@ export const dataverseService = {
       console.log('[UPLOAD SERVICE] File details:', { name: file.name, type: file.type, size: file.size });
 
       // Step 2: Upload file to the file column
-      const fileBytes = await file.arrayBuffer();
       const uploadUrl = `${config.api.invoices}(${invoiceId})/actum_invoicedocument`;
-      
-      console.log('[UPLOAD SERVICE] Upload URL:', uploadUrl);
-      
-      const uploadResponse = await fetch(uploadUrl, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/octet-stream',
-          __RequestVerificationToken: token,
-          'x-requested-with': 'XMLHttpRequest',
-          'x-ms-file-name': file.name,
-        },
-        body: fileBytes,
-      });
+      const safeFileName = sanitizeFileNameForHeader(file.name);
 
-      console.log('[UPLOAD SERVICE] Step 2 response status:', uploadResponse.status);
+      try {
+        const fileBytes = await file.arrayBuffer();
 
-      if (!uploadResponse.ok) {
-        const details = await uploadResponse.text().catch(() => '');
-        console.error('[UPLOAD SERVICE] Step 2 failed:', uploadResponse.status, details);
-        throw new Error(`Failed to upload file: ${uploadResponse.status}${details ? ` - ${details}` : ''}`);
+        console.log('[UPLOAD SERVICE] Upload URL:', uploadUrl);
+        console.log('[UPLOAD SERVICE] Sanitized file name for header:', safeFileName);
+
+        const uploadResponse = await fetch(uploadUrl, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            __RequestVerificationToken: token,
+            'x-requested-with': 'XMLHttpRequest',
+            'x-ms-file-name': safeFileName,
+          },
+          body: fileBytes,
+        });
+
+        console.log('[UPLOAD SERVICE] Step 2 response status:', uploadResponse.status);
+
+        if (!uploadResponse.ok) {
+          const details = await uploadResponse.text().catch(() => '');
+          throw new Error(`Failed to upload file: ${uploadResponse.status}${details ? ` - ${details}` : ''}`);
+        }
+
+        console.log('[UPLOAD SERVICE] Step 2 success. File uploaded.');
+      } catch (uploadError) {
+        console.error('[UPLOAD SERVICE] Step 2 failed, marking invoice record as canceled:', invoiceId, uploadError);
+
+        // The invoice record from Step 1 has no file attached. The portal contact only has
+        // write (not delete) permission on this table, so mark it canceled rather than
+        // leaving it as an invisible, permanently-incomplete "draft" — this also avoids
+        // granting delete access, which would let users remove already-submitted invoices.
+        try {
+          await fetch(`${config.api.invoices}(${invoiceId})`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              __RequestVerificationToken: token,
+              'x-requested-with': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ statuscode: InvoiceStatusCode.CANCELED }),
+          });
+        } catch (cleanupError) {
+          console.error('[UPLOAD SERVICE] Failed to mark invoice record as canceled:', invoiceId, cleanupError);
+        }
+
+        throw new InvoiceAttachError(uploadError);
       }
-
-      console.log('[UPLOAD SERVICE] Step 2 success. File uploaded.');
 
       // Return the created invoice
       return createdInvoice;
