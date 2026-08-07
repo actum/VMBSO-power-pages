@@ -8,9 +8,16 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+build
 dist
 dist-ssr
 *.local
+
+# Power Pages: generated per-download artifacts (see Microsoft docs — these are
+# rebuilt by pac pages download/upload and shouldn't be diffed across environments)
+.powerpages-site/web-files/
+.powerpages-site/.portalconfig/*-manifest.yml
+!.powerpages-site/.portalconfig/manifest.yml
 
 # Editor directories and files
 .vscode/*

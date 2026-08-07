@@ -16,7 +16,7 @@ import {
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
-import { dataverseService } from "../../services/dataverseService";
+import { dataverseService, InvoiceAttachError } from "../../services/dataverseService";
 import type { Invoice } from '../../types/invoice';
 import { LoadingModal } from '../common/ui/LoadingModal';
 
@@ -146,7 +146,11 @@ export const UploadNewInvoice: React.FC<UploadNewInvoiceProps> = ({ onUploaded }
       onUploaded?.(uploadedInvoice);
     } catch (error) {
       console.error('[UPLOAD] Error:', error);
-      const message = error instanceof Error ? error.message : t("error.message");
+      const message = error instanceof InvoiceAttachError
+        ? t("error.attachFailed")
+        : error instanceof Error
+          ? error.message
+          : t("error.message");
       setErrorMessage(message);
       setSuccessMessage(null);
     } finally {
