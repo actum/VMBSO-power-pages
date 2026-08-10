@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReactGA from 'react-ga4';
+import { config } from './config/powerPages.config';
 import theme from './theme/theme';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -32,18 +33,16 @@ const CatchAll: React.FC = () => {
   return isEntraCallback ? <Navigate to="/login" replace /> : <NotFound />;
 };
 
-const GA_MEASUREMENT_ID = import.meta.env.REACT_APP_GOOGLE_ANALYTICS_ID;
-
 /**
  * Sends a GA4 pageview on every route change.
- * No-ops entirely when GA_MEASUREMENT_ID isn't set (main.tsx never
- * initialized ReactGA in that case, so nothing fires and no cookie is set).
+ * No-ops entirely when config.analytics.googleAnalyticsId isn't set (main.tsx
+ * never initialized ReactGA in that case, so nothing fires and no cookie is set).
  */
 const PageViewTracker: React.FC = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    if (!GA_MEASUREMENT_ID) return;
+    if (!config.analytics.googleAnalyticsId) return;
     ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search });
   }, [location]);
 

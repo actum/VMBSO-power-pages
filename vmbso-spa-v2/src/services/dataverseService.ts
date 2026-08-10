@@ -16,6 +16,7 @@ import type { Reward } from '../types/reward';
 import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
 import type { Voucher } from '../types/voucher';
 import type { LandingPageContent, LandingPageCta } from '../types/homePage';
+import type { PublicConfig } from '../types/publicConfig';
 import { config } from '../config/powerPages.config';
 
 type FlowArrayResponse<T> = {
@@ -424,6 +425,30 @@ export const dataverseService = {
           return [];
         }
         throw error;
+      }
+    },
+  },
+
+  /**
+   * Public, non-secret, per-environment runtime config (Entra provider identifier,
+   * GA measurement ID, etc.) — read once at app bootstrap. Anonymous-readable, since
+   * the login page needs it before authentication.
+   */
+  publicConfig: {
+    async getAll(): Promise<PublicConfig[]> {
+      if (config.devMode) {
+        return [];
+      }
+
+      try {
+        const query = buildODataQuery({
+          select: ['actum_publicconfigid', 'actum_name', 'actum_value'],
+        });
+        const response = await apiClient.odata<{ value: PublicConfig[] }>(`/actum_publicconfigs${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        console.error('Error fetching public config:', error);
+        return [];
       }
     },
   },

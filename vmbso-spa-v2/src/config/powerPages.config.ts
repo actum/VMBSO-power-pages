@@ -17,7 +17,6 @@ const PORTAL_URL = import.meta.env.REACT_APP_PORTAL_URL ?? '';
 console.log('[CONFIG DEBUG] PORTAL_URL:', PORTAL_URL);
 console.log('[CONFIG DEBUG] NODE_ENV:', import.meta.env.MODE);
 console.log('[CONFIG DEBUG] devMode will be:', import.meta.env.DEV);
-console.log('[CONFIG DEBUG] REACT_APP_ENTRA_PROVIDER:', import.meta.env.REACT_APP_ENTRA_PROVIDER);
 
 export const config = {
   /**
@@ -41,19 +40,30 @@ export const config = {
      * This must be the AUTHORITY URL of the Entra provider — NOT the scheme name.
      * It is the `value` attribute on the provider button of the Power Pages /signin page.
      *
-     * How to find it:
-     *   1. Open https://<your-portal>/signin
-     *   2. Right-click the "Microsoft Entra External ID" button → Inspect
-     *   3. Copy the `value` attribute (looks like https://vmbsodev.ciamlogin.com/<tenant>/)
-     *   4. Set it in REACT_APP_ENTRA_PROVIDER in .env.production
+     * Populated at runtime from the actum_publicconfig table (see publicConfigService.ts,
+     * loaded once at app bootstrap in main.tsx) instead of a build-time env var — the
+     * Authority URL differs per environment (DEV/TEST/PROD each have their own Entra
+     * External ID tenant), and baking it into the build meant a rebuild was required
+     * every time it changed. Empty until loadPublicConfig() resolves.
      */
-    providerScheme: import.meta.env.REACT_APP_ENTRA_PROVIDER ?? '',
+    providerScheme: '',
     /** Where Power Pages should redirect after successful authentication. */
     returnUrl: '/login',
     /** Federated logout URL — clears both Power Pages and Entra sessions. */
     logoutUrl: '/Account/Login/LogOff?federated=true',
     /** React-side login page (used only in dev mode after mock logout). */
     loginPageUrl: '/login',
+  },
+
+  /** Runtime analytics config, populated from the actum_publicconfig table at bootstrap. */
+  analytics: {
+    /**
+     * GA4 measurement ID. Populated at runtime by publicConfigService.ts instead of a
+     * build-time env var, for the same per-environment reason as auth.providerScheme.
+     * Empty/undefined until loadPublicConfig() resolves, or if GA is not configured
+     * for this environment.
+     */
+    googleAnalyticsId: undefined as string | undefined,
   },
 
   /** Dataverse Web API endpoints. */
