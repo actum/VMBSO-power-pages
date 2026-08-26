@@ -244,7 +244,6 @@ export const UpdateProfile: React.FC = () => {
         config.flows.updateProfile,
         {
           hasAccount: vatSearchState === "found" ? "YES" : "NO",
-          contactId: currentUser?.contactid,
           phone: values.telephone1,
           // found-only
           accountId: foundAccount?.accountid,

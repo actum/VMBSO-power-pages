@@ -107,9 +107,7 @@ export const useDocuments = () => {
         status: string;
         data: ProductDocument[] | string;
         message: string;
-      }>(config.flows.fetchDocuments, {
-        contactId: currentUser.contactid,
-      });
+      }>(config.flows.fetchDocuments, {});
 
       if (response?.status === '200') {
         let raw: ProductDocument[];

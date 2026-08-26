@@ -664,9 +664,7 @@ export const dataverseService = {
 
       try {
         // Use apiClient.flow() which handles the proper content-type and format
-        const response = await apiClient.flow<FlowArrayResponse<Invoice>>(config.flows.fetchInvoices, {
-          contactId: contactId,
-        });
+        const response = await apiClient.flow<FlowArrayResponse<Invoice>>(config.flows.fetchInvoices, {});
 
         // Flow returns { status: "Success", data: "[...]" } where data is a JSON string
         if (response?.status === 'Success' || response?.status === '200') {
@@ -892,7 +890,6 @@ export const dataverseService = {
       try {
         const response = await apiClient.flow<FlowArrayResponse<InvoiceItem>>(config.flows.getInvoiceItems, {
           invoiceId,
-          contactId,
         });
 
         return parseFlowArrayData(response, 'invoice items');
@@ -1608,10 +1605,7 @@ export const dataverseService = {
       try {
         // Use Power Automate flow to fetch vouchers with contact names
         // (Direct OData queries can't expand contacts due to permissions)
-        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getVouchers, {
-          accountId: accountId,
-          role: role,
-        });
+        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getVouchers, {});
 
         // Flow returns { status: "200", data: "[...]" } where data is a JSON string
         if (response?.status === 'Success' || response?.status === '200') {
