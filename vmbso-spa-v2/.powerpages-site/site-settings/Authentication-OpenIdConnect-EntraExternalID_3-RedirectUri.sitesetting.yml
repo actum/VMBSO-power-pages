@@ -1,3 +1,5 @@
+envvar_schema: vmbso_entraexternalid_redirecturi
 id: 7cfdce6e-4bf0-4323-829b-c540de3723e2
 name: Authentication/OpenIdConnect/EntraExternalID_3/RedirectUri
-value: https://customerportal-test.powerappsportals.com/signin-entraexternalid_3
+source: 1
+value: https://vmbso-customerportal.powerappsportals.com/signin-entraexternalid_3

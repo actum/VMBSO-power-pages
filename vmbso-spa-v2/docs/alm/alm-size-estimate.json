@@ -1,0 +1,212 @@
+{
+  "siteName": "VMBSO Customer Portal v2",
+  "publisherPrefix": null,
+  "solutionId": null,
+  "totalSizeMB": 24.3,
+  "componentCountSiteTotal": 391,
+  "componentCountSiteActionable": 389,
+  "componentCountInSolution": null,
+  "orphansOnSite": null,
+  "botCountScoped": 1,
+  "botComponentCountScoped": 14,
+  "bundleChunkCount": 2,
+  "bundleChunkNote": "2 hashed bundle chunks (Vite/Rollup) on the site — 0 are in the solution, 2 are orphans from prior pac pages upload-code-site runs. Cleanable via dedicated cleanup pass.",
+  "inSolution": null,
+  "tableCount": 19,
+  "tableCountScope": "site-referenced",
+  "schemaAttrCount": 692,
+  "webFilesAggregateMB": 0,
+  "webFilesIndividual": [],
+  "webFileCount": 38,
+  "webFileSampleSize": 38,
+  "webFilesDiskMeasuredMB": 0.9,
+  "webFilesDiskMeasuredPath": "build",
+  "webFilesDiskFileCount": 14,
+  "cloudFlowCount": 9,
+  "botCount": 4,
+  "envVarCount": 43,
+  "envVarCountScope": "publisher-prefix",
+  "envVarCountTenantWide": 43,
+  "mediaRatio": 0.47,
+  "siteType": "declarative",
+  "tables": [
+    {
+      "logicalName": "actum_brand",
+      "attributeCount": 28
+    },
+    {
+      "logicalName": "actum_calltoactionbutton",
+      "attributeCount": 39
+    },
+    {
+      "logicalName": "actum_calltoactionbutton_actum_newspage",
+      "attributeCount": 4
+    },
+    {
+      "logicalName": "actum_country",
+      "attributeCount": 30
+    },
+    {
+      "logicalName": "actum_downloadlog",
+      "attributeCount": 33
+    },
+    {
+      "logicalName": "actum_invoice",
+      "attributeCount": 92
+    },
+    {
+      "logicalName": "actum_invoiceitem",
+      "attributeCount": 65
+    },
+    {
+      "logicalName": "actum_landingpagecontent",
+      "attributeCount": 49
+    },
+    {
+      "logicalName": "actum_language",
+      "attributeCount": 32
+    },
+    {
+      "logicalName": "actum_loyaltytransaction",
+      "attributeCount": 44
+    },
+    {
+      "logicalName": "actum_newspagecontent",
+      "attributeCount": 45
+    },
+    {
+      "logicalName": "actum_newspagecontent_actum_brand",
+      "attributeCount": 4
+    },
+    {
+      "logicalName": "actum_newspagecontent_actum_role",
+      "attributeCount": 4
+    },
+    {
+      "logicalName": "actum_productdocumentation",
+      "attributeCount": 46
+    },
+    {
+      "logicalName": "actum_publicconfig",
+      "attributeCount": 28
+    },
+    {
+      "logicalName": "actum_reward",
+      "attributeCount": 35
+    },
+    {
+      "logicalName": "actum_role",
+      "attributeCount": 30
+    },
+    {
+      "logicalName": "actum_translation",
+      "attributeCount": 30
+    },
+    {
+      "logicalName": "actum_voucher",
+      "attributeCount": 54
+    }
+  ],
+  "tableRelationships": [
+    [
+      "actum_brand",
+      "actum_invoiceitem"
+    ],
+    [
+      "actum_brand",
+      "actum_newspagecontent"
+    ],
+    [
+      "actum_brand",
+      "actum_landingpagecontent"
+    ],
+    [
+      "actum_brand",
+      "actum_productdocumentation"
+    ],
+    [
+      "actum_calltoactionbutton",
+      "actum_landingpagecontent"
+    ],
+    [
+      "actum_calltoactionbutton",
+      "actum_newspagecontent"
+    ],
+    [
+      "actum_country",
+      "actum_landingpagecontent"
+    ],
+    [
+      "actum_country",
+      "actum_newspagecontent"
+    ],
+    [
+      "actum_country",
+      "actum_language"
+    ],
+    [
+      "actum_country",
+      "actum_productdocumentation"
+    ],
+    [
+      "actum_invoice",
+      "actum_invoiceitem"
+    ],
+    [
+      "actum_invoice",
+      "actum_loyaltytransaction"
+    ],
+    [
+      "actum_language",
+      "actum_translation"
+    ],
+    [
+      "actum_language",
+      "actum_newspagecontent"
+    ],
+    [
+      "actum_landingpagecontent",
+      "actum_language"
+    ],
+    [
+      "actum_language",
+      "actum_productdocumentation"
+    ],
+    [
+      "actum_loyaltytransaction",
+      "actum_voucher"
+    ],
+    [
+      "actum_newspagecontent",
+      "actum_role"
+    ],
+    [
+      "actum_downloadlog",
+      "actum_productdocumentation"
+    ],
+    [
+      "actum_productdocumentation",
+      "actum_role"
+    ],
+    [
+      "actum_landingpagecontent",
+      "actum_role"
+    ]
+  ],
+  "breakdown": {
+    "tables": 2.2,
+    "webFiles": 0,
+    "siteSettings": 0.1,
+    "cloudFlows": 19.8,
+    "webRolesAndPermissions": 0,
+    "envVars": 0,
+    "otherMetadata": 2.2
+  },
+  "estimationMethod": "metadata-based",
+  "estimationAccuracyPct": 15,
+  "truncationSuspected": true,
+  "truncationWarnings": [
+    "Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount."
+  ],
+  "ppcGroundTruthCount": 303
+}

@@ -1,0 +1,4 @@
+description: Fields allowed via Web API for Public Config table
+id: e4739aa6-11cc-4b0b-89e9-ff24ac182d97
+name: Webapi/actum_publicconfig/fields
+value: actum_publicconfigid,actum_name,actum_value

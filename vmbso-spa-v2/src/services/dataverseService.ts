@@ -15,6 +15,7 @@ import { InvoiceStatusCode } from '../types/invoice';
 import type { Reward } from '../types/reward';
 import type { LoyaltyTransaction } from '../types/loyaltyTransaction';
 import type { Voucher } from '../types/voucher';
+import type { RawFlowVoucher, ValidateVoucherFlowResponse, RedeemVoucherFlowResponse } from '../types/voucherFlow';
 import type { LandingPageContent, LandingPageCta } from '../types/homePage';
 import type { PublicConfig } from '../types/publicConfig';
 import { config } from '../config/powerPages.config';
@@ -29,6 +30,16 @@ type UploadInvoiceArgs = {
   contactId: string;
   accountId: string;
   file: File;
+};
+
+/**
+ * Power Pages injects `window.shell` at runtime with a CSRF token getter; it has no
+ * public type declarations, so this is a minimal shape covering the API used here.
+ */
+type PowerPagesWindow = Window & {
+  shell?: {
+    getTokenDeferred?: () => Promise<string>;
+  };
 };
 
 /**
@@ -245,12 +256,14 @@ export const dataverseService = {
       }
 
       // Remove read-only fields
-      const { contactid, createdon, _parentcustomerid_value, ...rest } = fields;
+      const updateFields: Record<string, unknown> = { ...fields };
+      delete updateFields.contactid;
+      delete updateFields.createdon;
+      delete updateFields._parentcustomerid_value;
 
       // Convert raw lookup value to OData bind syntax for Dataverse PATCH
-      const updateFields: Record<string, unknown> = { ...rest };
-      if (_parentcustomerid_value) {
-        updateFields['parentcustomerid_account@odata.bind'] = `/accounts(${_parentcustomerid_value})`;
+      if (fields._parentcustomerid_value) {
+        updateFields['parentcustomerid_account@odata.bind'] = `/accounts(${fields._parentcustomerid_value})`;
       }
 
       await apiClient.odata(`/contacts(${contactId})`, {
@@ -704,17 +717,13 @@ export const dataverseService = {
         orderby: 'createdon desc',
       });
 
-      try {
-        const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
-          headers: {
-            Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
-          },
-        });
+      const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
+        headers: {
+          Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
+        },
+      });
 
-        return response.value ?? [];
-      } catch (error) {
-        throw error;
-      }
+      return response.value ?? [];
     },
 
     /**
@@ -1061,7 +1070,8 @@ export const dataverseService = {
       });
 
       // Add CSRF token
-      const token = await (window as any).shell?.getTokenDeferred?.() || 
+      const shellToken = await (window as PowerPagesWindow).shell?.getTokenDeferred?.();
+      const token = shellToken ||
                     await fetch('/_layout/tokenhtml', { credentials: 'include' })
                       .then(r => r.text())
                       .then(text => {
@@ -1605,14 +1615,14 @@ export const dataverseService = {
       try {
         // Use Power Automate flow to fetch vouchers with contact names
         // (Direct OData queries can't expand contacts due to permissions)
-        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getVouchers, {});
+        const response = await apiClient.flow<FlowArrayResponse<RawFlowVoucher>>(config.flows.getVouchers, {});
 
         // Flow returns { status: "200", data: "[...]" } where data is a JSON string
         if (response?.status === 'Success' || response?.status === '200') {
-          const rawVouchers = parseFlowArrayData<any>(response, 'vouchers');
-          
+          const rawVouchers = parseFlowArrayData<RawFlowVoucher>(response, 'vouchers');
+
           // Transform the data: convert string numbers to actual numbers and map FetchXML aliases
-          const vouchers: Voucher[] = rawVouchers.map((v: any) => ({
+          const vouchers: Voucher[] = rawVouchers.map((v) => ({
             ...v,
             statecode: typeof v.statecode === 'string' ? parseInt(v.statecode, 10) : v.statecode,
             statuscode: typeof v.statuscode === 'string' ? parseInt(v.statuscode, 10) : v.statuscode,
@@ -1643,98 +1653,6 @@ export const dataverseService = {
     },
 
     /**
-     * Get all vouchers redeemed by a specific distributor contact (distributors only)
-     * @param contactId - Distributor Contact GUID
-     * @returns Array of vouchers redeemed by this distributor across all installer accounts
-     */
-    async getRedeemedByDistributor(contactId: string): Promise<Voucher[]> {
-      if (config.devMode) {
-        // Dev mode: return mock redeemed vouchers
-        return [
-          {
-            actum_voucherid: 'voucher-002',
-            actum_name: 'Reward Voucher 202603201145',
-            actum_vouchercode: 'AB12CD34EF',
-            actum_expirationdate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-            _actum_account_value: 'installer-account-001',
-            _actum_contactid_value: 'installer-contact-002',
-            _actum_loyaltytransaction_value: 'transaction-002',
-            _actum_rewardclaimlineid_value: 'claimline-002',
-            _actum_redeemedby_value: contactId,
-            _actum_distributorid_value: 'distributor-account-001',
-            statecode: 0,
-            statuscode: 182980002, // Redeemed
-            createdon: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-            modifiedon: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-            'claimedBy.fullname': 'Bram Van den Broeck',
-            'claimedBy.email': 'bram.broeck@example.com',
-            'redeemedBy.fullname': 'Current Distributor',
-            'redeemedBy.email': 'distributor@example.com',
-            'redeemedBy.account': 'My Distribution Company',
-          },
-          {
-            actum_voucherid: 'voucher-005',
-            actum_name: 'Reward Voucher 202604011200',
-            actum_vouchercode: 'LMNOP78901',
-            actum_expirationdate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-            _actum_account_value: 'installer-account-002',
-            _actum_contactid_value: 'installer-contact-001',
-            _actum_loyaltytransaction_value: 'transaction-005',
-            _actum_rewardclaimlineid_value: 'claimline-005',
-            _actum_redeemedby_value: contactId,
-            _actum_distributorid_value: 'distributor-account-001',
-            statecode: 0,
-            statuscode: 182980002, // Redeemed
-            createdon: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-            modifiedon: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-            'claimedBy.fullname': 'Lotte De Smet',
-            'claimedBy.email': 'lotte.desmet@example.com',
-            'redeemedBy.fullname': 'Current Distributor',
-            'redeemedBy.email': 'distributor@example.com',
-            'redeemedBy.account': 'My Distribution Company',
-          },
-        ];
-      }
-
-      if (!config.flows.getRedeemedVouchersByDistributor || config.flows.getRedeemedVouchersByDistributor === 'TODO: add endpoint') {
-        throw new Error('Get redeemed vouchers by distributor flow URL is not configured.');
-      }
-
-      try {
-        // Use Power Automate flow to fetch redeemed vouchers
-        const response = await apiClient.flow<FlowArrayResponse<any>>(config.flows.getRedeemedVouchersByDistributor, {
-          contactId: contactId,
-        });
-
-        // Flow returns { status: "200", data: "[...]" } where data is a JSON string
-        if (response?.status === 'Success' || response?.status === '200') {
-          const rawVouchers = parseFlowArrayData<any>(response, 'vouchers');
-          
-          // Transform the data: convert string numbers to actual numbers and empty strings to null
-          const vouchers: Voucher[] = rawVouchers.map((v: any) => ({
-            ...v,
-            statecode: typeof v.statecode === 'string' ? parseInt(v.statecode, 10) : v.statecode,
-            statuscode: typeof v.statuscode === 'string' ? parseInt(v.statuscode, 10) : v.statuscode,
-            'claimedBy.fullname': v['claimedBy.fullname'] || null,
-            'claimedBy.email': v['claimedBy.email'] || null,
-            'redeemedBy.fullname': v['redeemedBy.fullname'] || null,
-            'redeemedBy.email': v['redeemedBy.email'] || null,
-            'redeemedBy.account': v['redeemedBy.account'] || null,
-          }));
-          
-          return vouchers;
-        } else if (response?.status === '500') {
-          throw new Error(response.message || 'Failed to fetch redeemed vouchers');
-        }
-        
-        return [];
-      } catch (error) {
-        console.error('Error fetching redeemed vouchers:', error);
-        throw error;
-      }
-    },
-
-    /**
      * Validate a voucher code (distributor only)
      * @param voucherCode - The voucher code to validate
      * @param accountId - Distributor's account ID
@@ -1749,7 +1667,7 @@ export const dataverseService = {
       valid: boolean;
       voucherId?: string;
       message?: string;
-      voucher?: any;
+      voucher?: Voucher;
     }> {
       if (config.devMode) {
         // Dev mode: simulate validation
@@ -1792,7 +1710,7 @@ export const dataverseService = {
       }
 
       try {
-        const response = await apiClient.flow<any>(config.flows.validateVoucher, {
+        const response = await apiClient.flow<ValidateVoucherFlowResponse>(config.flows.validateVoucher, {
           voucherCode,
           accountId,
           contactId,
@@ -1847,7 +1765,7 @@ export const dataverseService = {
       }
 
       try {
-        const response = await apiClient.flow<any>(config.flows.redeemVoucher, {
+        const response = await apiClient.flow<RedeemVoucherFlowResponse>(config.flows.redeemVoucher, {
           voucherId,
           accountId,
           contactId,

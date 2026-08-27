@@ -1,4 +1,4 @@
 id: bc7da2d7-7023-f111-8341-7ced8d428823
 name: HTTP/Content-Security-Policy
 source: 0
-value: default-src 'self';script-src 'self' 'nonce' content.powerapps.com;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;img-src 'self' content.powerapps.com data:;font-src 'self' https://fonts.gstatic.com;frame-ancestors 'none';object-src 'none'
+value: default-src 'self';script-src 'self' 'nonce' content.powerapps.com https://embed.powerva.microsoft.com;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;img-src 'self' content.powerapps.com;font-src 'self' https://fonts.gstatic.com;frame-ancestors 'none';object-src 'none'

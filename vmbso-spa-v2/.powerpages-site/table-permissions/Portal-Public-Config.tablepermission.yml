@@ -1,0 +1,15 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+- b890214e-9181-4e97-bca8-9096ad7d0ff0
+- ba526b27-ec4b-4998-ad48-a22c0dc5fe31
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_publicconfig
+entityname: Portal Public Config
+id: 4abd0d58-5162-4d8d-b76a-943f8268b314
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

@@ -1,0 +1,511 @@
+{
+  "generatedAt": "2026-08-13T08:50:00.000Z",
+  "siteName": "VMBSO Customer Portal v2",
+  "siteSettings": {
+    "keepAsIs": [
+      {
+        "name": "Webapi/actum_language/enabled"
+      },
+      {
+        "name": "Webapi/actum_language/fields"
+      },
+      {
+        "name": "Webapi/actum_translation/enabled"
+      },
+      {
+        "name": "Webapi/actum_translation/fields"
+      },
+      {
+        "name": "Webapi/enabled"
+      },
+      {
+        "name": "Webapi/account/disableodatafilter"
+      },
+      {
+        "name": "Webapi/account/enabled"
+      },
+      {
+        "name": "Webapi/account/fields"
+      },
+      {
+        "name": "Webapi/contact/disableodatafilter"
+      },
+      {
+        "name": "Webapi/contact/enabled"
+      },
+      {
+        "name": "Webapi/contact/fields"
+      },
+      {
+        "name": "Webapi/error/innererror"
+      },
+      {
+        "name": "Webapi/actum_brand/enabled"
+      },
+      {
+        "name": "Webapi/actum_brand/fields"
+      },
+      {
+        "name": "Webapi/actum_country/enabled"
+      },
+      {
+        "name": "Webapi/actum_country/fields"
+      },
+      {
+        "name": "Webapi/actum_role/enabled"
+      },
+      {
+        "name": "Webapi/actum_role/fields"
+      },
+      {
+        "name": "Webapi/actum_downloadlog/fields"
+      },
+      {
+        "name": "Webapi/actum_downloadlog/enabled"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/enabled"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/fields"
+      },
+      {
+        "name": "Webapi/actum_calltoactionbutton/enabled"
+      },
+      {
+        "name": "Webapi/actum_calltoactionbutton/fields"
+      },
+      {
+        "name": "HTTP/X-Frame-Options"
+      },
+      {
+        "name": "search/query"
+      },
+      {
+        "name": "search/filters"
+      },
+      {
+        "name": "Header/OutputCache/Enabled"
+      },
+      {
+        "name": "Footer/OutputCache/Enabled"
+      },
+      {
+        "name": "Search/FacetedView"
+      },
+      {
+        "name": "OnlineDomains"
+      },
+      {
+        "name": "Search/IndexQueryName"
+      },
+      {
+        "name": "MultiLanguage/DisplayLanguageCodeInURL"
+      },
+      {
+        "name": "Webapi/actum_landingpagecontent/fields"
+      },
+      {
+        "name": "CodeSite/Enabled"
+      },
+      {
+        "name": "Profile/ShowMarketingOptionsPanel"
+      },
+      {
+        "name": "Webapi/actum_calltoactionbutton_actum_newspage/enabled"
+      },
+      {
+        "name": "Webapi/actum_calltoactionbutton_actum_newspage/fields"
+      },
+      {
+        "name": "Webapi/actum_landingpagecontents/enabled"
+      },
+      {
+        "name": "Webapi/actum_landingpagecontents/fields"
+      },
+      {
+        "name": "Webapi/actum_invoice/enabled"
+      },
+      {
+        "name": "Webapi/actum_invoice/fields"
+      },
+      {
+        "name": "HTTP/Content-Security-Policy"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/enabled"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/fields"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/enabled"
+      },
+      {
+        "name": "Webapi/actum_newspagecontent/fields"
+      },
+      {
+        "name": "Webapi/actum_voucher/fields"
+      },
+      {
+        "name": "Webapi/actum_voucher/enabled"
+      },
+      {
+        "name": "Webapi/actum_reward/enabled"
+      },
+      {
+        "name": "Webapi/actum_reward/fields"
+      },
+      {
+        "name": "Webapi/actum_loyaltytransaction/fields"
+      },
+      {
+        "name": "Webapi/actum_loyaltytransaction/enabled"
+      },
+      {
+        "name": "KnowledgeManagement/DisplayNotes"
+      },
+      {
+        "name": "MultiLanguage/MaximumDepthToClone"
+      },
+      {
+        "name": "Webapi/actum_publicconfig/enabled"
+      },
+      {
+        "name": "Webapi/actum_landingpagecontent/enabled"
+      },
+      {
+        "name": "KnowledgeManagement/NotesFilter"
+      },
+      {
+        "name": "ThemeFeature"
+      },
+      {
+        "name": "Profile/ForceSignUp"
+      },
+      {
+        "name": "Profile/Enabled"
+      },
+      {
+        "name": "Site/BootstrapV5Enabled"
+      },
+      {
+        "name": "HTTP/X-Content-Type-Options"
+      },
+      {
+        "name": "Search/Enabled"
+      },
+      {
+        "name": "Search/IndexNotesAttachments"
+      },
+      {
+        "name": "CustomerSupport/DisplayAllUserActivitiesOnTimeline"
+      },
+      {
+        "name": "Header/ShowAllProfileNavigationLinks"
+      },
+      {
+        "name": "Search/RecordTypeFacetsEntities"
+      },
+      {
+        "name": "Webapi/actum_publicconfig/fields"
+      }
+    ],
+    "authNoValue": [
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/RPInitiatedLogout"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/Authority"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ValidateIssuer"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/AllowContactMappingWithEmail"
+      },
+      {
+        "name": "Authentication/Registration/LoginButtonAuthenticationType"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/Authority"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/Scope"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ProviderType"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ResponseMode"
+      },
+      {
+        "name": "Authentication/Registration/TermsPublicationDate"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/PostLogoutRedirectUri"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ValidateAudience"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/Scope"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/Caption"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/RedirectUri"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ResponseMode"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/UseTokenLifetime"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/MetadataAddress"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ProviderType"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ExternalLogoutEnabled"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/Caption"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/RPInitiatedLogout"
+      },
+      {
+        "name": "Authentication/OpenAuth/Facebook/AppId"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/RegistrationClaimsMapping"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ExternalLogoutEnabled"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/RegistrationClaimsMapping"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/UseTokenLifetime"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/MetadataAddress"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ResponseType"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/RedirectUri"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ValidateAudience"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/AllowContactMappingWithEmail"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ValidateIssuer"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ResponseType"
+      }
+    ],
+    "promoteToEnvVar": [
+      {
+        "name": "Authentication/LoginTrackingEnabled",
+        "value": "False"
+      },
+      {
+        "name": "Authentication/Registration/LocalLoginDeprecated",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/Enabled",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/RegistrationClaimsMapping",
+        "value": "firstname=given_name,lastname=family_name"
+      },
+      {
+        "name": "Authentication/Registration/LocalLoginEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/ProfileRedirectEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/TermsAgreementEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/MetadataAddress",
+        "value": "https://vmbsocustomerportaluat.ciamlogin.com/18435343-9fd6-4462-8046-47e928f5c986/v2.0/.well-known/openid-configuration"
+      },
+      {
+        "name": "Authentication/LoginThrottling/MaxInvaildAttemptsFromIPAddress",
+        "value": "1000"
+      },
+      {
+        "name": "Authentication/Registration/DenyMinorsWithoutParentalConsent",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ValidateAudience",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/UseTokenLifetime",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/PostLogoutRedirectUri",
+        "value": "https://customerportal-test.powerappsportals.com/"
+      },
+      {
+        "name": "Authentication/BearerAuthentication/Enabled",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/BearerAuthentication/Provider",
+        "value": "AzureAD"
+      },
+      {
+        "name": "Authentication/BearerAuthentication/Protocol",
+        "value": "OpenIdConnect"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/AzureAD/Caption",
+        "value": "Microsoft Entra ID"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ProviderType",
+        "value": "EntraExternalID"
+      },
+      {
+        "name": "Authentication/Registration/InvitationEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/Authority",
+        "value": "https://vmbsocustomerportaluat.ciamlogin.com/18435343-9fd6-4462-8046-47e928f5c986/"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ResponseMode",
+        "value": "form_post"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ExternalLogoutEnabled",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/RPInitiatedLogout",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/EmailConfirmationEnabled",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/AzureAD/RebrandDisclaimerEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/Scope",
+        "value": "openid email profile"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ResponseType",
+        "value": "code id_token"
+      },
+      {
+        "name": "Authentication/LoginThrottling/IpAddressTimeoutTimeSpan",
+        "value": "00:10:00"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/AllowContactMappingWithEmail",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/RedirectUri",
+        "value": "https://customerportal-test.powerappsportals.com/signin-entraexternalid_3"
+      },
+      {
+        "name": "Authentication/LoginThrottling/MaxAttemptsTimeLimitTimeSpan",
+        "value": "00:03:00"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ValidateIssuer",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/DenyMinors",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/Caption",
+        "value": "Microsoft Entra External ID"
+      },
+      {
+        "name": "Authentication/Registration/ExternalLoginEnabled",
+        "value": "true"
+      },
+      {
+        "name": "Authentication/Registration/AzureADLoginEnabled",
+        "value": "false"
+      },
+      {
+        "name": "Authentication/Registration/OpenRegistrationEnabled",
+        "value": "true"
+      }
+    ],
+    "excluded": [
+      {
+        "name": "Authentication/OpenAuth/Microsoft/ClientId",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_2/ClientId",
+        "value": ""
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_1/ClientId",
+        "value": ""
+      },
+      {
+        "name": "Authentication/OpenAuth/Twitter/ConsumerKey",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenAuth/Microsoft/ClientSecret",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenAuth/LinkedIn/ConsumerSecret",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenAuth/Twitter/ConsumerSecret",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenAuth/Facebook/AppSecret",
+        "value": null
+      },
+      {
+        "name": "Authentication/OpenIdConnect/EntraExternalID_3/ClientId",
+        "value": "f87b5a99-e2e4-4a89-832d-fbcc480c49ab"
+      },
+      {
+        "name": "Authentication/OpenAuth/LinkedIn/ConsumerKey",
+        "value": null
+      }
+    ]
+  }
+}

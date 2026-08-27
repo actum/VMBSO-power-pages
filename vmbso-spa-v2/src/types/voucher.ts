@@ -21,11 +21,11 @@ export interface Voucher {
   modifiedon: string;                           // ISO timestamp
   
   // Expanded contact info
-  'claimedBy.fullname'?: string;                // Contact who claimed
-  'claimedBy.email'?: string;                   // Email of contact who claimed
-  'redeemedBy.fullname'?: string;               // Contact who redeemed
-  'redeemedBy.email'?: string;                  // Email of contact who redeemed
-  'redeemedBy.account'?: string;                // Distributor account of contact who redeemed
+  'claimedBy.fullname'?: string | null;         // Contact who claimed
+  'claimedBy.email'?: string | null;            // Email of contact who claimed
+  'redeemedBy.fullname'?: string | null;        // Contact who redeemed
+  'redeemedBy.email'?: string | null;           // Email of contact who redeemed
+  'redeemedBy.account'?: string | null;         // Distributor account of contact who redeemed
 
   // Account names (from FetchXML direct account link-entities)
   'installerAccount.name'?: string | null;      // Installer company name (actum_account → account.name)

@@ -1,0 +1,63 @@
+{
+  "sizeAnalysis": {
+    "totalSizeMB": {
+      "value": 24.3,
+      "tier": "green"
+    },
+    "componentCount": {
+      "value": 391,
+      "tier": "green"
+    },
+    "schemaAttrCount": {
+      "value": 692,
+      "tier": "green"
+    },
+    "tableCount": {
+      "value": 19,
+      "tier": "yellow",
+      "scope": "site-referenced"
+    },
+    "webFilesAggregateMB": {
+      "value": 0,
+      "tier": "green"
+    },
+    "envVarCount": {
+      "value": 43,
+      "tier": "green"
+    }
+  },
+  "assetAdvisory": {
+    "enabled": true,
+    "candidates": [],
+    "recommendation": null
+  },
+  "splitStrategy": "single",
+  "appliedStrategies": [
+    "single"
+  ],
+  "compositeSubPartitioned": false,
+  "proposedSolutions": [
+    {
+      "uniqueName": "VMBSOCustomerPortalv2",
+      "displayName": "VMBSO Customer Portal v2",
+      "order": 1,
+      "componentTypes": [
+        "All"
+      ],
+      "description": "All components packaged in a single managed solution. Estimated size is within recommended thresholds.",
+      "sizeMB": 24.3,
+      "componentCount": 391,
+      "components": []
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "error",
+      "message": "Estimator may be truncated: Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount. The split recommendation below could be wrong — investigate before approving."
+    }
+  ],
+  "truncationSuspected": true,
+  "truncationWarnings": [
+    "Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount."
+  ]
+}

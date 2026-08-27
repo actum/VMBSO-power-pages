@@ -1,0 +1,1216 @@
+{
+  "SITE_NAME": "VMBSO Customer Portal v2",
+  "siteType": "declarative",
+  "GENERATED_AT": "2026-08-13T08:50:00.000Z",
+  "STRATEGY": "pp-pipelines",
+  "EXPORT_TYPE": "managed",
+  "APPROVAL_MODE": "No approval gates — deploy automatically",
+  "HAS_ENV_VARS": true,
+  "SOLUTION_DONE": true,
+  "PIPELINE_DONE": true,
+  "PLAN_STATUS": "Draft",
+  "PLAN_MODE": "draft",
+  "PLAN_QUALITY": "complete",
+  "decisionsLog": [
+    {
+      "field": "solution",
+      "value": "CustomerPortalPowerPages (existing)",
+      "source": "explicit"
+    },
+    {
+      "field": "strategy",
+      "value": "pp-pipelines",
+      "source": "default"
+    },
+    {
+      "field": "stages",
+      "value": "DEV -> TEST -> Production",
+      "source": "default"
+    },
+    {
+      "field": "approvalMode",
+      "value": "No approval gates",
+      "source": "explicit"
+    },
+    {
+      "field": "exportType",
+      "value": "managed",
+      "source": "default"
+    },
+    {
+      "field": "host",
+      "value": "VMBSO-PowerTools (existing custom host)",
+      "source": "default"
+    },
+    {
+      "field": "envVarScope",
+      "value": "Only 5 EntraExternalID_3 settings (Authority, ClientId, MetadataAddress, PostLogoutRedirectUri, RedirectUri) promoted to env vars",
+      "source": "explicit"
+    },
+    {
+      "field": "pipelineDiscovery",
+      "value": "Existing pipeline \"DEV -> TEST -> PROD\" found in host VMBSO-PowerTools (stages: TEST, PROD, both Active) — setup-pipeline removed from plan",
+      "source": "explicit"
+    },
+    {
+      "field": "finalScope",
+      "value": "Only action needed: add the 5 EntraExternalID_3 settings as environment variables to CustomerPortalPowerPages. Pipeline, host, and solution structure are already correct — nothing else changes.",
+      "source": "explicit"
+    },
+    {
+      "field": "envVarFindings",
+      "value": "DEV/TEST share the same Entra External ID app registration (Authority/ClientId/MetadataAddress identical by design); only PostLogoutRedirectUri/RedirectUri differ per site. PROD uses a separate Entra app entirely (different tenant), so PROD needs all 5 values overridden once migrated.",
+      "source": "explicit"
+    }
+  ],
+  "LAST_INVOCATION_AT": null,
+  "APPROVED_BY": "",
+  "APPROVAL_DATE": "",
+  "stages": [
+    {
+      "label": "Dev",
+      "envUrl": "https://vmbso-customerportal-dev.crm4.dynamics.com",
+      "envName": "VMBSO-CustomerPortal-DEV",
+      "type": "source"
+    },
+    {
+      "label": "TEST",
+      "envUrl": "https://vmbso-customerportal-test.crm4.dynamics.com",
+      "envName": "VMBSO-CustomerPortal-TEST",
+      "type": "target"
+    },
+    {
+      "label": "Production",
+      "envUrl": "https://vmbso-customerportal.crm4.dynamics.com",
+      "envName": "VMBSO-CustomerPortal-PROD",
+      "type": "target"
+    }
+  ],
+  "steps": [
+    {
+      "name": "Setup solution",
+      "status": "in_progress",
+      "skip": false,
+      "note": "Env var definitions for the 5 EntraExternalID_3 settings now created and moved into CustomerPortalPowerPages in DEV. Remaining: (1) verify DEV's live resolved RedirectUri/PostLogoutRedirectUri match DEV's own URLs — API read showed a possible stale value, confirm via live login test after a cache clear; (2) in TEST, delete the ad-hoc/orphaned environment variable definitions created directly there (not solution-linked); (3) after DEV is verified, redeploy the solution DEV→TEST via the pipeline so TEST receives the correctly solution-linked definitions; (4) set TEST’s Environment Variable VALUES for PostLogoutRedirectUri (https://customerportal-test.powerappsportals.com/) and RedirectUri (https://customerportal-test.powerappsportals.com/signin-entraexternalid_3) — Authority/ClientId/MetadataAddress can stay on the shared default."
+    },
+    {
+      "name": "Deploy via pipeline to TEST",
+      "status": "pending",
+      "skip": false,
+      "note": "Uses existing pipeline \"DEV -> TEST -> PROD\" — no pipeline setup needed"
+    },
+    {
+      "name": "Upload compiled SPA to TEST (pac pages upload-code-site)",
+      "status": "pending",
+      "skip": false
+    },
+    {
+      "name": "Activate site in TEST",
+      "status": "pending",
+      "skip": false
+    },
+    {
+      "name": "Test site in TEST",
+      "status": "pending",
+      "skip": false
+    },
+    {
+      "name": "Deploy via pipeline to Production",
+      "status": "pending",
+      "skip": false,
+      "note": "Uses existing pipeline \"DEV -> TEST -> PROD\""
+    },
+    {
+      "name": "Upload compiled SPA to Production (pac pages upload-code-site)",
+      "status": "pending",
+      "skip": false
+    },
+    {
+      "name": "Activate site in Production",
+      "status": "pending",
+      "skip": false
+    },
+    {
+      "name": "Test site in Production",
+      "status": "pending",
+      "skip": false
+    }
+  ],
+  "validationRuns": {
+    "TEST": null,
+    "Production": null
+  },
+  "pipelineMeta": {
+    "isActive": true,
+    "pipelineId": "e3dc438d-321f-f111-8342-000d3aba4b13",
+    "pipelineName": "DEV -> TEST -> PROD",
+    "reusedByWiring": null,
+    "lastDeploy": null
+  },
+  "risks": [
+    {
+      "type": "warning",
+      "message": "This solution has environment variables (12 detected in DEV) — you will be prompted for per-stage values during deployment."
+    },
+    {
+      "type": "info",
+      "message": "Environment-variable scope narrowed per user decision: only 5 settings under Authentication/OpenIdConnect/EntraExternalID_3 (Authority, ClientId, MetadataAddress, PostLogoutRedirectUri, RedirectUri) will be promoted to environment variables. The other 32 auth-related settings discovered (legacy EntraExternalID_1/_2, registration flags, login throttling, bearer auth) are left as-is — setup-solution will still surface them for review but the recommendation is to skip promoting them."
+    },
+    {
+      "type": "info",
+      "message": "10 credential-style site settings (ConsumerKey / ClientId / ClientSecret / etc.) detected. setup-solution will run a single bulk prompt to handle all of them — auto-classify by name, all-as-Secret, all-as-String, skip-all, or a per-credential picker."
+    },
+    {
+      "type": "warning",
+      "message": "The existing CustomerPortalPowerPages solution (202 components) does not yet cover the full site (estimated 391 components including 19 tables). Run /power-pages:setup-solution in sync mode against this solution before deploying, to reconcile what is missing versus what lives in the other 7 related solutions (CORE, InvoiceProcessing, VoucherProcessing, PCF, WhatsAppExtention, InvoiceDeleteRole, AgenticInvoiceProcessing)."
+    },
+    {
+      "type": "warning",
+      "message": "No approval gates are configured for this pipeline — deployments to TEST and Production will run automatically once triggered. Consider adding at least a Production approval gate before relying on this for real releases."
+    },
+    {
+      "type": "warning",
+      "message": "SECURITY FOLLOW-UP (outside this ALM plan): the environment variable actum_fileuploadblobsettings stores an Azure Storage account key in plaintext as its default value. Rotate this key and convert it to a Secret-typed environment variable — do not include the current default value in any solution export."
+    },
+    {
+      "type": "info",
+      "message": "Power Platform Pipelines only transport Dataverse solution components (site settings, permissions, web roles, etc.) — the compiled SPA build is a separate artifact. After each pipeline deployment, run pac pages upload-code-site (or /power-pages:deploy-site) against that same target environment to push the built React app. This step cannot be automated by the pipeline itself."
+    },
+    {
+      "type": "info",
+      "message": "A Power Platform Pipeline named \"DEV -> TEST -> PROD\" already exists in the host environment with active TEST and PROD stages. No new pipeline needs to be created — /power-pages:deploy-pipeline will use this existing pipeline directly."
+    },
+    {
+      "type": "warning",
+      "message": "PROD uses a completely separate Entra External ID app registration (different tenant: 057f43b8-... vs DEV/TEST's 18435343-...). When PROD is migrated to Environment Variable source (currently still Static), ALL 5 values — not just the redirect URLs — must be explicitly overridden with PROD's own values. Do not let PROD fall back to the shared DEV/TEST default, or production auth will point at the wrong Entra tenant."
+    },
+    {
+      "type": "warning",
+      "message": "TEST currently has its own independently-created (non-solution-linked) copies of these 5 environment variable definitions, made directly in TEST outside the DEV→TEST solution flow. These should be deleted before the next pipeline deployment from DEV, to avoid duplicate/conflicting definitions with different schema names colliding with the ones now carried by CustomerPortalPowerPages."
+    }
+  ],
+  "solutionContents": {
+    "tables": [
+      "actum_brand",
+      "actum_calltoactionbutton",
+      "actum_calltoactionbutton_actum_newspage",
+      "actum_country",
+      "actum_downloadlog",
+      "actum_invoice",
+      "actum_invoiceitem",
+      "actum_landingpagecontent",
+      "actum_language",
+      "actum_loyaltytransaction",
+      "actum_newspagecontent",
+      "actum_newspagecontent_actum_brand",
+      "actum_newspagecontent_actum_role",
+      "actum_productdocumentation",
+      "actum_publicconfig",
+      "actum_reward",
+      "actum_role",
+      "actum_translation",
+      "actum_voucher"
+    ],
+    "botComponents": [],
+    "siteSettings": {
+      "keepAsIs": [
+        {
+          "name": "Webapi/actum_language/enabled"
+        },
+        {
+          "name": "Webapi/actum_language/fields"
+        },
+        {
+          "name": "Webapi/actum_translation/enabled"
+        },
+        {
+          "name": "Webapi/actum_translation/fields"
+        },
+        {
+          "name": "Webapi/enabled"
+        },
+        {
+          "name": "Webapi/account/disableodatafilter"
+        },
+        {
+          "name": "Webapi/account/enabled"
+        },
+        {
+          "name": "Webapi/account/fields"
+        },
+        {
+          "name": "Webapi/contact/disableodatafilter"
+        },
+        {
+          "name": "Webapi/contact/enabled"
+        },
+        {
+          "name": "Webapi/contact/fields"
+        },
+        {
+          "name": "Webapi/error/innererror"
+        },
+        {
+          "name": "Webapi/actum_brand/enabled"
+        },
+        {
+          "name": "Webapi/actum_brand/fields"
+        },
+        {
+          "name": "Webapi/actum_country/enabled"
+        },
+        {
+          "name": "Webapi/actum_country/fields"
+        },
+        {
+          "name": "Webapi/actum_role/enabled"
+        },
+        {
+          "name": "Webapi/actum_role/fields"
+        },
+        {
+          "name": "Webapi/actum_downloadlog/fields"
+        },
+        {
+          "name": "Webapi/actum_downloadlog/enabled"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/enabled"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/fields"
+        },
+        {
+          "name": "Webapi/actum_calltoactionbutton/enabled"
+        },
+        {
+          "name": "Webapi/actum_calltoactionbutton/fields"
+        },
+        {
+          "name": "HTTP/X-Frame-Options"
+        },
+        {
+          "name": "search/query"
+        },
+        {
+          "name": "search/filters"
+        },
+        {
+          "name": "Header/OutputCache/Enabled"
+        },
+        {
+          "name": "Footer/OutputCache/Enabled"
+        },
+        {
+          "name": "Search/FacetedView"
+        },
+        {
+          "name": "OnlineDomains"
+        },
+        {
+          "name": "Search/IndexQueryName"
+        },
+        {
+          "name": "MultiLanguage/DisplayLanguageCodeInURL"
+        },
+        {
+          "name": "Webapi/actum_landingpagecontent/fields"
+        },
+        {
+          "name": "CodeSite/Enabled"
+        },
+        {
+          "name": "Profile/ShowMarketingOptionsPanel"
+        },
+        {
+          "name": "Webapi/actum_calltoactionbutton_actum_newspage/enabled"
+        },
+        {
+          "name": "Webapi/actum_calltoactionbutton_actum_newspage/fields"
+        },
+        {
+          "name": "Webapi/actum_landingpagecontents/enabled"
+        },
+        {
+          "name": "Webapi/actum_landingpagecontents/fields"
+        },
+        {
+          "name": "Webapi/actum_invoice/enabled"
+        },
+        {
+          "name": "Webapi/actum_invoice/fields"
+        },
+        {
+          "name": "HTTP/Content-Security-Policy"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/enabled"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/fields"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/enabled"
+        },
+        {
+          "name": "Webapi/actum_newspagecontent/fields"
+        },
+        {
+          "name": "Webapi/actum_voucher/fields"
+        },
+        {
+          "name": "Webapi/actum_voucher/enabled"
+        },
+        {
+          "name": "Webapi/actum_reward/enabled"
+        },
+        {
+          "name": "Webapi/actum_reward/fields"
+        },
+        {
+          "name": "Webapi/actum_loyaltytransaction/fields"
+        },
+        {
+          "name": "Webapi/actum_loyaltytransaction/enabled"
+        },
+        {
+          "name": "KnowledgeManagement/DisplayNotes"
+        },
+        {
+          "name": "MultiLanguage/MaximumDepthToClone"
+        },
+        {
+          "name": "Webapi/actum_publicconfig/enabled"
+        },
+        {
+          "name": "Webapi/actum_landingpagecontent/enabled"
+        },
+        {
+          "name": "KnowledgeManagement/NotesFilter"
+        },
+        {
+          "name": "ThemeFeature"
+        },
+        {
+          "name": "Profile/ForceSignUp"
+        },
+        {
+          "name": "Profile/Enabled"
+        },
+        {
+          "name": "Site/BootstrapV5Enabled"
+        },
+        {
+          "name": "HTTP/X-Content-Type-Options"
+        },
+        {
+          "name": "Search/Enabled"
+        },
+        {
+          "name": "Search/IndexNotesAttachments"
+        },
+        {
+          "name": "CustomerSupport/DisplayAllUserActivitiesOnTimeline"
+        },
+        {
+          "name": "Header/ShowAllProfileNavigationLinks"
+        },
+        {
+          "name": "Search/RecordTypeFacetsEntities"
+        },
+        {
+          "name": "Webapi/actum_publicconfig/fields"
+        }
+      ],
+      "authNoValue": [
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/RPInitiatedLogout"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/Authority"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ValidateIssuer"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/AllowContactMappingWithEmail"
+        },
+        {
+          "name": "Authentication/Registration/LoginButtonAuthenticationType"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/Authority"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/Scope"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ProviderType"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ResponseMode"
+        },
+        {
+          "name": "Authentication/Registration/TermsPublicationDate"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/PostLogoutRedirectUri"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ValidateAudience"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/Scope"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/Caption"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/RedirectUri"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ResponseMode"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/UseTokenLifetime"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/MetadataAddress"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ProviderType"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ExternalLogoutEnabled"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/Caption"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/RPInitiatedLogout"
+        },
+        {
+          "name": "Authentication/OpenAuth/Facebook/AppId"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/RegistrationClaimsMapping"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ExternalLogoutEnabled"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/RegistrationClaimsMapping"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/UseTokenLifetime"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/MetadataAddress"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ResponseType"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/RedirectUri"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ValidateAudience"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/AllowContactMappingWithEmail"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ValidateIssuer"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ResponseType"
+        }
+      ],
+      "promoteToEnvVar": [
+        {
+          "name": "Authentication/LoginTrackingEnabled",
+          "value": "False"
+        },
+        {
+          "name": "Authentication/Registration/LocalLoginDeprecated",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/Enabled",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/RegistrationClaimsMapping",
+          "value": "firstname=given_name,lastname=family_name"
+        },
+        {
+          "name": "Authentication/Registration/LocalLoginEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/ProfileRedirectEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/TermsAgreementEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/MetadataAddress",
+          "value": "https://vmbsocustomerportaluat.ciamlogin.com/18435343-9fd6-4462-8046-47e928f5c986/v2.0/.well-known/openid-configuration"
+        },
+        {
+          "name": "Authentication/LoginThrottling/MaxInvaildAttemptsFromIPAddress",
+          "value": "1000"
+        },
+        {
+          "name": "Authentication/Registration/DenyMinorsWithoutParentalConsent",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ValidateAudience",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/UseTokenLifetime",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/PostLogoutRedirectUri",
+          "value": "https://customerportal-test.powerappsportals.com/"
+        },
+        {
+          "name": "Authentication/BearerAuthentication/Enabled",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/BearerAuthentication/Provider",
+          "value": "AzureAD"
+        },
+        {
+          "name": "Authentication/BearerAuthentication/Protocol",
+          "value": "OpenIdConnect"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/AzureAD/Caption",
+          "value": "Microsoft Entra ID"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ProviderType",
+          "value": "EntraExternalID"
+        },
+        {
+          "name": "Authentication/Registration/InvitationEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/Authority",
+          "value": "https://vmbsocustomerportaluat.ciamlogin.com/18435343-9fd6-4462-8046-47e928f5c986/"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ResponseMode",
+          "value": "form_post"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ExternalLogoutEnabled",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/RPInitiatedLogout",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/EmailConfirmationEnabled",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/AzureAD/RebrandDisclaimerEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/Scope",
+          "value": "openid email profile"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ResponseType",
+          "value": "code id_token"
+        },
+        {
+          "name": "Authentication/LoginThrottling/IpAddressTimeoutTimeSpan",
+          "value": "00:10:00"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/AllowContactMappingWithEmail",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/RedirectUri",
+          "value": "https://customerportal-test.powerappsportals.com/signin-entraexternalid_3"
+        },
+        {
+          "name": "Authentication/LoginThrottling/MaxAttemptsTimeLimitTimeSpan",
+          "value": "00:03:00"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ValidateIssuer",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/DenyMinors",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/Caption",
+          "value": "Microsoft Entra External ID"
+        },
+        {
+          "name": "Authentication/Registration/ExternalLoginEnabled",
+          "value": "true"
+        },
+        {
+          "name": "Authentication/Registration/AzureADLoginEnabled",
+          "value": "false"
+        },
+        {
+          "name": "Authentication/Registration/OpenRegistrationEnabled",
+          "value": "true"
+        }
+      ],
+      "credentialNeedsDecision": [
+        {
+          "name": "Authentication/OpenAuth/Microsoft/ClientId",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_2/ClientId",
+          "value": ""
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_1/ClientId",
+          "value": ""
+        },
+        {
+          "name": "Authentication/OpenAuth/Twitter/ConsumerKey",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenAuth/Microsoft/ClientSecret",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenAuth/LinkedIn/ConsumerSecret",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenAuth/Twitter/ConsumerSecret",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenAuth/Facebook/AppSecret",
+          "value": null
+        },
+        {
+          "name": "Authentication/OpenIdConnect/EntraExternalID_3/ClientId",
+          "value": "f87b5a99-e2e4-4a89-832d-fbcc480c49ab"
+        },
+        {
+          "name": "Authentication/OpenAuth/LinkedIn/ConsumerKey",
+          "value": null
+        }
+      ]
+    }
+  },
+  "sizeAnalysis": {
+    "totalSizeMB": {
+      "value": 24.3,
+      "tier": "green"
+    },
+    "componentCount": {
+      "value": 391,
+      "tier": "green"
+    },
+    "schemaAttrCount": {
+      "value": 692,
+      "tier": "green"
+    },
+    "tableCount": {
+      "value": 19,
+      "tier": "yellow",
+      "scope": "site-referenced"
+    },
+    "webFilesAggregateMB": {
+      "value": 0,
+      "tier": "green"
+    },
+    "envVarCount": {
+      "value": 43,
+      "tier": "green"
+    }
+  },
+  "assetAdvisory": {
+    "enabled": true,
+    "candidates": [],
+    "recommendation": null
+  },
+  "splitStrategy": "single",
+  "appliedStrategies": [
+    "single"
+  ],
+  "compositeSubPartitioned": false,
+  "proposedSolutions": [
+    {
+      "uniqueName": "CustomerPortalPowerPages",
+      "displayName": "Customer Portal PowerPages",
+      "order": 1,
+      "componentTypes": [
+        "All"
+      ],
+      "description": "Existing unmanaged solution in DEV already tracking the Power Pages site (~202 components). Will be adopted via setup-solution sync mode.",
+      "sizeMB": 24.3,
+      "componentCount": 202,
+      "components": []
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "error",
+      "message": "Estimator may be truncated: Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount. The split recommendation below could be wrong — investigate before approving."
+    }
+  ],
+  "envVars": [
+    {
+      "schemaName": "actum_WhatsAppChannelID",
+      "displayName": "WhatsApp Channel ID",
+      "type": "String",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_InvoiceAgeThreshold",
+      "displayName": "InvoiceAgeThreshold",
+      "type": "Number",
+      "defaultValue": "",
+      "description": "number of months after invoice date to be still accepted",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_EventGritResourceName",
+      "displayName": "EventGritResourceName",
+      "type": "String",
+      "defaultValue": "/subscriptions/b02b1d81-3054-43c1-9a8d-c68a513c1d61/resourceGroups/vmbso-backoffice-portal-dev/providers/Microsoft.Communication/CommunicationServices/vmbsoboportaldevacs",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_sharepointdocumentsite",
+      "displayName": "SharePoint - Document Site",
+      "type": "DataSource",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_sharepointbaseurl",
+      "displayName": "SharePoint - Base URL",
+      "type": "String",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_fileuploadblobsettings",
+      "displayName": "PCF File Upload Blob Settings",
+      "type": "JSON",
+      "defaultValue": "{   \"accountName\": \"vbmsoportal\",   \"accountKey\": \"JMwxMU2zbRw37e7NkrieAorVt8ZopmqWqzxHltn4smH25p7Ent1NFe5Rt5c/TyZhDgir4RoTDxyc+ASt7iGKEw==\",   \"containerName\": \"documents\",   \"maxFileSizeMb\": 500 }",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_InvoiceSharepointSite",
+      "displayName": "InvoiceSharepointSite",
+      "type": "String",
+      "defaultValue": "https://vmbso.sharepoint.com/sites/kentico-customer-portal-DEV",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_storageacountname",
+      "displayName": "Storage Account Name",
+      "type": "String",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_TransactionExpiration",
+      "displayName": "TransactionExpiration",
+      "type": "Number",
+      "defaultValue": "24",
+      "description": "Expiration in months",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_InvoiceProcessingLibrary",
+      "displayName": "InvoiceProcessingLibrary",
+      "type": "String",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_sastokenvalidityminutes",
+      "displayName": "SAS token - validity minutes",
+      "type": "Number",
+      "defaultValue": "10",
+      "description": "",
+      "siteSetting": ""
+    },
+    {
+      "schemaName": "actum_sharepointdocumentlibrary",
+      "displayName": "SharePoint - Document Library",
+      "type": "DataSource",
+      "defaultValue": "",
+      "description": "",
+      "siteSetting": ""
+    }
+  ],
+  "plannedEnvVarCount": 47,
+  "breakdown": {
+    "tables": 2.2,
+    "webFiles": 0,
+    "siteSettings": 0.1,
+    "cloudFlows": 19.8,
+    "webRolesAndPermissions": 0,
+    "envVars": 0,
+    "otherMetadata": 2.2
+  },
+  "estimationMethod": "metadata-based",
+  "estimationAccuracyPct": 15,
+  "truncationSuspected": true,
+  "truncationWarnings": [
+    "Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount."
+  ],
+  "webFilesDiskMeasuredMB": 0.9,
+  "webFilesDiskMeasuredPath": "build",
+  "webFileSampleSize": 38,
+  "rawDiscovery": {
+    "estimate": {
+      "siteName": "VMBSO Customer Portal v2",
+      "publisherPrefix": null,
+      "solutionId": null,
+      "totalSizeMB": 24.3,
+      "componentCountSiteTotal": 391,
+      "componentCountSiteActionable": 389,
+      "componentCountInSolution": null,
+      "orphansOnSite": null,
+      "botCountScoped": 1,
+      "botComponentCountScoped": 14,
+      "bundleChunkCount": 2,
+      "bundleChunkNote": "2 hashed bundle chunks (Vite/Rollup) on the site — 0 are in the solution, 2 are orphans from prior pac pages upload-code-site runs. Cleanable via dedicated cleanup pass.",
+      "inSolution": null,
+      "tableCount": 19,
+      "tableCountScope": "site-referenced",
+      "schemaAttrCount": 692,
+      "webFilesAggregateMB": 0,
+      "webFilesIndividual": [],
+      "webFileCount": 38,
+      "webFileSampleSize": 38,
+      "webFilesDiskMeasuredMB": 0.9,
+      "webFilesDiskMeasuredPath": "build",
+      "webFilesDiskFileCount": 14,
+      "cloudFlowCount": 9,
+      "botCount": 4,
+      "envVarCount": 43,
+      "envVarCountScope": "publisher-prefix",
+      "envVarCountTenantWide": 43,
+      "mediaRatio": 0.47,
+      "siteType": "declarative",
+      "tables": [
+        {
+          "logicalName": "actum_brand",
+          "attributeCount": 28
+        },
+        {
+          "logicalName": "actum_calltoactionbutton",
+          "attributeCount": 39
+        },
+        {
+          "logicalName": "actum_calltoactionbutton_actum_newspage",
+          "attributeCount": 4
+        },
+        {
+          "logicalName": "actum_country",
+          "attributeCount": 30
+        },
+        {
+          "logicalName": "actum_downloadlog",
+          "attributeCount": 33
+        },
+        {
+          "logicalName": "actum_invoice",
+          "attributeCount": 92
+        },
+        {
+          "logicalName": "actum_invoiceitem",
+          "attributeCount": 65
+        },
+        {
+          "logicalName": "actum_landingpagecontent",
+          "attributeCount": 49
+        },
+        {
+          "logicalName": "actum_language",
+          "attributeCount": 32
+        },
+        {
+          "logicalName": "actum_loyaltytransaction",
+          "attributeCount": 44
+        },
+        {
+          "logicalName": "actum_newspagecontent",
+          "attributeCount": 45
+        },
+        {
+          "logicalName": "actum_newspagecontent_actum_brand",
+          "attributeCount": 4
+        },
+        {
+          "logicalName": "actum_newspagecontent_actum_role",
+          "attributeCount": 4
+        },
+        {
+          "logicalName": "actum_productdocumentation",
+          "attributeCount": 46
+        },
+        {
+          "logicalName": "actum_publicconfig",
+          "attributeCount": 28
+        },
+        {
+          "logicalName": "actum_reward",
+          "attributeCount": 35
+        },
+        {
+          "logicalName": "actum_role",
+          "attributeCount": 30
+        },
+        {
+          "logicalName": "actum_translation",
+          "attributeCount": 30
+        },
+        {
+          "logicalName": "actum_voucher",
+          "attributeCount": 54
+        }
+      ],
+      "tableRelationships": [
+        [
+          "actum_brand",
+          "actum_invoiceitem"
+        ],
+        [
+          "actum_brand",
+          "actum_newspagecontent"
+        ],
+        [
+          "actum_brand",
+          "actum_landingpagecontent"
+        ],
+        [
+          "actum_brand",
+          "actum_productdocumentation"
+        ],
+        [
+          "actum_calltoactionbutton",
+          "actum_landingpagecontent"
+        ],
+        [
+          "actum_calltoactionbutton",
+          "actum_newspagecontent"
+        ],
+        [
+          "actum_country",
+          "actum_landingpagecontent"
+        ],
+        [
+          "actum_country",
+          "actum_newspagecontent"
+        ],
+        [
+          "actum_country",
+          "actum_language"
+        ],
+        [
+          "actum_country",
+          "actum_productdocumentation"
+        ],
+        [
+          "actum_invoice",
+          "actum_invoiceitem"
+        ],
+        [
+          "actum_invoice",
+          "actum_loyaltytransaction"
+        ],
+        [
+          "actum_language",
+          "actum_translation"
+        ],
+        [
+          "actum_language",
+          "actum_newspagecontent"
+        ],
+        [
+          "actum_landingpagecontent",
+          "actum_language"
+        ],
+        [
+          "actum_language",
+          "actum_productdocumentation"
+        ],
+        [
+          "actum_loyaltytransaction",
+          "actum_voucher"
+        ],
+        [
+          "actum_newspagecontent",
+          "actum_role"
+        ],
+        [
+          "actum_downloadlog",
+          "actum_productdocumentation"
+        ],
+        [
+          "actum_productdocumentation",
+          "actum_role"
+        ],
+        [
+          "actum_landingpagecontent",
+          "actum_role"
+        ]
+      ],
+      "breakdown": {
+        "tables": 2.2,
+        "webFiles": 0,
+        "siteSettings": 0.1,
+        "cloudFlows": 19.8,
+        "webRolesAndPermissions": 0,
+        "envVars": 0,
+        "otherMetadata": 2.2
+      },
+      "estimationMethod": "metadata-based",
+      "estimationAccuracyPct": 15,
+      "truncationSuspected": true,
+      "truncationWarnings": [
+        "Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount."
+      ],
+      "ppcGroundTruthCount": 303
+    },
+    "splitPlan": {
+      "sizeAnalysis": {
+        "totalSizeMB": {
+          "value": 24.3,
+          "tier": "green"
+        },
+        "componentCount": {
+          "value": 391,
+          "tier": "green"
+        },
+        "schemaAttrCount": {
+          "value": 692,
+          "tier": "green"
+        },
+        "tableCount": {
+          "value": 19,
+          "tier": "yellow",
+          "scope": "site-referenced"
+        },
+        "webFilesAggregateMB": {
+          "value": 0,
+          "tier": "green"
+        },
+        "envVarCount": {
+          "value": 43,
+          "tier": "green"
+        }
+      },
+      "assetAdvisory": {
+        "enabled": true,
+        "candidates": [],
+        "recommendation": null
+      },
+      "splitStrategy": "single",
+      "appliedStrategies": [
+        "single"
+      ],
+      "compositeSubPartitioned": false,
+      "proposedSolutions": [
+        {
+          "uniqueName": "VMBSOCustomerPortalv2",
+          "displayName": "VMBSO Customer Portal v2",
+          "order": 1,
+          "componentTypes": [
+            "All"
+          ],
+          "description": "All components packaged in a single managed solution. Estimated size is within recommended thresholds.",
+          "sizeMB": 24.3,
+          "componentCount": 391,
+          "components": []
+        }
+      ],
+      "recommendations": [
+        {
+          "type": "error",
+          "message": "Estimator may be truncated: Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount. The split recommendation below could be wrong — investigate before approving."
+        }
+      ],
+      "truncationSuspected": true,
+      "truncationWarnings": [
+        "Sampled 38 of 38 web files, but the average measured size is suspiciously small (<1 KB/file). The site's web file payloads may live in file-typed columns whose bytes are not returned via $select=content. The estimator's webFilesAggregateMB is likely an undercount."
+      ]
+    },
+    "hostResolution": {
+      "schemaVersion": 2,
+      "checkedAt": "2026-08-13T08:45:31.070Z",
+      "sourceEnvUrl": "https://vmbso-customerportal-dev.crm4.dynamics.com",
+      "sourceEnvId": "877d9dea-add8-e82f-91d9-c1fa784bfd4b",
+      "actionTaken": "none",
+      "finalHostEnvUrl": "https://vmbso-powertools.crm4.dynamics.com/",
+      "finalHostEnvId": "877d9dea-add8-e82f-91d9-c1fa784bfd4b",
+      "finalHostEnvName": "VMBSO-PowerTools",
+      "finalHostInstanceApiUrl": "https://vmbso-powertools.api.crm4.dynamics.com",
+      "isPlatformHost": false,
+      "tenantDefaultCustomHostEnvId": null,
+      "pipelinesSolutionVersion": "9.1.2026034.260325188",
+      "ready": true,
+      "warnings": [],
+      "candidates": {
+        "existingCustomHosts": [],
+        "existingPlatformHost": null,
+        "eligibleForAppInstall": [],
+        "inaccessibleEnvs": []
+      },
+      "telemetry": {
+        "correlationId": null
+      },
+      "detectionDurationMs": 5180,
+      "cacheHit": false,
+      "resolutionStatus": "AvailableUsingCustomHost"
+    }
+  },
+  "hostResolution": {
+    "status": "AvailableUsingCustomHost",
+    "hostEnvUrl": "https://vmbso-powertools.crm4.dynamics.com/",
+    "hostEnvId": "877d9dea-add8-e82f-91d9-c1fa784bfd4b",
+    "hostType": "custom",
+    "pipelinesSolutionVersion": "9.1.2026034.260325188",
+    "candidatesCount": 0,
+    "willEnsureDuringExecution": false,
+    "willProvisionPlatform": false,
+    "willProvisionCustom": false,
+    "willUsePpac": false,
+    "chosenEnvUrl": null,
+    "userChoseDeferToSetupPipeline": false
+  }
+}

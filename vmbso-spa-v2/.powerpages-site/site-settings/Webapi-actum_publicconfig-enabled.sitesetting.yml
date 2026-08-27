@@ -1,0 +1,4 @@
+description: Enable Web API access for the Public Config table (non-secret, per-environment runtime config read by the SPA at bootstrap)
+id: 4bedd013-ede1-4785-8bf7-8678dda855da
+name: Webapi/actum_publicconfig/enabled
+value: true
