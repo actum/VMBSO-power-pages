@@ -2,7 +2,7 @@
  * Custom hook for landing page content (Dataverse actum_landingpagecontent)
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dataverseService } from '../services/dataverseService';
 import { useAuth } from '../contexts/AuthContext';
@@ -66,8 +66,15 @@ export const useHomePage = () => {
   const [homePageData, setHomePageData] = useState<HomePageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Incremented on every fetch; only the latest fetch may update state. Prevents a
+  // slower, stale response (e.g. for the initial detector language, before the user's
+  // saved language is applied) from overwriting the correct content with an error.
+  const latestRequestId = useRef(0);
 
   const fetchHomePage = useCallback(async () => {
+    const requestId = ++latestRequestId.current;
+    const isStale = () => requestId !== latestRequestId.current;
+
     if (!currentUser?.contactid) {
       setLoading(false);
       return;
@@ -103,6 +110,8 @@ export const useHomePage = () => {
         brandIds,
       );
 
+      if (isStale()) return;
+
       if (!row) {
         setError(t('errors.noContent'));
         setHomePageData(null);
@@ -114,6 +123,8 @@ export const useHomePage = () => {
         row.actum_landingpagecontentid,
       );
 
+      if (isStale()) return;
+
       const firstName = currentUser.firstname;
       const fullName = currentUser.fullname?.trim() || `${currentUser.firstname ?? ''} ${currentUser.lastname ?? ''}`.trim();
 
@@ -121,12 +132,14 @@ export const useHomePage = () => {
         mapToHomePageData(row, firstName, fullName, ctas, t('actions.goToDocuments'))
       );
     } catch (err) {
+      if (isStale()) return;
       const message = err instanceof Error ? err.message : t('errors.loadFailed');
       setError(message);
       setHomePageData(null);
       console.error('Error fetching home page content:', err);
     } finally {
-      setLoading(false);
+      // A newer fetch owns the loading state
+      if (!isStale()) setLoading(false);
     }
   }, [
     currentUser?.contactid,

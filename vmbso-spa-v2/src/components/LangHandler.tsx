@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { getUserLanguageCode } from "../utils/userLanguageService";
-import { getSupportedLanguages, getDefaultLanguage } from "../utils/languageMapper";
+import { config } from "../config/powerPages.config";
+import { getUserLanguageCode, saveUserLanguage } from "../utils/userLanguageService";
+import { getSupportedLanguages, getDefaultLanguage, isSupportedLanguage } from "../utils/languageMapper";
 
 /**
  * LangHandler - Manages application language based on user preference and URL params
@@ -20,6 +21,7 @@ const LangHandler = () => {
   const navigate = useNavigate();
   const { currentUser, loading } = useAuth();
   const [userLanguageLoaded, setUserLanguageLoaded] = useState(false);
+  const languageBackfilled = useRef(false);
 
   // Handle URL parameter language override
   useEffect(() => {
@@ -82,6 +84,37 @@ const LangHandler = () => {
 
     loadUserLanguage();
   }, [currentUser, loading, userLanguageLoaded, searchParams, i18n, navigate]);
+
+  // Backfill: if the signed-in user has no saved language (never used the
+  // LanguagePicker), persist the language they are currently viewing the site in.
+  useEffect(() => {
+    if (config.devMode || loading || languageBackfilled.current) {
+      return;
+    }
+    if (!currentUser?.contactid || currentUser._actum_languageid_value) {
+      return;
+    }
+
+    languageBackfilled.current = true;
+
+    const langParam = searchParams.get("lang");
+    const currentLanguage =
+      langParam && isSupportedLanguage(langParam) ? langParam
+      : isSupportedLanguage(i18n.language) ? i18n.language
+      : getDefaultLanguage();
+
+    // No refreshUser() here: it would reset in-progress forms (e.g. UpdateProfile)
+    // that re-initialise from currentUser. The ref guard prevents a second save.
+    saveUserLanguage(currentUser.contactid, currentLanguage)
+      .then(saved => {
+        if (saved) {
+          console.log(`[LangHandler] Saved missing user language: ${currentLanguage}`);
+        }
+      })
+      .catch(error => {
+        console.error('[LangHandler] Failed to save missing user language:', error);
+      });
+  }, [currentUser, loading, searchParams, i18n]);
 
   return null;
 };

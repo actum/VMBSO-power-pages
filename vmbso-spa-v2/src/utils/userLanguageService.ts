@@ -5,6 +5,7 @@
  */
 
 import { dataverseService } from '../services/dataverseService';
+import { type Contact } from '../types/contact';
 import { mapDataverseToFrontend, getDefaultLanguage } from './languageMapper';
 
 /**
@@ -95,4 +96,23 @@ export async function getLanguageIdFromCode(frontendCode: string): Promise<strin
     console.error('[UserLanguage] Failed to resolve language ID from code:', error);
     return null;
   }
+}
+
+/**
+ * Persist a frontend language code as the contact's actum_languageid lookup.
+ * @param contactId - The contact to update
+ * @param frontendCode - The frontend language code (e.g., "en-GB", "fr-FR", "be-NL")
+ * @returns true if saved, false if the code could not be resolved to a language record
+ */
+export async function saveUserLanguage(contactId: string, frontendCode: string): Promise<boolean> {
+  const languageId = await getLanguageIdFromCode(frontendCode);
+  if (!languageId) {
+    return false;
+  }
+
+  // OData bind key is not part of the Contact type, hence the cast
+  await dataverseService.contacts.update(contactId, {
+    'actum_languageid@odata.bind': `/actum_languages(${languageId})`,
+  } as unknown as Partial<Contact>);
+  return true;
 }

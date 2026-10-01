@@ -4,8 +4,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { dataverseService } from '../../services/dataverseService';
-import { getLanguageIdFromCode } from '../../utils/userLanguageService';
+import { saveUserLanguage } from '../../utils/userLanguageService';
 
 const LANGUAGE_ABBREVIATIONS: Record<string, string> = {
   'en-GB': 'EN',
@@ -42,11 +41,7 @@ const LanguagePicker: React.FC = () => {
     // Persist language preference to backend
     if (currentUser?.contactid) {
       try {
-        const languageId = await getLanguageIdFromCode(newLangKey);
-        if (languageId) {
-          await dataverseService.contacts.update(currentUser.contactid, {
-            'actum_languageid@odata.bind': `/actum_languages(${languageId})`,
-          } as any);
+        if (await saveUserLanguage(currentUser.contactid, newLangKey)) {
           await refreshUser();
         }
       } catch (error) {
