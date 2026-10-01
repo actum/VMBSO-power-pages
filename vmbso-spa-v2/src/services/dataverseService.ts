@@ -346,17 +346,15 @@ export const dataverseService = {
     /**
      * Get brands linked to an account via the M2M relationship.
      * Nav prop: actum_account_actum_brand_actum_brand
+     * Uses $expand on the account (with an explicit $select) rather than the
+     * /accounts(id)/navprop path, which Power Pages treats as an all-columns
+     * read of the account and rejects once the wildcard fields setting is gone.
      */
     async getBrands(accountId: string): Promise<Brand[]> {
       try {
-        const query = buildODataQuery({
-          select: ['actum_brandid', 'actum_name'],
-          filter: 'statecode eq 0',
-        });
-        const response = await apiClient.odata<{ value: Brand[] }>(
-          `/accounts(${accountId})/actum_account_actum_brand_actum_brand${query}`
-        );
-        return response.value ?? [];
+        const url = `/accounts(${accountId})?$select=accountid&$expand=actum_account_actum_brand_actum_brand($select=actum_brandid,actum_name;$filter=statecode eq 0)`;
+        const response = await apiClient.odata<{ actum_account_actum_brand_actum_brand?: Brand[] }>(url);
+        return response.actum_account_actum_brand_actum_brand ?? [];
       } catch (error) {
         if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
           return [];
