@@ -42,7 +42,7 @@ enum ApprovalStatus {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
-  const { logout, currentUser } = useAuth();
+  const { logout, currentUser, isProfileComplete } = useAuth();
   const { t } = useTranslation(['header', 'footer', 'layout']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -254,8 +254,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </Box>
       </Drawer>
 
-      {/* Pending Approval Ribbon */}
-      {currentUser?.actum_approvalstatus === ApprovalStatus.Pending && (
+      {/* Pending Approval Ribbon — only once the profile is completed */}
+      {isProfileComplete && currentUser?.actum_approvalstatus === ApprovalStatus.Pending && (
         <Alert 
           severity="warning" 
           sx={{ 
