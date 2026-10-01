@@ -1,4 +1,4 @@
 id: 99dcae81-261c-f111-8341-000d3a688605
 name: Webapi/actum_brand/fields
 source: 0
-value: '*'
+value: actum_brandid,actum_name,statecode

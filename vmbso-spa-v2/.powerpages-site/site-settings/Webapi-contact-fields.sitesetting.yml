@@ -2,4 +2,4 @@ description: Defines which attributes can be read or modified. Use * to allow al
 id: 2fa60b26-141c-f111-8341-000d3a688605
 name: Webapi/contact/fields
 source: 0
-value: '*'
+value: contactid,firstname,lastname,emailaddress1,fullname,mobilephone,telephone1,jobtitle,createdon,modifiedon,actum_approvalstatus,_actum_languageid_value,_parentcustomerid_value,mspp_userpreferredlcid,address1_line1,address1_city,address1_postalcode,adx_identity_username,adx_identity_emailaddress1confirmed,actum_languageid

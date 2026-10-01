@@ -2,4 +2,4 @@ description: Defines which attributes can be read or modified. Use * to allow al
 id: f1d742cf-131c-f111-8341-000d3a688605
 name: Webapi/account/fields
 source: 0
-value: '*'
+value: accountid,name,actum_vatregistrationnumber,_actum_primarycountryid_value,_actum_roleid_value,actum_account_actum_brand_actum_brand

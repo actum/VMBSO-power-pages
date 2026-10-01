@@ -1,4 +1,4 @@
 id: cbce4712-4650-44a0-9eb7-5975371203c1
 name: Webapi/actum_landingpagecontent/fields
 source: 0
-value: '*'
+value: actum_landingpagecontentid,actum_name,actum_greetingstext,actum_title,actum_introductiontext,actum_heroimageurl,actum_bannerimageurl,actum_bannerimagetext,actum_bannertitle,_actum_languageid_value,_actum_countryid_value,_actum_roleid_value,_actum_brandid_value,statecode,statuscode,actum_CallToActionButton_actum_LandingPageContent_actum_LandingPageContent

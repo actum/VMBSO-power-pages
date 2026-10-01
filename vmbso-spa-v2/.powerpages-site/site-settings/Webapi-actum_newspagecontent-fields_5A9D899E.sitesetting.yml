@@ -1,4 +1,4 @@
 id: c2156711-1f27-f111-8342-000d3aba4179
 name: Webapi/actum_newspagecontent/fields
 source: 0
-value: '*'
+value: actum_newspagecontentid,actum_name,actum_title,actum_summary,actum_body,actum_publishdate,createdon,statecode,_actum_languageid_value,_actum_countryid_value,actum_NewsPageContent_actum_brand_actum_brand,actum_NewsPageContent_actum_role_actum_role,actum_CallToActionButton_actum_NewsPageContent_actum_NewsPageContent

@@ -1,4 +1,4 @@
 id: cd43304e-ca1e-f111-8341-000d3a688605
 name: Webapi/actum_downloadlog/fields
 source: 0
-value: '*'
+value: actum_downloadlogid,actum_sastoken,modifiedon,Actum_contactid,Actum_documentid

@@ -1,4 +1,4 @@
 id: 9704cc9b-711c-f111-8341-000d3a66f974
 name: Webapi/actum_translation/fields
 source: 0
-value: '*'
+value: actum_translationid,actum_translationname,actum_content,_actum_languageid_value,statecode
