@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-report-template-version="2">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="color-scheme" content="light"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-7NNBRlMcs2sVksctvxTzUg=='; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"/>
+<title>Web API Wildcard Migration</title>
+<style>
+:root {
+  --bg:#faf9f8; --surface:#ffffff; --surface2:#f3f2f1;
+  --border:#e1dfdd;
+  --text:#323130; --text-dim:#605e5c; --text-bright:#201f1e;
+  --accent:#0078d4; --accent-bg:#0078d40a; --accent-border:#0078d425;
+  --critical:#d13438; --critical-bg:#d134380a; --critical-border:#d1343825;
+  --warning:#ca5010; --warning-bg:#ca50100a; --warning-border:#ca501025;
+  --pass:#107c10; --pass-bg:#107c100a; --pass-border:#107c1025;
+  --info:#0078d4; --info-bg:#0078d40a; --info-border:#0078d425;
+  --mono:'Cascadia Code','Consolas',monospace;
+  --sans:'Segoe UI','Segoe UI Web (West European)',-apple-system,system-ui,sans-serif;
+  --radius:8px; --radius-sm:4px;
+  --shadow-4:0 1.6px 3.6px 0 rgba(0,0,0,0.132),0 0.3px 0.9px 0 rgba(0,0,0,0.108);
+  --topbar-h:72px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+.skip-link{position:absolute;top:-100px;left:12px;z-index:200;padding:10px 16px;color:var(--text-bright);background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);}
+.skip-link:focus{top:12px;}
+
+.topbar{z-index:100;background:var(--surface);box-shadow:var(--shadow-4);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;position:sticky;top:0;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.logo{width:36px;height:36px;object-fit:contain;display:block;flex-shrink:0;}
+.topbar-title{font-size:16px;font-weight:700;color:var(--text-bright);}
+.topbar-sub{font-size:11px;color:var(--text-dim);margin-top:1px;}
+.report-status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:0.6px;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);}
+
+.layout{display:flex;min-height:calc(100vh - var(--topbar-h));}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;flex-shrink:0;}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 22px;background:none;border:none;border-left:2px solid transparent;color:var(--text-dim);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:left;transition:all 0.15s;position:relative;}
+.nav-btn:hover{color:var(--text);background:var(--surface2);}
+.nav-btn.active{color:var(--accent);font-weight:600;border-left-color:var(--accent);background:var(--accent-bg);}
+.nav-btn .nav-icon{font-size:14px;opacity:0.6;width:16px;text-align:center;}
+.nav-btn.active .nav-icon{opacity:0.95;}
+.nav-badge{position:absolute;right:14px;font-size:10px;font-family:var(--mono);padding:1px 6px;border-radius:8px;font-weight:700;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);}
+
+.content{flex:1;min-width:0;padding:32px 40px 72px;max-width:1100px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+h2{font-size:21px;font-weight:800;color:var(--text-bright);letter-spacing:-0.3px;margin-bottom:5px;}
+.section-desc{font-size:13px;color:var(--text-dim);margin-bottom:20px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:10px;transition:box-shadow 0.2s;}
+.card:hover{box-shadow:var(--shadow-4);}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-align:center;box-shadow:var(--shadow-4);}
+.stat-num{font-size:28px;font-weight:800;font-family:var(--mono);line-height:1;}
+.stat-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:6px;}
+
+.severity{font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;font-family:var(--mono);display:inline-block;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;}
+.severity-critical{color:var(--critical);background:var(--critical-bg);border:1px solid var(--critical-border);}
+.severity-warning{color:var(--warning);background:var(--warning-bg);border:1px solid var(--warning-border);}
+.severity-info{color:var(--info);background:var(--info-bg);border:1px solid var(--info-border);}
+.severity-pass{color:var(--pass);background:var(--pass-bg);border:1px solid var(--pass-border);}
+
+.mig-table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.table-scroll{overflow-x:auto;}
+.mig-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-dim);padding:10px 12px;border-bottom:2px solid var(--border);background:var(--surface2);}
+.mig-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+.mig-table tbody tr:last-child td{border-bottom:none;}
+.row-summary:hover td{background:var(--surface2);}
+.col-toggle{width:36px;}
+.col-num{width:90px;text-align:right;}
+td.col-num{font-family:var(--mono);color:var(--text);text-align:right;}
+.cell-setting{font-family:var(--mono);font-weight:600;color:var(--text-bright);overflow-wrap:anywhere;}
+.row-toggle{background:none;border:none;cursor:pointer;color:var(--text-dim);font-size:12px;padding:0;line-height:1;}
+.row-toggle[aria-expanded="true"] .chevron{transform:rotate(90deg);}
+.chevron{display:inline-block;transition:transform 0.2s;}
+.row-detail>td{background:var(--surface2);padding:4px 16px 16px 44px;}
+
+.field-label{font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.field-block{margin-top:12px;}
+.field-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.field-chip{font-family:var(--mono);font-size:11px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:2px 7px;overflow-wrap:anywhere;}
+.usage-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.usage-loc{font-family:var(--mono);font-size:11px;color:var(--text-bright);background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1px 6px;margin-right:8px;overflow-wrap:anywhere;}
+.usage-detail{font-size:12px;color:var(--text);}
+.reasoning-block{background:var(--surface);border-left:2px solid var(--accent);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--text);line-height:1.7;}
+.fix-block{background:var(--pass-bg);border-left:2px solid var(--pass);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--text);line-height:1.7;}
+.empty-note{color:var(--text-dim);}
+
+@media(max-width:900px){
+  .layout{flex-direction:column;}
+  .sidebar{width:100%;display:flex;overflow-x:auto;padding:0;border-right:none;border-bottom:1px solid var(--border);}
+  .nav-btn{width:auto;white-space:nowrap;border-left:none;border-bottom:2px solid transparent;padding:12px 18px 12px 18px;}
+  .nav-btn.active{border-left-color:transparent;border-bottom-color:var(--accent);}
+  .nav-badge{position:static;margin-left:2px;}
+  .content{padding:20px 16px 72px;}
+}
+@media(max-width:600px){
+  /* Detail row repeats both counts; drop columns. */
+  .mig-table .col-num{display:none;}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .section.active{animation:none;}
+  .chevron{transition:none;}
+}
+@media(forced-colors:active){
+  .card,.stat-card,.mig-table,.severity,.field-chip,.report-status{border:1px solid CanvasText;}
+}
+@media print{
+  body{background:#fff;}
+  .topbar,footer{position:static;}
+  .sidebar,.col-toggle{display:none;}
+  .section{display:block!important;animation:none;}
+  .row-detail{display:table-row!important;}
+  .card,.stat-card,.mig-table tr{box-shadow:none;break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#contentRoot">Skip to report content</a>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <img class="logo" src="./power-pages-icon.png" alt="Power Pages"/>
+    <div>
+      <div class="topbar-title">Web API Wildcard Migration</div>
+      <div class="topbar-sub">Least-privilege field settings &middot; Generated October 1, 2026 at 8:52 AM UTC</div>
+    </div>
+  </div>
+  <span class="report-status"><span class="visually-hidden">Report status: </span>Complete</span>
+</div>
+
+<div class="layout">
+  <div class="sidebar" role="tablist" aria-label="Report sections">
+    <button class="nav-btn active" role="tab" id="nav-overview" aria-controls="tab-overview" aria-selected="true" data-tab="overview"><span class="nav-icon" aria-hidden="true">&#9673;</span> Overview</button>
+    <button class="nav-btn" role="tab" id="nav-wildcard" aria-controls="tab-wildcard" aria-selected="false" tabindex="-1" data-tab="wildcard"><span class="nav-icon" aria-hidden="true">&#9888;</span> Wildcard Fields <span class="nav-badge" id="badgeWildcard"></span></button>
+    <button class="nav-btn" role="tab" id="nav-explicit" aria-controls="tab-explicit" aria-selected="false" tabindex="-1" data-tab="explicit"><span class="nav-icon" aria-hidden="true">&#9638;</span> Explicit Fields <span class="nav-badge" id="badgeExplicit"></span></button>
+  </div>
+
+  <div class="content" id="contentRoot">
+
+    <div class="section active" id="tab-overview" role="tabpanel" aria-labelledby="nav-overview" tabindex="0">
+      <h2>Overview</h2>
+      <p class="section-desc">One modular configuration scope (.powerpages-site/site-settings, no deployment profiles) and every Web API call site in src/ (services, hooks, pages, components); build/ and .powerpages-site/web-files/ excluded.</p>
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+
+    <div class="section" id="tab-wildcard" role="tabpanel" aria-labelledby="nav-wildcard" tabindex="0">
+      <h2>Wildcard Fields</h2>
+      <p class="section-desc">Settings whose <code>fields</code> value used <code>*</code>. Expand a row to see every usage, the replacement columns, and the evidence behind them.</p>
+      <div id="wildcardList"></div>
+    </div>
+
+    <div class="section" id="tab-explicit" role="tabpanel" aria-labelledby="nav-explicit" tabindex="0">
+      <h2>Explicit Fields</h2>
+      <p class="section-desc">Settings that already listed columns. Expand a row to compare the configured columns against the columns the site actually uses.</p>
+      <div id="explicitList"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer style="position:fixed;bottom:0;left:0;right:0;text-align:center;padding:10px;font-size:12px;color:#605e5c;border-top:1px solid #c8c6c4;background:#ffffff;z-index:100;">AI-generated content may be incorrect</footer>
+
+<script nonce="7NNBRlMcs2sVksctvxTzUg==">
+const WILDCARD_DATA = [{"setting":"Webapi/contact/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:189","detail":"GET contacts with $select, $filter on createdon, $expand of language lookup"},{"location":"src/services/dataverseService.ts:269","detail":"PATCH contacts (language bind from LanguagePicker)"},{"location":"src/components/common/LanguagePicker.tsx:47","detail":"Caller supplying language lookup bind payload"}],"fields":["contactid","firstname","lastname","emailaddress1","fullname","mobilephone","telephone1","jobtitle","createdon","modifiedon","actum_approvalstatus","_actum_languageid_value","_parentcustomerid_value","mspp_userpreferredlcid","address1_line1","address1_city","address1_postalcode","adx_identity_username","adx_identity_emailaddress1confirmed","actum_languageid"],"finding":"Projection from the $select of the current-contact GET (dataverseService.ts:149-173), createdon filter, actum_languageid navigation for $expand and for the language bind written by LanguagePicker.","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/account/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:204","detail":"GET account by id with $select"},{"location":"src/services/dataverseService.ts:336","detail":"GET account by id (getById) with $select"},{"location":"src/services/dataverseService.ts:356","detail":"GET account brands navigation (N:N)"},{"location":"src/services/dataverseService.ts:373","detail":"POST accounts (no callers found)"},{"location":"src/services/dataverseService.ts:388","detail":"PATCH account primary contact bind (no callers found)"}],"fields":["accountid","name","actum_vatregistrationnumber","_actum_primarycountryid_value","_actum_roleid_value","actum_account_actum_brand_actum_brand"],"finding":"Union of the two account GET projections (dataverseService.ts:205, :334) and the brand N:N navigation route (:357). Uncalled create/setPrimaryContact excluded by user decision.","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_brand/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:356","detail":"GET brands via account N:N navigation"},{"location":"src/services/dataverseService.ts:480","detail":"GET brands list"},{"location":"src/hooks/useNews.ts:182","detail":"Expanded brands on news query"}],"fields":["actum_brandid","actum_name","statecode"],"finding":"Projection and statecode filter on brand list (:476-478), account-brand navigation (:353-354) and news brand $expand (useNews.ts:182); actum_name also used for ordering.","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_calltoactionbutton/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:1024","detail":"Expanded CTAs on landing page query"},{"location":"src/hooks/useNews.ts:163","detail":"Expanded CTAs on news query"}],"fields":["actum_calltoactionbuttonid","actum_ctatext","actum_ctaurl","actum_ctatarget","statecode"],"finding":"Nested $select and statecode filter in the landing page CTA $expand (dataverseService.ts:1024) and news CTA $expand (useNews.ts:163).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_calltoactionbutton_actum_newspage/fields","status":"Removed","usages":[],"fields":[],"finding":"N:N intersect table; no source call targets it and the news CTA expansion goes through the actum_newspagecontent navigation property. The sibling brand and role intersects have no Web API settings.","fix":"Applied locally: Remove the enabled and fields settings (delete local files; delete the site-setting records in Power Pages Management because upload may not delete them). Manual record deletion still required after deploy."},{"setting":"Webapi/actum_country/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:222","detail":"GET country by id with $select"},{"location":"src/services/dataverseService.ts:432","detail":"GET country languages navigation"},{"location":"src/services/dataverseService.ts:522","detail":"GET countries list"}],"fields":["actum_countryid","actum_name","actum_uploadinvoicesallowed","actum_country_actum_language_actum_language"],"finding":"Country-by-id projection (:223), country list projection and ordering (:519-520), country-language navigation route (:433).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_downloadlog/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:1084","detail":"POST download log with contact and document binds"},{"location":"src/services/dataverseService.ts:1135","detail":"GET download log by id with $select and $filter"}],"fields":["actum_downloadlogid","actum_sastoken","modifiedon","Actum_contactid","Actum_documentid"],"finding":"POST binds through Actum_contactid and Actum_documentid navigation properties (:1089-1090), id read from the response (:1116), GET projection (:1131) and modifiedon filter (:1128).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_invoice/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:720","detail":"GET invoices (getAll, no callers found)"},{"location":"src/services/dataverseService.ts:740","detail":"POST invoice with contact and account binds"},{"location":"src/services/dataverseService.ts:824","detail":"PATCH invoice file column"},{"location":"src/services/dataverseService.ts:852","detail":"PATCH invoice status"}],"fields":["actum_invoiceid","actum_invoicedocument","statuscode","actum_Contact","actum_Account"],"finding":"POST binds through actum_Contact and actum_Account (:750-751), id read from the response (:798), file column route (:815), statuscode PATCH (:860). Uncalled getAll excluded by user decision.","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_landingpagecontent/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:998","detail":"GET landing page content with $select and $filter"},{"location":"src/services/dataverseService.ts:1024","detail":"GET landing page by id with CTA $expand"}],"fields":["actum_landingpagecontentid","actum_name","actum_greetingstext","actum_title","actum_introductiontext","actum_heroimageurl","actum_bannerimageurl","actum_bannerimagetext","actum_bannertitle","_actum_languageid_value","_actum_countryid_value","_actum_roleid_value","_actum_brandid_value","statecode","statuscode","actum_CallToActionButton_actum_LandingPageContent_actum_LandingPageContent"],"finding":"Landing page projection (:978-993), statuscode filter (:970), CTA navigation $expand (:1022-1024).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_landingpagecontents/fields","status":"Removed","usages":[],"fields":[],"finding":"Setting name uses the entity set name; the logical name is actum_landingpagecontent, so this setting governs no table.","fix":"Applied locally: Remove the enabled and fields settings (delete local files; delete the site-setting records in Power Pages Management because upload may not delete them). Manual record deletion still required after deploy."},{"setting":"Webapi/actum_language/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:181","detail":"Expanded language on contact query"},{"location":"src/services/dataverseService.ts:412","detail":"GET languages list"},{"location":"src/services/dataverseService.ts:432","detail":"GET languages via country N:N navigation"}],"fields":["actum_languageid","actum_name","actum_code","actum_iso6391","actum_lcid","actum_isdefault","statecode"],"finding":"Language list projection and statecode filter (:408-410), country-language navigation projection (:429), contact language $expand (:181).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_loyaltytransaction/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:1275","detail":"GET balance transactions with $select and $filter"},{"location":"src/services/dataverseService.ts:1440","detail":"GET transaction history with $select, $filter, $orderby"}],"fields":["actum_loyaltytransactionid","actum_name","actum_loyaltypoints","actum_transactiontype","actum_portalmessage","statecode","statuscode","createdon","modifiedon","_actum_account_value"],"finding":"History projection and ordering (:1426-1437), balance projection (:1271) and account, statecode and modifiedon filters (:1272, :1436).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_newspagecontent/fields","status":"Migrated","usages":[{"location":"src/hooks/useNews.ts:179","detail":"GET news with $select, $filter, $expand, $orderby"},{"location":"src/hooks/useNews.ts:160","detail":"GET news ids with CTA $expand"}],"fields":["actum_newspagecontentid","actum_name","actum_title","actum_summary","actum_body","actum_publishdate","createdon","statecode","_actum_languageid_value","_actum_countryid_value","actum_NewsPageContent_actum_brand_actum_brand","actum_NewsPageContent_actum_role_actum_role","actum_CallToActionButton_actum_NewsPageContent_actum_NewsPageContent"],"finding":"News projection (useNews.ts:179), statecode, publish date, language and country filters (:168-177), brand, role and CTA navigation $expand (:163, :182).","fix":"Applied: Replace * in both wildcard copies with the explicit list; set the duplicate explicit copy to the same list so all three records agree."},{"setting":"Webapi/actum_reward/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:1239","detail":"GET rewards with $select, $filter, $orderby"}],"fields":["actum_rewardid","actum_name","actum_description","actum_pointamount","statecode","statuscode"],"finding":"Reward catalog projection, statecode filter and pointamount ordering (dataverseService.ts:1234-1236).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_role/fields","status":"Migrated","usages":[{"location":"src/services/dataverseService.ts:213","detail":"GET role by id with $select"},{"location":"src/services/dataverseService.ts:501","detail":"GET roles list"},{"location":"src/hooks/useNews.ts:182","detail":"Expanded roles on news query"}],"fields":["actum_roleid","actum_name","actum_uploadinvoicesallowed"],"finding":"Role-by-id projection (:214), role list projection and ordering (:498-499), news role $expand (useNews.ts:182).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_translation/fields","status":"Migrated","usages":[{"location":"src/services/translationService.ts:86","detail":"GET translations with $select and $filter"}],"fields":["actum_translationid","actum_translationname","actum_content","_actum_languageid_value","statecode"],"finding":"Translation projection and statecode filter (translationService.ts:87).","fix":"Applied: Replace * with the explicit list."},{"setting":"Webapi/actum_voucher/fields","status":"Removed","usages":[],"fields":[],"finding":"Vouchers are read, validated and redeemed only through cloud flows (dataverseService.ts:1618, :1713, :1768); no direct Web API call reaches this table.","fix":"Applied locally: Remove the enabled and fields settings (delete local files; delete the site-setting records in Power Pages Management because upload may not delete them). Manual record deletion still required after deploy."}];
+const EXPLICIT_DATA = [{"setting":"Webapi/actum_publicconfig/fields","status":"Least privilege","usages":[{"location":"src/services/dataverseService.ts:460","detail":"GET public config with $select"}],"fields":["actum_publicconfigid","actum_name","actum_value"],"finding":"Configured columns exactly match the only call site projection.","fix":"No change required."},{"setting":"Webapi/actum_newspagecontent/fields","status":"Least privilege","usages":[{"location":"src/hooks/useNews.ts:179","detail":"GET news"}],"fields":["actum_newspagecontentid","actum_name","actum_title","actum_summary","actum_body","actum_publishdate","createdon","statecode","_actum_languageid_value","_actum_countryid_value","actum_NewsPageContent_actum_brand_actum_brand","actum_NewsPageContent_actum_role_actum_role","actum_CallToActionButton_actum_NewsPageContent_actum_NewsPageContent"],"finding":"Duplicate of the wildcard copies in the same scope. Lists actum_ctahint, actum_ctalabel and actum_ctaurl, which do not exist on actum_newspagecontent, and lacks actum_name, lookup filters and navigation properties used by useNews.ts.","fix":"Applied: set to the same explicit list as the migrated wildcard copies; nonexistent columns removed."}];
+
+// Entry: { setting, status, usages: [{location, detail}], fields, finding, fix }
+// Unknown status values fall back to neutral.
+const STATUS_TONE = {
+  migrated: 'pass', 'least privilege': 'pass',
+  pending: 'warning', overbroad: 'warning', incomplete: 'warning',
+  blocked: 'critical',
+  removed: 'info',
+};
+
+// Resolved means the setting no longer carries `*`.
+const RESOLVED_STATUS = ['migrated', 'removed'];
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function escAttr(s) { return String(s == null ? '' : s).replace(/[^a-zA-Z0-9_-]/g, ''); }
+
+function toneOf(status) { return STATUS_TONE[String(status || '').toLowerCase()] || 'info'; }
+
+function fieldBlock(label, fields) {
+  if (!Array.isArray(fields) || fields.length === 0) return '';
+  const chips = fields.map(f => '<span class="field-chip">' + esc(f) + '</span>').join('');
+  return '<div class="field-block"><div class="field-label">' + esc(label) + ' (' + fields.length + ')</div>' +
+    '<div class="field-chips">' + chips + '</div></div>';
+}
+
+function usageBlock(usages) {
+  if (!usages.length) return '';
+  const items = usages.map(u =>
+    '<li><span class="usage-loc">' + esc(u.location) + '</span>' +
+    (u.detail ? '<span class="usage-detail">' + esc(u.detail) + '</span>' : '') + '</li>').join('');
+  return '<div class="field-block"><div class="field-label">Usages (' + usages.length + ')</div>' +
+    '<ul class="usage-list">' + items + '</ul></div>';
+}
+
+function textBlock(label, text, className) {
+  if (!text) return '';
+  return '<div class="field-block"><div class="field-label">' + esc(label) + '</div>' +
+    '<div class="' + className + '">' + esc(text) + '</div></div>';
+}
+
+function rowsHtml(entry, index, prefix, fieldsLabel) {
+  const detailId = prefix + '-detail-' + index;
+  const usages = Array.isArray(entry.usages) ? entry.usages : [];
+  const fields = Array.isArray(entry.fields) ? entry.fields : [];
+  return '<tr class="row-summary">' +
+      '<td class="col-toggle"><button type="button" class="row-toggle" aria-expanded="false" aria-controls="' + escAttr(detailId) + '">' +
+        '<span class="chevron" aria-hidden="true">&#9654;</span>' +
+        '<span class="visually-hidden">Details for ' + esc(entry.setting) + '</span></button></td>' +
+      '<td><span class="severity severity-' + toneOf(entry.status) + '">' + esc(entry.status) + '</span></td>' +
+      '<td class="cell-setting">' + esc(entry.setting) + '</td>' +
+      '<td class="col-num">' + usages.length + '</td>' +
+      '<td class="col-num">' + fields.length + '</td>' +
+    '</tr>' +
+    '<tr class="row-detail" id="' + escAttr(detailId) + '" hidden><td colspan="5">' +
+      usageBlock(usages) +
+      fieldBlock(fieldsLabel, fields) +
+      textBlock('Evidence', entry.finding, 'reasoning-block') +
+      textBlock('Outcome', entry.fix, 'fix-block') +
+    '</td></tr>';
+}
+
+function renderList(container, entries, prefix, fieldsLabel, emptyText) {
+  if (!entries.length) {
+    container.innerHTML = '<div class="card empty-note">' + esc(emptyText) + '</div>';
+    return;
+  }
+  container.innerHTML = '<div class="table-scroll"><table class="mig-table">' +
+    '<thead><tr><th class="col-toggle"><span class="visually-hidden">Expand</span></th>' +
+    '<th>Status</th><th>Site setting</th>' +
+    '<th class="col-num">Usages</th><th class="col-num">Columns</th></tr></thead><tbody>' +
+    entries.map((e, i) => rowsHtml(e, i, prefix, fieldsLabel)).join('') +
+    '</tbody></table></div>';
+}
+
+const wildcards = Array.isArray(WILDCARD_DATA) ? WILDCARD_DATA : [];
+const explicits = Array.isArray(EXPLICIT_DATA) ? EXPLICIT_DATA : [];
+const statusOf = (entry) => String(entry.status || '').toLowerCase();
+
+const stats = [
+  { num: wildcards.length, label: 'Wildcards Found', color: 'var(--warning)' },
+  { num: wildcards.filter(e => RESOLVED_STATUS.includes(statusOf(e))).length, label: 'Wildcards Resolved', color: 'var(--pass)' },
+  { num: wildcards.filter(e => statusOf(e) === 'blocked').length, label: 'Wildcards Blocked', color: 'var(--critical)' },
+  { num: explicits.length, label: 'Explicit Settings', color: 'var(--accent)' },
+];
+document.getElementById('statsGrid').innerHTML = stats
+  .filter(s => s.num > 0)
+  .map(s => '<div class="stat-card"><div class="stat-num" style="color:' + s.color + '">' + s.num + '</div><div class="stat-label">' + esc(s.label) + '</div></div>')
+  .join('');
+
+document.getElementById('badgeWildcard').textContent = wildcards.length;
+document.getElementById('badgeExplicit').textContent = explicits.length;
+
+renderList(document.getElementById('wildcardList'), wildcards, 'wildcard', 'Replacement columns',
+  'No wildcard field settings were found in any configuration scope.');
+renderList(document.getElementById('explicitList'), explicits, 'explicit', 'Configured columns',
+  'No already-explicit field settings were found in any configuration scope.');
+
+const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
+// An explicit behavior overrides the CSS reduced-motion rule.
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function selectTab(btn) {
+  navButtons.forEach(b => {
+    const on = b === btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', String(on));
+    // Roving tabindex keeps a single tablist tab stop.
+    b.tabIndex = on ? 0 : -1;
+    document.getElementById('tab-' + b.dataset.tab).classList.toggle('active', on);
+  });
+  window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+}
+navButtons.forEach((btn, index) => {
+  btn.addEventListener('click', () => selectTab(btn));
+  btn.addEventListener('keydown', event => {
+    const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1
+      : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+    if (!step) return;
+    event.preventDefault();
+    const next = navButtons[(index + step + navButtons.length) % navButtons.length];
+    selectTab(next);
+    next.focus();
+  });
+});
+
+document.addEventListener('click', event => {
+  const toggle = event.target.closest('.row-toggle');
+  if (!toggle) return;
+  const detail = document.getElementById(toggle.getAttribute('aria-controls'));
+  if (!detail) return;
+  detail.hidden = !detail.hidden;
+  toggle.setAttribute('aria-expanded', String(!detail.hidden));
+});
+</script>
+
+</body>
+</html>

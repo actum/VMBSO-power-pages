@@ -271,13 +271,13 @@ export const dataverseService = {
         headers: {
           'Content-Type': 'application/json',
           'If-Match': '*', // Required by Dataverse
-          'Prefer': 'return=representation', // Request updated record in response
+          // No 'Prefer: return=representation' — without a $select it reads all
+          // columns, which Power Pages rejects now that fields are explicit.
         },
         body: JSON.stringify(updateFields),
       });
 
-      // Re-fetch to ensure we have latest data
-      // (Prefer header may not be supported, so we always re-fetch for safety)
+      // Re-fetch to get the latest data with the fields we're allowed to read
       const updated = await this.getCurrent();
       if (!updated) {
         throw new Error('Unable to fetch updated contact');
@@ -362,38 +362,6 @@ export const dataverseService = {
         throw error;
       }
     },
-
-    /**
-     * Create a new Account record.
-     * Uses Prefer: return=representation to get the created record back.
-     */
-    async create(fields: Omit<Account, 'accountid'>): Promise<Account> {
-      const response = await apiClient.odata<Account>('/accounts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation',
-        },
-        body: JSON.stringify(fields),
-      });
-      return response;
-    },
-
-    /**
-     * Set the primary contact on an existing Account.
-     */
-    async setPrimaryContact(accountId: string, contactId: string): Promise<void> {
-      await apiClient.odata(`/accounts(${accountId})`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'If-Match': '*',
-        },
-        body: JSON.stringify({
-          'primarycontactid@odata.bind': `/contacts(${contactId})`,
-        }),
-      });
-    },
   },
 
   /**
@@ -420,17 +388,13 @@ export const dataverseService = {
     /**
      * Get languages linked to a specific country via the M2M relationship
      * actum_country_actum_language_actum_language.
+     * Uses $expand on the country (see accounts.getBrands for why).
      */
     async getByCountry(countryId: string): Promise<Language[]> {
       try {
-        const query = buildODataQuery({
-          select: ['actum_languageid', 'actum_name', 'actum_code', 'actum_iso6391', 'actum_lcid', 'actum_isdefault'],
-          orderby: 'actum_name asc',
-        });
-        const response = await apiClient.odata<{ value: Language[] }>(
-          `/actum_countries(${countryId})/actum_country_actum_language_actum_language${query}`
-        );
-        return response.value ?? [];
+        const url = `/actum_countries(${countryId})?$select=actum_countryid&$expand=actum_country_actum_language_actum_language($select=actum_languageid,actum_name,actum_code,actum_iso6391,actum_lcid,actum_isdefault;$orderby=actum_name asc)`;
+        const response = await apiClient.odata<{ actum_country_actum_language_actum_language?: Language[] }>(url);
+        return response.actum_country_actum_language_actum_language ?? [];
       } catch (error) {
         if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
           return [];
@@ -693,38 +657,6 @@ export const dataverseService = {
     },
 
     /**
-     * Fetch invoices from Dataverse using OData.
-     * Tries likely table names because table logical name can vary by environment.
-     */
-    async getAll(): Promise<Invoice[]> {
-      if (config.devMode) {
-        return [];
-      }
-
-      const query = buildODataQuery({
-        select: [
-          'actum_invoicenumber',
-          'actum_creditpoints',
-          'actum_status',
-          'statuscode',
-          'actum_account',
-          'actum_contact',
-          '_actum_accountid_value',
-          '_actum_contactid_value',
-        ],
-        orderby: 'createdon desc',
-      });
-
-      const response = await apiClient.odata<{ value: Invoice[] }>(`/actum_invoices${query}`, {
-        headers: {
-          Prefer: 'odata.include-annotations="OData.Community.Display.V1.FormattedValue"',
-        },
-      });
-
-      return response.value ?? [];
-    },
-
-    /**
      * Upload an invoice using direct OData (2-step process):
      * 1. Create invoice record with contact/account references
      * 2. Upload file to actum_invoicedocument file column
@@ -742,7 +674,8 @@ export const dataverseService = {
           'Content-Type': 'application/json',
           __RequestVerificationToken: token,
           'x-requested-with': 'XMLHttpRequest',
-          'Prefer': 'return=representation',
+          // No 'Prefer: return=representation' (all-columns read, rejected by
+          // Power Pages); the ID is taken from the OData-EntityId header below.
         },
         body: JSON.stringify({
           'actum_Contact@odata.bind': `/contacts(${contactId})`,

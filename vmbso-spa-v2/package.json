@@ -48,7 +48,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "cleanup": "pwsh -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1 || powershell -ExecutionPolicy Bypass -File ./cleanup-old-builds.ps1",
-    "deploy": "npm run build && npm run cleanup && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal v2\"",
-    "download": "pwsh -ExecutionPolicy Bypass -File ./download.ps1 || powershell -ExecutionPolicy Bypass -File ./download.ps1"
+    "deploy": "npm run build && npm run cleanup && pac pages upload-code-site --rootPath ./ --compiledPath ./build --siteName \"VMBSO Customer Portal v2\" && npm run sync-solution",
+    "download": "pwsh -ExecutionPolicy Bypass -File ./download.ps1 || powershell -ExecutionPolicy Bypass -File ./download.ps1",
+    "sync-solution": "pwsh -ExecutionPolicy Bypass -File ./sync-solution.ps1 || powershell -ExecutionPolicy Bypass -File ./sync-solution.ps1"
   }
 }
