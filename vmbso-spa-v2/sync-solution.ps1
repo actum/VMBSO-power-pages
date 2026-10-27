@@ -1,10 +1,14 @@
-# Add the site's current build web files to the Dataverse solution after upload-code-site.
-# upload-code-site creates new web file records (hashed bundle names) but never adds them to a
-# solution, so the Power Platform pipeline would keep shipping the old bundles to TEST/PROD.
+# Add the site's current build web files and shared site settings to the Dataverse solution after
+# upload-code-site. upload-code-site creates new web file records (hashed bundle names) and site
+# settings but never adds them to a solution, so the Power Platform pipeline would keep shipping the
+# old bundles to TEST/PROD and never update those settings there.
 # (npm run deploy runs this right after `pac pages upload-code-site`.)
 #
+# Site settings added: names matching -SiteSettingPatterns (same value in every environment) plus
+# settings backed by an environment variable (value comes from each environment).
+#
 # Only ADDS components. Stale bundles still in the solution are reported; pass -PruneStale to
-# remove them from the solution (records are not deleted).
+# remove them from the solution (records are not deleted). Site settings are never removed.
 #
 # Requires: az CLI signed in to the tenant (`az login`).
 
@@ -13,6 +17,8 @@ param(
     [string]$SolutionUniqueName = "CustomerPortalPowerPages",
     [string]$WebsiteId = "ac923a79-af52-4a68-8d8f-9f947a0d5821",
     [string]$BuildPath = "build",
+    [string]$SiteSettingsPath = ".powerpages-site/site-settings",
+    [string[]]$SiteSettingPatterns = @("HTTP/*", "Webapi/*"),
     [switch]$DryRun,
     [switch]$PruneStale
 )
@@ -86,22 +92,48 @@ $stale = $webFiles | Where-Object {
     (-not (Get-PartialUrl $_) -or $_.name -match "\.[A-Za-z0-9_-]{8,}(\.chunk)?\.(js|css|woff2?)$")
 }
 
+# Site settings (powerpagecomponenttype 9) that belong in the solution
+$siteSettings = Get-All "$api/powerpagecomponents?`$select=name,powerpagecomponentid,content&`$filter=_powerpagesiteid_value eq $WebsiteId and powerpagecomponenttype eq 9"
+$shared = $siteSettings | Where-Object {
+    $s = $_
+    $envVar = try { ($s.content | ConvertFrom-Json).envvar_schema } catch { $null }
+    $envVar -or ($SiteSettingPatterns | Where-Object { $s.name -like $_ })
+}
+$settingsToAdd = $shared | Where-Object { -not $inSolution.ContainsKey($_.powerpagecomponentid) }
+
+# A matching setting in the repo but not in Dataverse was deleted there (e.g. reset in the admin UI)
+if (Test-Path $SiteSettingsPath) {
+    $settingIds = @{}
+    $siteSettings | ForEach-Object { $settingIds[$_.powerpagecomponentid] = $true }
+    foreach ($file in Get-ChildItem -Path $SiteSettingsPath -Filter *.yml) {
+        $yml = Get-Content $file.FullName -Raw
+        $id = if ($yml -match "(?m)^id:\s*(\S+)") { $matches[1] }
+        $name = if ($yml -match "(?m)^name:\s*(.+?)\s*$") { $matches[1] }
+        $wanted = ($yml -match "(?m)^envvar_schema:") -or ($SiteSettingPatterns | Where-Object { $name -like $_ })
+        if ($wanted -and $id -and -not $settingIds.ContainsKey($id)) {
+            Write-Host "WARNING: site setting $name ($id) is in the repo but missing in Dataverse; re-upload before running the pipeline" -ForegroundColor Yellow
+        }
+    }
+}
+
 Write-Host "`nSolution: $SolutionUniqueName ($EnvUrl)" -ForegroundColor Cyan
 Write-Host "Current build web files: $(@($current).Count), already in solution: $(@($current).Count - @($toAdd).Count)" -ForegroundColor Cyan
+Write-Host "Shared site settings: $(@($shared).Count), already in solution: $(@($shared).Count - @($settingsToAdd).Count)" -ForegroundColor Cyan
 
-foreach ($wf in $toAdd) {
+foreach ($component in @($toAdd) + @($settingsToAdd)) {
+    if (-not $component) { continue }
     if ($DryRun) {
-        Write-Host "  [dry run] would add: $($wf.name) ($($wf.powerpagecomponentid))" -ForegroundColor Yellow
+        Write-Host "  [dry run] would add: $($component.name) ($($component.powerpagecomponentid))" -ForegroundColor Yellow
         continue
     }
     $body = @{
-        ComponentId           = $wf.powerpagecomponentid
+        ComponentId           = $component.powerpagecomponentid
         ComponentType         = $componentType
         SolutionUniqueName    = $SolutionUniqueName
         AddRequiredComponents = $false
     } | ConvertTo-Json
     Invoke-RestMethod -Uri "$api/AddSolutionComponent" -Headers $headers -Method Post -Body $body -ContentType "application/json" | Out-Null
-    Write-Host "  added: $($wf.name) ($($wf.powerpagecomponentid))" -ForegroundColor Green
+    Write-Host "  added: $($component.name) ($($component.powerpagecomponentid))" -ForegroundColor Green
 }
 
 if (@($stale).Count -gt 0) {
