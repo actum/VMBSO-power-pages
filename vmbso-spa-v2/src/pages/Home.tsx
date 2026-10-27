@@ -50,7 +50,7 @@ export const Home: React.FC = () => {
                         sx={{ mb: { xs: 8, md: 12 } }}
                     >
                         {/* Left column — title, intro text, CTA buttons */}
-                        <Box sx={{ width: '100%', flex: { md: '0 0 58.333333%' } }}>
+                        <Box sx={{ width: '100%', minWidth: 0, flex: { md: '7 1 0' } }}>
                             <Typography
                                 variant="h2"
                                 component="h1"
@@ -94,7 +94,7 @@ export const Home: React.FC = () => {
                         </Box>
 
                         {/* Right column — hero image */}
-                        <Box sx={{ width: '100%', flex: { md: '0 0 41.666667%' } }}>
+                        <Box sx={{ width: '100%', minWidth: 0, flex: { md: '5 1 0' } }}>
                             <Box
                                 component="img"
                                 src={homePageData.heroSection.heroImage.url}
