@@ -23,6 +23,7 @@ directory for the available flags.
 | `npm run cleanup` | Runs `cleanup-old-builds.ps1`, which deletes stale `main.*` bundles under `.powerpages-site/web-files` that don't match the hashes of the `./build` folder produced by the *immediately preceding* `npm run build`. Only `main.*` files are pruned; other old hashed files can still pile up there. `npm run deploy` already runs this in the right order. |
 | `npm run deploy` | `npm run build` → `npm run cleanup` → `pac pages upload-code-site` against whichever environment the active `pac` auth profile points at (must be **DEV**) → `npm run sync-solution`. |
 | `npm run sync-solution` | Runs `sync-solution.ps1`: adds the current build's web files and the shared site settings (`HTTP/*`, `Webapi/*` and the environment-variable-backed ones) to the `CustomerPortalPowerPages` solution in DEV, so the pipeline ships them. Only adds components; stale bundles still in the solution are just reported. Requires `az login`. |
+| `npm run check-environments` | Dry run of `cleanup-environments.ps1`: reports leftovers in DEV and TEST that break pipeline deployments (unmanaged layers in TEST, site components missing from the solution, orphan records). Changes nothing; 0 steps means clean. See [Environment cleanup](#environment-cleanup). Requires `az login`. |
 | `npm run download` | Runs `download.ps1`: `pac pages download-code-site` from DEV into a temporary folder, copies its `.powerpages-site` metadata over this folder, then deletes the temporary folder. Use this to pull down site-setting/permission changes made in the Power Pages admin UI so they aren't lost on the next deploy. |
 
 The scripts call `pwsh` (PowerShell 7) and fall back to Windows PowerShell. If PowerShell 7 isn't
@@ -51,7 +52,27 @@ pipeline**. Never run `pac pages upload-code-site` or `npm run download` against
 
 What the sync step does **not** add to the solution: site settings outside `HTTP/*`, `Webapi/*` and
 the environment-variable-backed ones, table permissions, web roles, and page/content changes. If you
-changed any of those, add them to the solution in DEV yourself before running the pipeline.
+changed any of those, add them to the solution in DEV yourself before running the pipeline
+(`cleanup-environments.ps1 -IncludePermissionsAndFlows` adds new table permissions, flow
+registrations and auth settings for you).
+
+### Environment cleanup
+
+`cleanup-environments.ps1` fixes leftovers that make the pipeline silently not update TEST:
+
+- **TEST:** unmanaged layers on top of managed components (created by any direct upload to TEST) and
+  unmanaged components that don't exist in DEV (old bundles, orphan `index.html` copies).
+- **DEV:** site components missing from `CustomerPortalPowerPages`, unused auth providers, bot
+  consumers and orphan records, plus their local `.powerpages-site` YAML so a deploy doesn't recreate them.
+
+It is a dry run unless you pass `-Apply`, and writes the plan to `%TEMP%\cleanup-environments-plan.csv`.
+Review the plan before applying, and fix DEV before TEST:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./cleanup-environments.ps1 -IncludePermissionsAndFlows -Scope DEV,REPO -Apply
+# commit the deleted YAML, run the pipeline, then:
+powershell -ExecutionPolicy Bypass -File ./cleanup-environments.ps1 -Scope TEST -Apply
+```
 
 ### Sync options
 
@@ -87,5 +108,5 @@ npm run lint
 - `cleanup-old-builds.ps1` determines "current" build hashes from the local `build/` folder
   produced by the immediately-preceding `npm run build` step, so `npm run cleanup` should always
   be run right after a fresh build — which is exactly what `npm run deploy` already does.
-- Many site settings in TEST were created by past direct uploads and are not in any solution, so a
-  pipeline change to one of them may not take effect until the managed layer replaces it.
+- Past direct uploads to TEST left unmanaged layers that masked pipeline changes. They were cleaned
+  up on 2026-11-04; run `npm run check-environments` if TEST doesn't pick up a pipeline change.
