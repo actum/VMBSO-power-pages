@@ -261,9 +261,9 @@ See Design → "Protecting published terms". Business rules can't read the paren
 - Produces helper `acceptTerms(terms: RequiredTerm[], contactId: string, shownTextByVersion: Record<string, TermsText>, alreadyAccepted: Set<string>): Promise<void>` in `src/components/terms/acceptTerms.ts`. It creates acceptances **only for versions not in `alreadyAccepted`** (Review Focus #4), one at a time, and throws on the first failure. "Shown text" = the text displayed in the dialog, or the `pickText` result if the dialog was never opened. Record `actum_languageid` = that text's language and `actum_texthash` = `await sha256Hex(text.actum_body)`.
 - Produces `sha256Hex(body: string): Promise<string>` in `src/utils/textHash.ts`: `crypto.subtle.digest('SHA-256', new TextEncoder().encode(body))` → lowercase hex. It hashes the **raw** `actum_body` as returned by the Web API, not the DOMPurify output, so admins can reproduce it from the stored record.
 
-- [ ] **Step 1:** Write `acceptTerms.test.ts`: with `alreadyAccepted` containing v1, calling with [v1, v2] calls `createAcceptance` once (for v2), with v2's shown language and `textHash` = SHA-256 of its body (mock `dataverseService`). Also write `textHash.test.ts`: `sha256Hex('abc')` = `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`.
-- [ ] **Step 2:** `npm test` → FAIL; implement; → PASS.
-- [ ] **Step 3:** Build the two components. Mobile: full-width cards, 16px gutter.
+- [x] **Step 1:** Write `acceptTerms.test.ts`: with `alreadyAccepted` containing v1, calling with [v1, v2] calls `createAcceptance` once (for v2), with v2's shown language and `textHash` = SHA-256 of its body (mock `dataverseService`). Also write `textHash.test.ts`: `sha256Hex('abc')` = `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`.
+- [x] **Step 2:** `npm test` → FAIL; implement; → PASS.
+- [x] **Step 3 (done 2026-11-06; the dialog no longer loads texts itself: `usePickedTermsTexts` in `src/hooks/useTermsTexts.ts` picks one text per version for the page, so the dialog and the recorded language + hash always match; strings have English fallbacks until Task 13):** Build the two components. Mobile: full-width cards, 16px gutter.
 - [ ] **Step 4: Commit** `feat(terms): acceptance list and dialog`
 
 ### Task 10: Update Profile integration

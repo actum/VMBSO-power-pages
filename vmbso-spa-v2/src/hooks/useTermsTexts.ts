@@ -5,6 +5,15 @@ import { dataverseService } from '../services/dataverseService';
 import type { Language } from '../types/language';
 import type { TermsText } from '../types/terms';
 import { mapFrontendToDataverse } from '../utils/languageMapper';
+import { pickText } from '../utils/termsResolver';
+
+export interface PickedTermsText {
+  text: TermsText;
+  /** False: the text is not in the UI language; show the "only available in …" note. */
+  isUiLanguage: boolean;
+  /** Name of the text's language (e.g. "French"), for that note. */
+  languageName?: string;
+}
 
 const DEV_LANGUAGES: Language[] = [
   { actum_languageid: 'dev-en', actum_name: 'English', actum_code: 'en-GB' },
@@ -71,4 +80,28 @@ export const useTermsTexts = (versionIds: string[]): TermsTextsState => {
   }, [languages, i18n.language]);
 
   return { texts, languages, uiLanguageId, englishLanguageId, loading, error };
+};
+
+/**
+ * Per version, the text to show (UI language → only text → English → oldest). The same pick is
+ * shown in the dialog and recorded on acceptance (language + SHA-256).
+ */
+export const usePickedTermsTexts = (
+  versionIds: string[],
+): { picked: Record<string, PickedTermsText>; loading: boolean; error: boolean } => {
+  const { texts, languages, uiLanguageId, englishLanguageId, loading, error } = useTermsTexts(versionIds);
+  const picked = useMemo(() => {
+    const result: Record<string, PickedTermsText> = {};
+    for (const id of versionIds) {
+      const pick = pickText(texts.filter((t) => t._actum_termsversionid_value === id), uiLanguageId, englishLanguageId);
+      if (pick) {
+        const languageName = languages.find((l) => l.actum_languageid === pick.text._actum_languageid_value)?.actum_name;
+        result[id] = { ...pick, languageName };
+      }
+    }
+    return result;
+    // versionIds content is captured by `texts` (loaded per id set)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [texts, languages, uiLanguageId, englishLanguageId]);
+  return { picked, loading, error };
 };
