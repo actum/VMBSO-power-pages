@@ -18,6 +18,7 @@ import type { Voucher } from '../types/voucher';
 import type { RawFlowVoucher, ValidateVoucherFlowResponse, RedeemVoucherFlowResponse } from '../types/voucherFlow';
 import type { LandingPageContent, LandingPageCta } from '../types/homePage';
 import type { PublicConfig } from '../types/publicConfig';
+import { TermsStatus, type TermsAcceptance, type TermsText, type TermsVersion } from '../types/terms';
 import { config } from '../config/powerPages.config';
 
 type FlowArrayResponse<T> = {
@@ -457,7 +458,7 @@ export const dataverseService = {
     async getAll(): Promise<Role[]> {
       try {
         const query = buildODataQuery({
-          select: ['actum_roleid', 'actum_name'],
+          select: ['actum_roleid', 'actum_name', 'actum_uploadinvoicesallowed'],
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Role[] }>(`/actum_roles${query}`);
@@ -478,7 +479,7 @@ export const dataverseService = {
     async getAll(): Promise<Country[]> {
       try {
         const query = buildODataQuery({
-          select: ['actum_countryid', 'actum_name'],
+          select: ['actum_countryid', 'actum_name', 'actum_uploadinvoicesallowed'],
           orderby: 'actum_name asc',
         });
         const response = await apiClient.odata<{ value: Country[] }>(`/actum_countries${query}`);
@@ -488,6 +489,112 @@ export const dataverseService = {
           return [];
         }
         throw error;
+      }
+    },
+  },
+
+  /**
+   * Terms & Conditions (VMPP-323).
+   * Versions and texts are readable by every signed-in user; acceptances are Contact-scoped
+   * (create + read own). Read errors 401/403/404 return [] like the other lookups.
+   */
+  terms: {
+    /**
+     * Published, active versions for the user's country plus the default set (empty country).
+     * Without a country only the default set is returned.
+     */
+    async getPublishedCandidates(countryId?: string): Promise<TermsVersion[]> {
+      try {
+        const countryFilter = countryId
+          ? `(_actum_countryid_value eq ${countryId} or _actum_countryid_value eq null)`
+          : '_actum_countryid_value eq null';
+        const query = buildODataQuery({
+          select: ['actum_termsversionid', 'actum_name', 'actum_scope', '_actum_countryid_value', 'actum_version', 'actum_status', 'createdon'],
+          filter: `statecode eq 0 and actum_status eq ${TermsStatus.Published} and ${countryFilter}`,
+        });
+        const response = await apiClient.odata<{ value: TermsVersion[] }>(`/actum_termsversions${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /** All texts (one per language) of the given versions. */
+    async getTexts(versionIds: string[]): Promise<TermsText[]> {
+      if (!versionIds.length) return [];
+      try {
+        const query = buildODataQuery({
+          select: ['actum_termstextid', '_actum_termsversionid_value', '_actum_languageid_value', 'actum_body', 'createdon'],
+          filter: versionIds.map((id) => `_actum_termsversionid_value eq ${id}`).join(' or '),
+        });
+        const response = await apiClient.odata<{ value: TermsText[] }>(`/actum_termstexts${query}`);
+        return response.value ?? [];
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * The signed-in user's acceptances (Contact scope returns only their own rows), with the
+     * accepted version's scope and country for the NEW/UPDATED label.
+     * The filter changes on every call to bypass the Power Pages Web API cache, so an acceptance
+     * created a moment ago is returned (same technique as downloadLogs.getById).
+     */
+    async getMyAcceptances(): Promise<TermsAcceptance[]> {
+      try {
+        const future = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString();
+        const query = buildODataQuery({
+          select: ['actum_termsacceptanceid', '_actum_termsversionid_value', '_actum_languageid_value', 'actum_texthash', 'createdon'],
+          expand: ['actum_TermsVersionId($select=actum_scope,_actum_countryid_value)'],
+          filter: `createdon lt ${future}`,
+        });
+        const response = await apiClient.odata<{
+          value: (TermsAcceptance & { actum_TermsVersionId?: TermsAcceptance['version'] | null })[];
+        }>(`/actum_termsacceptances${query}`);
+        return (response.value ?? []).map(({ actum_TermsVersionId, ...acceptance }) => ({
+          ...acceptance,
+          version: actum_TermsVersionId ?? undefined,
+        }));
+      } catch (error) {
+        if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+          return [];
+        }
+        throw error;
+      }
+    },
+
+    /**
+     * Records that the contact accepted a version, in the language they read, with the
+     * SHA-256 of the body they read. Lookups via @odata.bind; no Prefer: return=representation
+     * (rejected by Power Pages). Needs Append + AppendTo on both sides of each lookup.
+     */
+    async createAcceptance(args: { contactId: string; versionId: string; languageId: string; textHash: string; name: string }): Promise<void> {
+      const token = await getCsrfToken();
+      const response = await fetch(config.api.termsAcceptances, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          __RequestVerificationToken: token,
+          'x-requested-with': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+          actum_name: args.name.slice(0, 200),
+          actum_texthash: args.textHash,
+          'actum_ContactId@odata.bind': `/contacts(${args.contactId})`,
+          'actum_TermsVersionId@odata.bind': `/actum_termsversions(${args.versionId})`,
+          'actum_LanguageId@odata.bind': `/actum_languages(${args.languageId})`,
+        }),
+      });
+      if (!response.ok) {
+        const details = await response.text().catch(() => '');
+        throw new Error(`Failed to record terms acceptance: ${response.status}${details ? ` - ${details}` : ''}`);
       }
     },
   },

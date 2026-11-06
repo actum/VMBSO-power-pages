@@ -226,7 +226,7 @@ See Design → "Protecting published terms". Business rules can't read the paren
   - `dataverseService.terms.createAcceptance(args: { contactId: string; versionId: string; languageId: string; textHash: string; name: string }): Promise<void>` — POST with `@odata.bind` for the three lookups plus `actum_texthash`, following the `uploadInvoice` pattern.
   - Every method returns `[]` on 401/403/404 like `roles.getAll`.
 
-- [ ] **Step 1:** Implement the four methods.
+- [x] **Step 1 (done 2026-11-06; versions also filtered on `statecode eq 0`; `getTexts` uses or-chained eq; `getMyAcceptances` uses a changing `createdon lt <future>` filter to bypass the Web API cache):** Implement the four methods.
 - [ ] **Step 2: Verify** — in DEV browser console (after deploy) each returns the seeded data; `createAcceptance` creates one row visible in `getMyAcceptances()`.
 - [ ] **Step 3: Commit** `feat(terms): dataverse service`
 
