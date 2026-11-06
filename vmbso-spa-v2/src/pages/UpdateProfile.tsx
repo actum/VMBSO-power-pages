@@ -216,7 +216,8 @@ export const UpdateProfile: React.FC = () => {
     if (!found && vatSearchState !== "notFound") return null;
     const roleId = found ? foundAccount?._actum_roleid_value : values.actum_role;
     const countryId = found ? foundAccount?._actum_primarycountryid_value : values.actum_primarycountry;
-    if (!countryId || (!found && !roleId)) return null;
+    // New company: wait for both dropdowns. Found account without a country: default set.
+    if (!found && (!countryId || !roleId)) return null;
     return {
       countryId,
       role: roles.find(r => r.actum_roleid === roleId),
