@@ -136,8 +136,8 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 ### Task 4: Seed placeholder content (DEV)
 
-- [ ] **Step 1:** Create in DEV: BE-General v1 (EN/FR/NL texts), BE-InvoiceUpload v1 (EN/FR/NL), BE-Distributor v1 (EN/FR/NL), FR-General v1 (FR), Default-General v1 (EN), all Published. Placeholder bodies until Phase 0 content arrives.
-- [ ] **Step 2: Verify** — `GET /_api/actum_termsversions?$filter=actum_status eq 182980001` returns 5 rows.
+- [x] **Step 1 (done 2026-11-06; names: "BE General", "Upload invoices" (BE), "BE Distributor", "Terms for the first version" (FR General, FR + EN texts, made by Daniel), "Default General"):** Create in DEV: BE-General v1 (EN/FR/NL texts), BE-InvoiceUpload v1 (EN/FR/NL), BE-Distributor v1 (EN/FR/NL), FR-General v1 (FR), Default-General v1 (EN), all Published. Placeholder bodies until Phase 0 content arrives.
+- [x] **Step 2: Verify** (5 Published rows confirmed via the Dataverse API; the portal check is the Task 3 console test) — `GET /_api/actum_termsversions?$filter=actum_status eq 182980001` returns 5 rows.
 
 ## Phase 2 — SPA logic
 
