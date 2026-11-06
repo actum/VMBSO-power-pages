@@ -21,8 +21,8 @@ param(
     [string]$TestUrl = "https://vmbso-customerportal-test.crm4.dynamics.com",
     [string]$SolutionUniqueName = "CustomerPortalPowerPages",
     [string]$WebsiteId = "ac923a79-af52-4a68-8d8f-9f947a0d5821",
-    [string]$SitePath = "$PSScriptRoot\.powerpages-site",
-    [string]$PlanPath = "$env:TEMP\cleanup-environments-plan.csv",
+    [string]$SitePath = (Join-Path $PSScriptRoot ".powerpages-site"),
+    [string]$PlanPath = (Join-Path ([System.IO.Path]::GetTempPath()) "cleanup-environments-plan.csv"),
     [string[]]$ExtraDeleteIds = @(),
     [ValidateSet("DEV", "REPO", "TEST")]
     [string[]]$Scope = @("DEV", "REPO", "TEST"),

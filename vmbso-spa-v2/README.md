@@ -9,8 +9,10 @@ npm install
 npm run dev
 ```
 
-Requires `.env.local` for local Dataverse/PAC auth configuration — see `.env.local` in this
-directory for the available flags.
+No local env file is needed: the committed `.env.development` and `.env.production` cover it.
+`REACT_APP_DEV_ROLE` in `.env.development` switches the local voucher view between `installer` and
+`distributor`. To override a value just for your machine, put it in a `.env.local` file (gitignored).
+Only variables prefixed with `REACT_APP_` reach the app.
 
 ## Scripts
 
