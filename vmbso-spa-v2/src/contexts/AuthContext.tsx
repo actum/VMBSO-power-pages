@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { type Contact } from '../types/contact';
+import type { RequiredTerm } from '../types/terms';
 import { authService } from '../services/authService';
+import { devMockRequiredTerms, loadRequiredTerms } from '../services/termsStatus';
+import { config } from '../config/powerPages.config';
 
 const APPROVAL_STATUS_REJECTED = 182980002;
 
@@ -12,6 +15,14 @@ interface AuthContextType {
   loading: boolean;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  /** True until the terms status of the current user (complete profile) is known. */
+  termsLoading: boolean;
+  /** Every T&C document that applies to the user, accepted or not (VMPP-323). */
+  requiredTerms: RequiredTerm[];
+  /** The applicable documents the user has not accepted yet; the app is gated while non-empty. */
+  missingTerms: RequiredTerm[];
+  /** Reload the terms status, e.g. after accepting. */
+  refreshTerms: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -90,6 +101,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setCurrentUser(user);
   };
 
+  // ── Terms & Conditions status (VMPP-323) ─────────────────────────────
+  // Only users with a complete profile are gated; new users accept on the Update Profile page.
+  // `termsKey` identifies the user + profile state the terms belong to, so termsLoading stays
+  // true (and the gate waits) until terms for the *current* state are loaded.
+  const [requiredTerms, setRequiredTerms] = useState<RequiredTerm[]>([]);
+  const [termsKey, setTermsKey] = useState<string | null>(null);
+  const currentTermsKey = currentUser && isProfileComplete ? `${currentUser.contactid}` : null;
+
+  const refreshTerms = useCallback(async () => {
+    if (!currentUser || !currentTermsKey) {
+      setRequiredTerms([]);
+      setTermsKey(null);
+      return;
+    }
+    if (config.devMode) {
+      setRequiredTerms(devMockRequiredTerms());
+      setTermsKey(currentTermsKey);
+      return;
+    }
+    try {
+      setRequiredTerms(await loadRequiredTerms(currentUser));
+    } catch (error) {
+      // Fail open: a read error must not lock users out of the portal.
+      console.error('[TERMS] Could not load terms status:', error);
+      setRequiredTerms([]);
+    } finally {
+      setTermsKey(currentTermsKey);
+    }
+  }, [currentUser, currentTermsKey]);
+
+  useEffect(() => {
+    refreshTerms();
+  }, [refreshTerms]);
+
+  const termsLoading = loading || (currentTermsKey !== null && termsKey !== currentTermsKey);
+  const missingTerms = React.useMemo(() => requiredTerms.filter((t) => !t.accepted), [requiredTerms]);
+
   const value: AuthContextType = {
     currentUser,
     isAuthenticated,
@@ -98,6 +146,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     logout,
     refreshUser,
+    termsLoading,
+    requiredTerms,
+    missingTerms,
+    refreshTerms,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

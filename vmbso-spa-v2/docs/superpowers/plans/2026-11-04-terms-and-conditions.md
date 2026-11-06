@@ -244,8 +244,8 @@ See Design → "Protecting published terms". Business rules can't read the paren
   ```
 - Produces `useTermsTexts(versionIds: string[]): { texts: TermsText[]; languages: Language[]; loading: boolean }` (fetches texts + `languages.getAll()` once; used by dialog to `pickText`).
 
-- [ ] **Step 1:** After `checkSession` sets a user **with complete profile**, build `FeatureContext` from `currentUser.parentcustomerid.actum_Role` / `actum_Country` and `actum_Country.actum_countryid`, call `getPublishedCandidates` + `getMyAcceptances`, then `resolveRequiredVersions` → `computeRequiredTerms`. Incomplete profile → `requiredTerms = []`, `termsLoading = false`.
-- [ ] **Step 2:** Dev mode (`config.devMode`): return mock required terms (one General `new`) so pages render locally, like `DEV_MOCK_DOCUMENTS`.
+- [x] **Step 1 (done 2026-11-06; logic in `src/services/termsStatus.ts` + tests; `termsLoading` stays true until terms belong to the current contact, so the gate never sees a stale "nothing missing"; a load error fails OPEN (no gate) so an API problem cannot lock everyone out):** After `checkSession` sets a user **with complete profile**, build `FeatureContext` from `currentUser.parentcustomerid.actum_Role` / `actum_Country` and `actum_Country.actum_countryid`, call `getPublishedCandidates` + `getMyAcceptances`, then `resolveRequiredVersions` → `computeRequiredTerms`. Incomplete profile → `requiredTerms = []`, `termsLoading = false`.
+- [x] **Step 2 (done; acceptance of the mock is remembered in sessionStorage):** Dev mode (`config.devMode`): return mock required terms (one General `new`) so pages render locally, like `DEV_MOCK_DOCUMENTS`.
 - [ ] **Step 3: Verify** — DEV: user with no acceptances logs in → `missingTerms.length` = number of applicable docs (React DevTools / temporary log).
 - [ ] **Step 4: Commit** `feat(terms): terms status in auth context`
 
