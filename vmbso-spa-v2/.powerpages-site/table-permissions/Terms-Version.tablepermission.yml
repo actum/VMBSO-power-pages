@@ -1,6 +1,6 @@
 adx_entitypermission_webrole:
 - 7cd9bdff-1527-405b-bb88-611db94d307c
-append: false
+append: true
 appendto: true
 create: false
 delete: false

@@ -132,7 +132,7 @@ See Design → "Protecting published terms". Business rules can't read the paren
 - [x] **Step 2 (done 2026-11-06; version also has AppendTo so acceptances can link to it; language and contact already had AppendTo):** Use `power-pages:table-permissions-architect`, web role = Authenticated Users (same as `Contact.tablepermission.yml`):
   - version, text: Read, Global scope
   - acceptance: **Create + Read**, Contact scope (relationship from Task 1), no Write/Delete, Append + AppendTo as required for the lookups
-- [ ] **Step 3: Verify** — upload to DEV, then in the browser console while logged in: `GET /_api/actum_termsversions?$select=actum_name` returns 200; `GET /_api/actum_termsacceptances` returns only own rows.
+- [x] **Step 3: Verify (done 2026-11-06 from the browser console: reads 200, create 204, read-back returns own row only. Lesson: Power Pages needed Append AND AppendTo on BOTH sides of every lookup set on create, despite the error text naming only AppendTo, so acceptance and version now have both flags (Write stays off). Also, `sync-solution.ps1` doesn't add table permissions, so the three were added to `CustomerPortalPowerPages` by hand.)** — upload to DEV, then in the browser console while logged in: `GET /_api/actum_termsversions?$select=actum_name` returns 200; `GET /_api/actum_termsacceptances` returns only own rows.
 
 ### Task 4: Seed placeholder content (DEV)
 
