@@ -282,9 +282,9 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 **Files:** Modify `src/components/ProtectedRoute.tsx`, `src/App.tsx`; Create `src/pages/AcceptTerms.tsx`; Modify `src/components/Layout.tsx` (prop `hideNavigation?: boolean`).
 
-- [ ] **Step 1:** `ProtectedRoute` gains `requireAcceptedTerms?: boolean` (default `true`). After the profile rule: `termsLoading` → spinner; `requireAcceptedTerms && missingTerms.length > 0` → `<Navigate to="/accept-terms" replace state={{ from: location.pathname }} />`.
-- [ ] **Step 2:** Routes: `/accept-terms` → `<ProtectedRoute requireAcceptedTerms={false}><AcceptTerms/></ProtectedRoute>`; `/update-profile` also `requireAcceptedTerms={false}`.
-- [ ] **Step 3:** `AcceptTerms` page: `Layout hideNavigation`, title + intro, `TermsAcceptanceList` with `showKindBadge`, "Accept and continue" disabled until all checked → `acceptTerms` → `refreshTerms()` → `navigate(state.from ?? '/')`. If `missingTerms` is empty on mount → redirect to `/`.
+- [x] **Step 1:** `ProtectedRoute` gains `requireAcceptedTerms?: boolean` (default `true`). After the profile rule: `termsLoading` → spinner; `requireAcceptedTerms && missingTerms.length > 0` → `<Navigate to="/accept-terms" replace state={{ from: location.pathname }} />`.
+- [x] **Step 2:** Routes: `/accept-terms` → `<ProtectedRoute requireAcceptedTerms={false}><AcceptTerms/></ProtectedRoute>`; `/update-profile` also `requireAcceptedTerms={false}`.
+- [x] **Step 3 (done 2026-11-06; a save error shows an inline message and keeps the user on the page; texts come from `usePickedTermsTexts`):** `AcceptTerms` page: `Layout hideNavigation`, title + intro, `TermsAcceptanceList` with `showKindBadge`, "Accept and continue" disabled until all checked → `acceptTerms` → `refreshTerms()` → `navigate(state.from ?? '/')`. If `missingTerms` is empty on mount → redirect to `/`.
 - [ ] **Step 4: Verify** — manual tests T7–T10.
 - [ ] **Step 5: Commit** `feat(terms): gate and accept-terms page`
 

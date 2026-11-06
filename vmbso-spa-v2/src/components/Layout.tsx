@@ -34,13 +34,15 @@ import { canAccessVouchers } from '../utils/accessControl';
 
 interface LayoutProps {
   children: React.ReactNode;
+  /** Hide the navigation links and the mobile menu (e.g. the Terms & Conditions gate). */
+  hideNavigation?: boolean;
 }
 
 enum ApprovalStatus {
   Pending = 182980000,
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, hideNavigation = false }) => {
   const navigate = useNavigate();
   const { logout, currentUser, isProfileComplete } = useAuth();
   const { t } = useTranslation(['header', 'footer', 'layout']);
@@ -80,7 +82,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     handleMobileMenuClose();
   };
 
-  const navigationItems = [
+  const navigationItems = hideNavigation ? [] : [
     { label: t('header:navigation.home'), path: '/' },
     { label: t('header:navigation.documents'), path: '/documents' },
     { label: t('header:navigation.news'), path: '/news' },
@@ -144,7 +146,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Pipe separator */}
             <Box
               sx={{
-                display: { xs: 'none', md: 'block' },
+                display: { xs: 'none', md: hideNavigation ? 'none' : 'block' },
                 width: '1px',
                 height: '2rem',
                 bgcolor: 'divider',
@@ -188,7 +190,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               edge="end"
               onClick={handleMobileMenuToggle}
               sx={{ 
-                display: { xs: 'flex', md: 'none' },
+                display: { xs: hideNavigation ? 'none' : 'flex', md: 'none' },
                 color: 'text.primary',
                 ml: 1,
               }}

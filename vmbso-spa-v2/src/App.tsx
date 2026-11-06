@@ -19,6 +19,7 @@ import LangHandler from './components/LangHandler';
 import { Invoices } from './pages/Invoices';
 import { Rewards } from './pages/Rewards';
 import { Vouchers } from './pages/Vouchers';
+import { AcceptTerms } from './pages/AcceptTerms';
 
 /**
  * Catches Entra External ID cancel/error redirects (e.g. /signin-entraexternalid_2?error=...)
@@ -121,8 +122,18 @@ function App() {
               <Route
                 path="/update-profile"
                 element={
-                  <ProtectedRoute requireCompleteProfile={false}>
+                  <ProtectedRoute requireCompleteProfile={false} requireAcceptedTerms={false}>
                     <UpdateProfile />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Terms & Conditions gate (VMPP-323) */}
+              <Route
+                path="/accept-terms"
+                element={
+                  <ProtectedRoute requireAcceptedTerms={false}>
+                    <AcceptTerms />
                   </ProtectedRoute>
                 }
               />
