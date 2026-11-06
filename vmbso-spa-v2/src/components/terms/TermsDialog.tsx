@@ -32,17 +32,16 @@ export const TermsDialog: React.FC<TermsDialogProps> = ({ open, onClose, title, 
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth scroll="paper">
-      <DialogTitle sx={{ pr: 7 }}>
-        <Typography variant="h5" component="span" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+      <DialogTitle sx={{ pr: 8, py: 3 }}>
+        <Typography component="span" sx={{ fontSize: '24px', fontWeight: 700, lineHeight: 1.3 }}>
           {title}
         </Typography>
         <IconButton
           onClick={onClose}
-          size="small"
-          sx={{ position: 'absolute', top: 12, right: 12 }}
+          sx={{ position: 'absolute', top: 16, right: 16 }}
           aria-label={t('close', 'Close')}
         >
-          <CloseIcon fontSize="small" />
+          <CloseIcon sx={{ fontSize: 24 }} />
         </IconButton>
       </DialogTitle>
       <Divider />
@@ -56,27 +55,32 @@ export const TermsDialog: React.FC<TermsDialogProps> = ({ open, onClose, title, 
         ) : (
           <>
             {!picked.isUiLanguage && picked.languageName && (
-              <Alert severity="info" sx={{ mb: 2 }}>
+              <Alert severity="info" sx={{ mb: 2, fontSize: '15px' }}>
                 {t('onlyAvailableIn', 'These terms are only available in {{language}}.', { language: picked.languageName })}
               </Alert>
             )}
             <Box
               sx={{
-                '& h1, & h2, & h3': { fontWeight: 700, mt: 3, mb: 1, color: 'text.primary' },
-                '& h2': { fontSize: '1.15rem' },
-                '& h3': { fontSize: '1rem' },
-                '& p': { mb: 1.5, lineHeight: 1.75, color: 'text.secondary' },
+                fontSize: '16px',
+                '& h1, & h2, & h3, & h4': { fontWeight: 700, mt: 3, mb: 1, color: 'text.primary', lineHeight: 1.3 },
+                '& h1': { fontSize: '22px' },
+                '& h2': { fontSize: '20px' },
+                '& h3': { fontSize: '18px' },
+                '& h4': { fontSize: '16px' },
+                '& > :first-of-type': { mt: 0 },
+                '& p': { fontSize: '16px', mb: 1.5, lineHeight: 1.7, color: 'text.secondary' },
                 '& ul, & ol': { pl: 3, mb: 1.5 },
-                '& li': { mb: 0.5, lineHeight: 1.75, color: 'text.secondary' },
-                '& strong': { color: 'text.primary', fontWeight: 600 },
+                '& li': { fontSize: '16px', mb: 0.5, lineHeight: 1.7, color: 'text.secondary' },
+                '& strong, & b': { color: 'text.primary', fontWeight: 600 },
+                '& a': { color: 'primary.main' },
               }}
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(picked.text.actum_body) }}
             />
           </>
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} variant="contained">
+      <DialogActions sx={{ px: 3, py: 2.5 }}>
+        <Button onClick={onClose} variant="contained" sx={{ fontSize: '16px', fontWeight: 700, px: 4, py: 1.25 }}>
           {t('close', 'Close')}
         </Button>
       </DialogActions>

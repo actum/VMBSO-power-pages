@@ -83,10 +83,10 @@ export const AcceptTerms: React.FC = () => {
     <Layout hideNavigation>
       <Box sx={{ maxWidth: 800, mx: 'auto', px: { xs: 0, sm: 2 } }}>
         <Paper sx={{ p: { xs: 2, sm: 4 } }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
+          <Typography variant="h4" component="h1" sx={{ fontSize: '26px', fontWeight: 700, mb: 1 }}>
             {t('gateTitle', 'Please review our terms')}
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography color="text.secondary" sx={{ fontSize: '16px', mb: 3 }}>
             {t('gateIntro', 'To continue using the portal, please accept the following terms.')}
           </Typography>
 
@@ -113,6 +113,7 @@ export const AcceptTerms: React.FC = () => {
               onClick={handleAccept}
               disabled={!allChecked || submitting || textsLoading}
               startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : undefined}
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
               {t('acceptAndContinue', 'Accept and continue')}
             </Button>

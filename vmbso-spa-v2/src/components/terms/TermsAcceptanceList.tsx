@@ -47,37 +47,50 @@ export const TermsAcceptanceList: React.FC<TermsAcceptanceListProps> = ({
             variant="outlined"
             sx={{ p: { xs: 2, sm: 3 }, borderColor: showError ? 'error.main' : undefined }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, flexWrap: 'wrap' }}>
-              <ArticleOutlinedIcon color="action" sx={{ mt: 0.25 }} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
+              <ArticleOutlinedIcon color="action" sx={{ fontSize: 26, mt: '2px' }} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                {showKindBadge && kind && (
-                  <Chip
-                    label={kind === 'updated' ? t('badgeUpdated', 'UPDATED') : t('badgeNew', 'NEW')}
-                    color={kind === 'updated' ? 'warning' : 'primary'}
-                    size="small"
-                    sx={{ fontSize: '10px', fontWeight: 700, height: 20, mb: 0.75 }}
-                  />
-                )}
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, wordBreak: 'break-word' }}>
+                <Typography component="h2" sx={{ fontSize: '18px', fontWeight: 700, lineHeight: 1.4, wordBreak: 'break-word' }}>
+                  {showKindBadge && kind && (
+                    <Chip
+                      component="span"
+                      label={kind === 'updated' ? t('badgeUpdated', 'UPDATED') : t('badgeNew', 'NEW')}
+                      color={kind === 'updated' ? 'warning' : 'primary'}
+                      size="small"
+                      sx={{ fontSize: '10px', fontWeight: 700, height: 22, borderRadius: '4px', mr: 1.25, verticalAlign: 'text-bottom' }}
+                    />
+                  )}
                   {version.actum_name}
                 </Typography>
                 {showKindBadge && kind && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  <Typography color="text.secondary" sx={{ fontSize: '16px', mt: 1 }}>
                     {kind === 'updated'
                       ? t('explainUpdated', "We've updated these terms since you last accepted them.")
                       : t('explainNew', 'These terms apply to you and need your acceptance.')}
                   </Typography>
                 )}
               </Box>
-              <Button variant="outlined" size="small" onClick={() => setOpenId(id)}>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenId(id)}
+                sx={{ fontSize: '16px', fontWeight: 700, px: 3, py: 1, width: { xs: '100%', sm: 'auto' }, flexShrink: 0 }}
+              >
                 {t('read', 'Read terms')}
               </Button>
             </Box>
             <FormControlLabel
-              sx={{ mt: 1.5, ml: 0 }}
-              control={<Checkbox checked={isChecked} onChange={() => onToggle(id)} disabled={disabled} color={showError ? 'error' : 'primary'} />}
+              sx={{ mt: 2, ml: 0 }}
+              control={
+                <Checkbox
+                  checked={isChecked}
+                  onChange={() => onToggle(id)}
+                  disabled={disabled}
+                  color={showError ? 'error' : 'primary'}
+                  sx={{ '& .MuiSvgIcon-root': { fontSize: 26 } }}
+                />
+              }
               label={
-                <Typography variant="body2" color={showError ? 'error' : 'text.primary'}>
+                <Typography color={showError ? 'error' : 'text.primary'} sx={{ fontSize: '16px' }}>
                   {t('acceptCheckbox', 'I have read and accept these terms')}
                 </Typography>
               }
