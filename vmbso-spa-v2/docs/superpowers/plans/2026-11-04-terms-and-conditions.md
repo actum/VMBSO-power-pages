@@ -29,14 +29,22 @@
 | Table | Purpose | Key columns |
 |---|---|---|
 | `actum_termsversion` | One row per document **version** | name, `actum_scope` (choice), `actum_countryid` (lookup country, empty = default set), `actum_version` (whole number), `actum_status` (choice) |
-| `actum_termstext` | One row per **language** of a version | name, `actum_termsversionid` (parent, cascade delete), `actum_languageid` (lookup language), `actum_body` (rich text) |
-| `actum_termsacceptance` | Audit log, one row per user × version | name, `actum_contactid` (lookup contact), `actum_termsversionid` (Restrict delete), `actum_termstextid` (text actually read, Restrict delete), system `createdon` = accepted on |
+| `actum_termstext` | One row per **language** of a version | name, `actum_termsversionid` (parent, cascade delete), `actum_languageid` (lookup language), `actum_body` (rich text), `actum_versionispublished` (calculated Yes/No from the parent version's status; used only by form rules). **Alternate key** `actum_VersionLanguageKey` (version, language): one text per language per version |
+| `actum_termsacceptance` | Audit log, one row per user × version | name, `actum_contactid` (lookup contact), `actum_termsversionid` (Restrict delete), `actum_languageid` (language of the text actually read, Restrict delete; the text = the `actum_termstext` with this version + language), `actum_texthash` (SHA-256 of the body the user read, computed in the browser), system `createdon` = accepted on |
 
 Choices (value range `182980000+`, like `actum_approvalstatus`):
 - `actum_scope`: General `182980000`, InvoiceUpload `182980001`, Distributor `182980002`
 - `actum_status`: Draft `182980000`, Published `182980001`, Retired `182980002`
 
-Deliberately **not** included (can be added later without breaking): effective date, default-language/default-text column, text snapshot in acceptance.
+Deliberately **not** included (can be added later without breaking): effective date, default-language/default-text column, full text snapshot in acceptance (the hash is enough).
+
+### Protecting published terms (decided 2026-11-06: keep it simple)
+Goal: safe enough, not enterprise/litigation grade. Admins who deliberately work around the guidance (Web API, imports) own that decision.
+- **Make it obvious, don't enforce:** form business rules lock the published wording and show a "create a new version instead" message. No server-side blocking (no plug-ins, real-time workflows or field security).
+- **Record what was accepted:** `actum_texthash` = SHA-256 of the exact body shown to the user. It's computed in the browser (`crypto.subtle`) because there's no low-code way to hash on the server: cloud-flow expressions and Power Fx have no hash function, and Server Logic only runs on portal calls, not on back-office edits. A user could fake their own hash; that's acceptable at this level.
+- **Keep the previous wording:** Dataverse auditing on, for version and text.
+- **Process rule:** a wording change always means a new version. Never edit a published one.
+- **Deferred (additional step, not in this story):** an email alert when a published text's body is edited (see "Later" at the end).
 
 ### Resolution rules (pure logic)
 1. Candidates = versions with status Published and country = user's country OR empty.
@@ -55,7 +63,7 @@ Text to display for a version: UI language → only text (if exactly one) → En
 - Gate check runs once per session load (login/reload); cached in `AuthContext`; refreshed after accepting.
 
 ## Global Constraints
-- Never `pac pages upload` to TEST; deploy = `npm run deploy` to DEV (uploads + runs `sync-solution.ps1`), then pipeline. New tables, site settings and table permissions must be in solution `CustomerPortalPowerPages`.
+- Never `pac pages upload` to TEST; deploy = `npm run deploy` to DEV (uploads + runs `sync-solution.ps1`), then pipeline. New **tables** go in the **backoffice solution `CustomerPortalCORE`** (deployed before the portal solution); site settings and table permissions go in `CustomerPortalPowerPages`.
 - Web API `fields` settings list explicit columns, never `*`.
 - Render T&C HTML only through `DOMPurify.sanitize(...)`.
 - Small text uses absolute `px` (theme sets `html { font-size: 62.5% }`); e.g. badges `fontSize: '10px'`.
@@ -85,22 +93,29 @@ Text to display for a version: UI language → only text (if exactly one) → En
 
 **Owner:** Claude via `power-pages:setup-datamodel` (az token, as `sync-solution.ps1`).
 
-- [ ] **Step 1:** Create `actum_termsversion`, `actum_termstext`, `actum_termsacceptance` with the columns, choices and values from Design → Data model, inside solution `CustomerPortalPowerPages`.
-- [ ] **Step 2:** Relationship behaviours: text→version **Cascade** delete; acceptance→version **Restrict**; acceptance→text **Restrict**; acceptance→contact Remove link.
-- [ ] **Step 3:** Record the generated names this plan depends on in this file under "Generated names" below: entity set names, lookup navigation property names (for `@odata.bind` and `$expand`), and the contact↔acceptance relationship name (for the Contact-scope permission).
-- [ ] **Step 4: Verify** — `GET {org}/api/data/v9.2/EntityDefinitions(LogicalName='actum_termsacceptance')?$expand=ManyToOneRelationships($select=SchemaName,ReferencingAttribute)` lists the three lookups.
+- [x] **Step 1:** Create `actum_termsversion`, `actum_termstext`, `actum_termsacceptance` with the columns, choices and values from Design → Data model, inside the backoffice solution **`CustomerPortalCORE`** (decided 2026-11-05; tables are not part of `CustomerPortalPowerPages`).
+- [x] **Step 2:** Relationship behaviours: text→version **Cascade** delete; acceptance→version **Restrict**; acceptance→language **Restrict**; acceptance→contact **Cascade** (decided 2026-11-05: acceptances are worthless without the contact; any post-erasure retention/anonymisation is VMPP-394's call).
+- [x] **Step 3:** Record the generated names this plan depends on in this file under "Generated names" below: entity set names, lookup navigation property names (for `@odata.bind` and `$expand`), and the contact↔acceptance relationship name (for the Contact-scope permission).
+- [x] **Step 4: Verify** — `GET {org}/api/data/v9.2/EntityDefinitions(LogicalName='actum_termsacceptance')?$expand=ManyToOneRelationships($select=SchemaName,ReferencingAttribute)` lists the three lookups.
 
-Generated names (fill in Step 3):
-- Entity sets: `actum_termsversions` / `actum_termstexts` / `actum_termsacceptances` (confirm)
-- Nav props: acceptance→contact `____`, acceptance→version `____`, acceptance→text `____`, text→version `____`
-- Contact relationship: `____`
+Generated names (verified in DEV 2026-11-05, solution `CustomerPortalCORE`, all tables Organization-owned):
+- Entity sets: `actum_termsversions` / `actum_termstexts` / `actum_termsacceptances`
+- Nav props (many→one, use in `@odata.bind` / `$expand`): acceptance→contact `actum_ContactId`, acceptance→version `actum_TermsVersionId`, acceptance→language `actum_LanguageId`, text→version `actum_TermsVersionId`, text→language `actum_LanguageId`, version→country `actum_CountryId`
+- Relationships: `contact_actum_termsacceptance` (Cascade; use for the Contact-scope permission), `actum_termsversion_actum_termsacceptance` (Restrict), `actum_language_actum_termsacceptance` (Restrict), `actum_termsversion_actum_termstext` (Cascade), `actum_language_actum_termstext` (Restrict), `actum_country_actum_termsversion` (Restrict)
+- Schema fix 2026-11-05: acceptance originally also had a text lookup (`actum_termstextid`), which could disagree with its version lookup. It was replaced by a language lookup, and alternate key `actum_VersionLanguageKey` (version + language) was added on `actum_termstext`. Each fact is now stored once. Trade-off: acceptances no longer block deleting a single text. That is acceptable because versions are retired, not deleted, and deleting an accepted version is still blocked.
+- `actum_body` is Memo, RichText format, max 1,048,576; `actum_version` min 1; `actum_status` form default Draft.
 
-### Task 2: Business rule + model-driven app (Daniel, maker portal)
+### Task 2: Protect published terms (simple) + model-driven app
 
-- [ ] **Step 1:** Entity-scope business rule on `actum_termstext`: lock `actum_body` and `actum_languageid` when the parent version is Published. If cross-table conditions are not possible in a business rule, put a rollup/flag on text or use a rule on `actum_termsversion` locking status back-transition + a short flow that rejects edits; record the chosen approach here.
-- [ ] **Step 2:** Rule on `actum_termsversion`: lock `actum_scope`, `actum_countryid`, `actum_version` when status = Published.
-- [ ] **Step 3:** Add forms/views to the back-office model-driven app (version form with texts subgrid). Add to `CustomerPortalPowerPages`.
-- [ ] **Step 4: Verify** — try editing the body of a Published text via the Web API → rejected.
+See Design → "Protecting published terms". Business rules can't read the parent table, hence the calculated column. Everything here is a form-level aid only: Web API and import edits are not blocked, by decision.
+
+- [x] **Step 1a (Claude, done 2026-11-06):** `actum_termsacceptance.actum_texthash`: single line of text, max 64 (hex SHA-256), optional, in `CustomerPortalCORE`.
+- [x] **Step 1b (done 2026-11-06, classic calculated, verified):** `actum_termstext.actum_versionispublished`: a **classic Calculated** Yes/No column (not a Power Fx *formula* column). Condition: `Terms Version (actum_termsversionid) → Status` equals `Published` → Yes, else No. Tried via API on 2026-11-06: formula columns can read the parent version, but return the column *name* (`"actum_status"`) for a related choice, so the flag was always No. The broken column was deleted; the classic calculated column's XAML can't reasonably be written by hand.
+- [x] **Step 2 (Claude, done 2026-11-06):** Switch on auditing for `actum_termsversion` and `actum_termstext` (`IsAuditEnabled`). Environment auditing is already on; DEV retention is 30 days, and PROD retention is for the client to decide.
+- [x] **Step 3 (Daniel, done 2026-11-06; rule "Lock published terms text", scope Entity, active; tested via the Web API: the calculated flag is No/Yes/No for Draft/Published/Retired, and the API edit of a published text still succeeds, so the error message acts only on the form, as decided):** Business rule on `actum_termstext` (scope: all forms): if `actum_versionispublished` = Yes, lock `actum_body`, `actum_languageid` and `actum_termsversionid`, and show the message *"This version is published and users have accepted it. Don't edit it; create a new version instead."*
+- [x] **Step 4 (Daniel, done 2026-11-06; rule "Lock published terms version", active):** Business rule on `actum_termsversion`: if `actum_status` = Published, lock `actum_scope`, `actum_countryid` and `actum_version`; else unlock them. Status stays editable so the version can be retired. No message: an error would block saving the switch to Published, and a recommendation must carry an action. The Version form header note carries the message instead (Step 5).
+- [x] **Step 5 (Claude via Web API, done 2026-11-06; backup of the previous forms, views and navigation in the session scratchpad):** Forms/views in the back-office model-driven app (version form with a texts subgrid), in `CustomerPortalCORE` alongside the tables. Add a one-line form description or header note stating the process rule.
+- [x] **Step 6: Verify (Daniel, 2026-11-06: locked Body + message confirmed):** in the model-driven app, open a Published version's text: fields are locked and the message shows. A Draft version's text stays editable. Auditing shows the change history on a test edit made through the Web API (expected to succeed, by design).
 
 ### Task 3: Web API site settings + table permissions
 
@@ -110,11 +125,11 @@ Generated names (fill in Step 3):
 - Create: `site-settings/Webapi-actum_termsacceptance-enabled.sitesetting.yml`, `…-fields.sitesetting.yml`
 - Create: `table-permissions/Terms-Version.tablepermission.yml`, `Terms-Text.tablepermission.yml`, `Terms-Acceptance.tablepermission.yml`
 
-- [ ] **Step 1:** Use `power-pages:webapi-settings-architect`. Fields:
+- [x] **Step 1 (done 2026-11-06, YAML written by hand following the repo pattern; version also exposes `statecode`, acceptance also exposes the nav props `actum_ContactId,actum_TermsVersionId,actum_LanguageId` for `@odata.bind`):** Fields:
   - version: `actum_termsversionid,actum_name,actum_scope,_actum_countryid_value,actum_version,actum_status,createdon`
   - text: `actum_termstextid,actum_name,_actum_termsversionid_value,_actum_languageid_value,actum_body,createdon`
-  - acceptance: `actum_termsacceptanceid,actum_name,_actum_contactid_value,_actum_termsversionid_value,_actum_termstextid_value,createdon` + the nav props from Task 1 needed for `@odata.bind` / `$expand`
-- [ ] **Step 2:** Use `power-pages:table-permissions-architect`, web role = Authenticated Users (same as `Contact.tablepermission.yml`):
+  - acceptance: `actum_termsacceptanceid,actum_name,_actum_contactid_value,_actum_termsversionid_value,_actum_languageid_value,actum_texthash,createdon` + the nav props from Task 1 needed for `@odata.bind` / `$expand`
+- [x] **Step 2 (done 2026-11-06; version also has AppendTo so acceptances can link to it; language and contact already had AppendTo):** Use `power-pages:table-permissions-architect`, web role = Authenticated Users (same as `Contact.tablepermission.yml`):
   - version, text: Read, Global scope
   - acceptance: **Create + Read**, Contact scope (relationship from Task 1), no Write/Delete, Append + AppendTo as required for the lookups
 - [ ] **Step 3: Verify** — upload to DEV, then in the browser console while logged in: `GET /_api/actum_termsversions?$select=actum_name` returns 200; `GET /_api/actum_termsacceptances` returns only own rows.
@@ -130,8 +145,8 @@ Generated names (fill in Step 3):
 
 **Files:** Modify `package.json`; Create `vitest.config.ts` (or `test` block in `vite.config.ts`).
 
-- [ ] **Step 1:** `npm i -D vitest@^2` ; add script `"test": "vitest run"`.
-- [ ] **Step 2: Verify** — `npm test` runs and reports "No test files found" (exit 0 with `passWithNoTests: true`).
+- [x] **Step 1 (done 2026-11-06; vitest@^3, because Vitest 2 targets Vite 5 and this project is on Vite 6; config in `vitest.config.ts`):** `npm i -D vitest` ; add script `"test": "vitest run"`.
+- [x] **Step 2: Verify** — `npm test` runs and reports "No test files found" (exit 0 with `passWithNoTests: true`).
 - [ ] **Step 3: Commit** `chore: add vitest`
 
 ### Task 6: Types, feature helpers and terms resolver
@@ -150,7 +165,7 @@ Generated names (fill in Step 3):
   export const TermsStatus = { Draft: 182980000, Published: 182980001, Retired: 182980002 } as const;
   export interface TermsVersion { actum_termsversionid: string; actum_name: string; actum_scope: TermsScopeValue; _actum_countryid_value?: string | null; actum_version: number; createdon: string; }
   export interface TermsText { actum_termstextid: string; _actum_termsversionid_value: string; _actum_languageid_value: string; actum_body: string; createdon: string; }
-  export interface TermsAcceptance { actum_termsacceptanceid: string; _actum_termsversionid_value: string; _actum_termstextid_value?: string; createdon: string; version?: Pick<TermsVersion, 'actum_scope' | '_actum_countryid_value'>; }
+  export interface TermsAcceptance { actum_termsacceptanceid: string; _actum_termsversionid_value: string; _actum_languageid_value: string; actum_texthash?: string; createdon: string; version?: Pick<TermsVersion, 'actum_scope' | '_actum_countryid_value'>; }
   export interface FeatureContext { countryId?: string; role?: { actum_name: string; actum_uploadinvoicesallowed?: boolean }; country?: { actum_uploadinvoicesallowed?: boolean }; }
   export type MissingKind = 'new' | 'updated';
   export interface RequiredTerm { version: TermsVersion; accepted: boolean; acceptedOn?: string; kind?: MissingKind; }
@@ -162,7 +177,7 @@ Generated names (fill in Step 3):
   - `computeRequiredTerms(required: TermsVersion[], acceptances: TermsAcceptance[]): RequiredTerm[]`
   - `pickText(texts: TermsText[], uiLanguageId: string | undefined, englishLanguageId: string | undefined): { text: TermsText; isUiLanguage: boolean } | undefined`
 
-- [ ] **Step 1: Write failing tests** (`termsResolver.test.ts`), fixtures `BE='be'`, `FR='fr'`:
+- [x] **Step 1: Write failing tests** (`termsResolver.test.ts`), fixtures `BE='be'`, `FR='fr'`:
   ```ts
   // qualifiesForScope
   expect(qualifiesForScope(TermsScope.General, {})).toBe(true);
@@ -193,9 +208,9 @@ Generated names (fill in Step 3):
   test('no texts → undefined');
   ```
   Plus `accessControl.test.ts`: existing `canAccessInvoices` / `isDistributor` results unchanged for approved installer, pending installer, distributor (mock `config.devMode = false` via `vi.mock('../config/powerPages.config')`).
-- [ ] **Step 2:** `npm test` → FAIL (modules not found).
-- [ ] **Step 3:** Implement per the Interfaces and Design → Resolution rules. `resolveRequiredVersions` assumes candidates already filtered to Published + (user country | null); it groups by scope, applies country preference, then sorts `actum_version desc, createdon desc`. Log `console.warn` when a qualified scope has no candidate (Review Focus #2).
-- [ ] **Step 4:** `npm test` → PASS; `npm run lint` clean.
+- [x] **Step 2:** `npm test` → FAIL (modules not found).
+- [x] **Step 3:** Implement per the Interfaces and Design → Resolution rules. `resolveRequiredVersions` assumes candidates already filtered to Published + (user country | null); it groups by scope, applies country preference, then sorts `actum_version desc, createdon desc`. Log `console.warn` when a qualified scope has no candidate (Review Focus #2).
+- [x] **Step 4 (27 tests pass; eslint clean on the new files; `tsc` reports only errors that already existed in other files):** `npm test` → PASS; `npm run lint` clean.
 - [ ] **Step 5: Commit** `feat(terms): resolver and feature helpers`
 
 ### Task 7: Terms data service
@@ -208,7 +223,7 @@ Generated names (fill in Step 3):
   - `dataverseService.terms.getPublishedCandidates(countryId?: string): Promise<TermsVersion[]>` — `$filter=actum_status eq 182980001 and (_actum_countryid_value eq {countryId} or _actum_countryid_value eq null)` (only the `null` branch when no countryId).
   - `dataverseService.terms.getTexts(versionIds: string[]): Promise<TermsText[]>` — `$filter=Microsoft.Dynamics.CRM.In(PropertyName='actum_termsversionid',PropertyValues=[...])` or `or`-chained eq.
   - `dataverseService.terms.getMyAcceptances(): Promise<TermsAcceptance[]>` — expands version scope + country into `version`.
-  - `dataverseService.terms.createAcceptance(args: { contactId: string; versionId: string; textId: string; name: string }): Promise<void>` — POST with `@odata.bind` for the three lookups, pattern of `uploadInvoice`.
+  - `dataverseService.terms.createAcceptance(args: { contactId: string; versionId: string; languageId: string; textHash: string; name: string }): Promise<void>` — POST with `@odata.bind` for the three lookups plus `actum_texthash`, following the `uploadInvoice` pattern.
   - Every method returns `[]` on 401/403/404 like `roles.getAll`.
 
 - [ ] **Step 1:** Implement the four methods.
@@ -238,14 +253,15 @@ Generated names (fill in Step 3):
 
 ### Task 9: Terms cards + read dialog
 
-**Files:** Create `src/components/terms/TermsDialog.tsx`, `src/components/terms/TermsAcceptanceList.tsx`.
+**Files:** Create `src/components/terms/TermsDialog.tsx`, `src/components/terms/TermsAcceptanceList.tsx`, `src/components/terms/acceptTerms.ts`, `src/utils/textHash.ts` (+ tests).
 
 **Interfaces:**
 - `TermsDialog({ open, onClose, version: TermsVersion }: …)` — loads texts via `useTermsTexts([version.id])`, picks with `pickText(texts, uiLanguageId, englishId)`, renders `DOMPurify.sanitize(text.actum_body)` in a scrollable MUI `Dialog`; shows `t('terms:onlyAvailableIn', { language })` when `!isUiLanguage`.
 - `TermsAcceptanceList({ terms: RequiredTerm[]; checked: Record<string, boolean>; onToggle(versionId): void; showKindBadge?: boolean; error?: boolean })` — one card per term: badge NEW/UPDATED (10px, only when `showKindBadge`), title `actum_name`, explanation line per kind, "Read terms" button, checkbox "I have read and accept these terms". `error` highlights unchecked boxes.
-- Produces helper `acceptTerms(terms: RequiredTerm[], contactId: string, textIdsByVersion: Record<string,string>, alreadyAccepted: Set<string>): Promise<void>` in `src/components/terms/acceptTerms.ts` — creates acceptances **only for versions not in `alreadyAccepted`** (Review Focus #4), sequentially, throws on first failure. Record `actum_termstextid` = text shown in the dialog, or `pickText` result if the dialog was never opened.
+- Produces helper `acceptTerms(terms: RequiredTerm[], contactId: string, shownTextByVersion: Record<string, TermsText>, alreadyAccepted: Set<string>): Promise<void>` in `src/components/terms/acceptTerms.ts`. It creates acceptances **only for versions not in `alreadyAccepted`** (Review Focus #4), one at a time, and throws on the first failure. "Shown text" = the text displayed in the dialog, or the `pickText` result if the dialog was never opened. Record `actum_languageid` = that text's language and `actum_texthash` = `await sha256Hex(text.actum_body)`.
+- Produces `sha256Hex(body: string): Promise<string>` in `src/utils/textHash.ts`: `crypto.subtle.digest('SHA-256', new TextEncoder().encode(body))` → lowercase hex. It hashes the **raw** `actum_body` as returned by the Web API, not the DOMPurify output, so admins can reproduce it from the stored record.
 
-- [ ] **Step 1:** Write `acceptTerms.test.ts`: with `alreadyAccepted` containing v1, calling with [v1, v2] calls `createAcceptance` once (v2) — mock `dataverseService`.
+- [ ] **Step 1:** Write `acceptTerms.test.ts`: with `alreadyAccepted` containing v1, calling with [v1, v2] calls `createAcceptance` once (for v2), with v2's shown language and `textHash` = SHA-256 of its body (mock `dataverseService`). Also write `textHash.test.ts`: `sha256Hex('abc')` = `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`.
 - [ ] **Step 2:** `npm test` → FAIL; implement; → PASS.
 - [ ] **Step 3:** Build the two components. Mobile: full-width cards, 16px gutter.
 - [ ] **Step 4: Commit** `feat(terms): acceptance list and dialog`
@@ -293,8 +309,8 @@ Generated names (fill in Step 3):
 ## Phase 4 — Deploy & content
 
 - [ ] `npm run build` clean; `npm test` green; `npm run lint` clean.
-- [ ] `npm run deploy` to DEV (includes `sync-solution`); confirm new tables, the 6 site settings and 3 table permissions are in `CustomerPortalPowerPages` (`sync-solution.ps1 -DryRun`).
-- [ ] Run manual tests T1–T12 in DEV.
+- [ ] `npm run deploy` to DEV (includes `sync-solution`); confirm the new tables are in the backoffice solution and the 6 site settings + 3 table permissions are in `CustomerPortalPowerPages`; deploy the backoffice solution to TEST before the portal pipeline (`sync-solution.ps1 -DryRun`).
+- [ ] Run manual tests T1–T13 in DEV.
 - [ ] Load final content (Phase 0) in DEV; plan content move to TEST/PROD (data, not solution): versions first, then texts (Configuration Migration tool or manual).
 - [ ] Pipeline to TEST; rerun T1, T3, T7, T8.
 
@@ -315,4 +331,11 @@ Generated names (fill in Step 3):
 | T9 | Feature switched on | Set FR country `uploadinvoicesallowed = true` + add FR-InvoiceUpload v1; log in FR installer | Gate with NEW Invoice upload card |
 | T10 | Accept in one language, return in another | Accept in FR, switch UI to EN, reload | No gate |
 | T11 | Reading later | Footer → Terms & Conditions | Lists applicable versions with accepted dates; dialog opens in UI language |
-| T12 | Edit published text | Try editing body of a Published text in back office | Blocked |
+| T12 | Edit published text | Open a text of a Published version in the back-office app | Body/language locked, "create a new version" message shown (form-level only; Web API edits are allowed by design and show up in the audit history) |
+| T13 | Hash recorded | Accept terms (T1), then compare `actum_texthash` with SHA-256 of that text's `actum_body` | Equal |
+
+---
+
+## Later (additional steps, not in this story)
+
+- **Alert on edits to published texts** (deferred 2026-11-06): a cloud flow in `CustomerPortalCORE` that triggers when `actum_termstext.actum_body` is modified. If the parent version is Published, it emails the admins (recipients to be decided): *"Text X (version Y, language Z) was edited after N users accepted it. Publish a new version so they re-accept."* N = acceptances with that version + language created before the edit. Admins can use `actum_texthash` to see which users accepted wording that differs from the current text.
