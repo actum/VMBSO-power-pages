@@ -1,0 +1,4 @@
+id: 7fc8dccb-3b77-43fb-8346-0caae6682b20
+name: Webapi/actum_termsversion/fields
+source: 0
+value: actum_termsversionid,actum_name,actum_scope,_actum_countryid_value,actum_version,actum_status,statecode,createdon

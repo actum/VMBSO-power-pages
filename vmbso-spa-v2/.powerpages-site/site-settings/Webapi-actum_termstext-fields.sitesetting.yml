@@ -1,0 +1,4 @@
+id: b611c8f7-5ec2-4799-afc0-2277329b24e4
+name: Webapi/actum_termstext/fields
+source: 0
+value: actum_termstextid,actum_name,_actum_termsversionid_value,_actum_languageid_value,actum_body,createdon

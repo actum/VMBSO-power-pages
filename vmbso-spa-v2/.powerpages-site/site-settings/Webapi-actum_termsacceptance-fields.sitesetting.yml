@@ -1,0 +1,4 @@
+id: 6e8e658b-8dba-4093-9f8b-bee3f6dc4063
+name: Webapi/actum_termsacceptance/fields
+source: 0
+value: actum_termsacceptanceid,actum_name,_actum_contactid_value,_actum_termsversionid_value,_actum_languageid_value,actum_texthash,createdon,actum_ContactId,actum_TermsVersionId,actum_LanguageId

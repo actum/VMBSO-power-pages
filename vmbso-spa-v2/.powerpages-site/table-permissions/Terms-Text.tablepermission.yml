@@ -1,0 +1,13 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: false
+appendto: false
+create: false
+delete: false
+entitylogicalname: actum_termstext
+entityname: Terms Text
+id: 8d4f7b27-eba6-4ba2-b0eb-12de78ce96cf
+parententitypermission: 
+read: true
+scope: 756150000
+write: false

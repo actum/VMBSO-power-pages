@@ -1,0 +1,14 @@
+adx_entitypermission_webrole:
+- 7cd9bdff-1527-405b-bb88-611db94d307c
+append: true
+appendto: false
+contactrelationship: contact_actum_termsacceptance
+create: true
+delete: false
+entitylogicalname: actum_termsacceptance
+entityname: Terms Acceptance
+id: e397dedf-fd28-4dea-a851-399583005ca8
+parententitypermission: 
+read: true
+scope: 756150001
+write: false
