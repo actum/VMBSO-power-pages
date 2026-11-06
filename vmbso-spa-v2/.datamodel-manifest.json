@@ -1,0 +1,39 @@
+{
+  "environmentUrl": "https://vmbso-customerportal-dev.crm4.dynamics.com",
+  "tables": [
+    {
+      "logicalName": "actum_termsversion",
+      "displayName": "Terms Version",
+      "status": "new",
+      "columns": [
+        { "logicalName": "actum_name", "type": "String" },
+        { "logicalName": "actum_scope", "type": "Picklist" },
+        { "logicalName": "actum_status", "type": "Picklist" },
+        { "logicalName": "actum_version", "type": "Integer" },
+        { "logicalName": "actum_countryid", "type": "Lookup" }
+      ]
+    },
+    {
+      "logicalName": "actum_termstext",
+      "displayName": "Terms Text",
+      "status": "new",
+      "columns": [
+        { "logicalName": "actum_name", "type": "String" },
+        { "logicalName": "actum_body", "type": "Memo" },
+        { "logicalName": "actum_termsversionid", "type": "Lookup" },
+        { "logicalName": "actum_languageid", "type": "Lookup" }
+      ]
+    },
+    {
+      "logicalName": "actum_termsacceptance",
+      "displayName": "Terms Acceptance",
+      "status": "new",
+      "columns": [
+        { "logicalName": "actum_name", "type": "String" },
+        { "logicalName": "actum_contactid", "type": "Lookup" },
+        { "logicalName": "actum_termsversionid", "type": "Lookup" },
+        { "logicalName": "actum_languageid", "type": "Lookup" }
+      ]
+    }
+  ]
+}
