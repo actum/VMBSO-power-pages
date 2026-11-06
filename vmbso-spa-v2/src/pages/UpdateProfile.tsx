@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Typography,
   Box,
@@ -31,6 +31,11 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import InputLabelField from "../components/common/ui/InputLabelField";
 import { isValidE164, autoFormatPhone } from "../utils/phoneUtils";
+import { TermsAcceptanceList } from "../components/terms/TermsAcceptanceList";
+import { acceptTerms } from "../components/terms/acceptTerms";
+import { useRequiredTermsFor } from "../hooks/useRequiredTermsFor";
+import { usePickedTermsTexts } from "../hooks/useTermsTexts";
+import type { FeatureContext, TermsText } from "../types/terms";
 
 type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
@@ -203,6 +208,38 @@ export const UpdateProfile: React.FC = () => {
     }
   };
 
+  // ── Terms & Conditions (VMPP-323) — first-time profile only ─────────
+  // Role + country come from the VAT-found account, or from the form when the company is new.
+  const termsCtx = useMemo<FeatureContext | null>(() => {
+    if (isProfileComplete || rolesLoading || countriesLoading) return null;
+    const found = vatSearchState === "found";
+    if (!found && vatSearchState !== "notFound") return null;
+    const roleId = found ? foundAccount?._actum_roleid_value : values.actum_role;
+    const countryId = found ? foundAccount?._actum_primarycountryid_value : values.actum_primarycountry;
+    if (!countryId || (!found && !roleId)) return null;
+    return {
+      countryId,
+      role: roles.find(r => r.actum_roleid === roleId),
+      country: countries.find(c => c.actum_countryid === countryId),
+    };
+  }, [isProfileComplete, rolesLoading, countriesLoading, vatSearchState, foundAccount, values.actum_role, values.actum_primarycountry, roles, countries]);
+  const { terms: profileTerms, loading: profileTermsLoading } = useRequiredTermsFor(termsCtx);
+  const profileTermIds = useMemo(() => profileTerms.map(term => term.version.actum_termsversionid), [profileTerms]);
+  const { picked: profilePicked, loading: profileTextsLoading } = usePickedTermsTexts(profileTermIds);
+  const [termsChecked, setTermsChecked] = useState<Record<string, boolean>>({});
+  const [termsError, setTermsError] = useState(false);
+  const profileTermsKey = profileTermIds.join(",");
+  useEffect(() => {
+    // Required documents changed (role/country changed): ask again
+    setTermsChecked({});
+    setTermsError(false);
+  }, [profileTermsKey]);
+
+  const handleTermsToggle = (versionId: string) => {
+    setTermsError(false);
+    setTermsChecked(prev => ({ ...prev, [versionId]: !prev[versionId] }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -237,8 +274,34 @@ export const UpdateProfile: React.FC = () => {
       return;
     }
 
+    // Terms & Conditions must all be accepted before the profile is completed
+    if (!isProfileComplete) {
+      if (profileTermsLoading || profileTextsLoading) {
+        setError(t("terms:stillLoading", "The terms are still loading. Please try again in a moment."));
+        return;
+      }
+      if (profileTerms.some(term => !termsChecked[term.version.actum_termsversionid])) {
+        setTermsError(true);
+        setError(t("terms:mustAccept", "Please read and accept all terms to continue."));
+        return;
+      }
+    }
+
     try {
       setUpdating(true);
+
+      // Record the acceptances first, then complete the profile. Already-accepted versions are
+      // skipped, so a retry after a failed profile update creates no duplicates.
+      if (!isProfileComplete && profileTerms.length > 0 && currentUser) {
+        const shown: Record<string, TermsText> = {};
+        for (const id of profileTermIds) {
+          if (profilePicked[id]) shown[id] = profilePicked[id].text;
+        }
+        const alreadyAccepted = config.devMode
+          ? new Set<string>()
+          : new Set((await dataverseService.terms.getMyAcceptances()).map(a => a._actum_termsversionid_value));
+        await acceptTerms(profileTerms, currentUser.contactid, shown, alreadyAccepted);
+      }
 
       const response = await apiClient.flow<{ status: string; message: string }>(
         config.flows.updateProfile,
@@ -628,6 +691,29 @@ export const UpdateProfile: React.FC = () => {
               </>
             )}
           </Grid>
+
+          {/* ── Terms & Conditions (first-time profile only) ── */}
+          {!isProfileComplete && (profileTermsLoading || profileTerms.length > 0) && (
+            <Box sx={{ mt: 5 }}>
+              <Typography variant="h6">{t("terms:sectionTitle", "Terms & Conditions")}</Typography>
+              <Typography color="text.secondary" sx={{ fontSize: "16px", mt: 1, mb: 2 }}>
+                {t("terms:sectionIntro", "Please read and accept the following terms to complete your profile.")}
+              </Typography>
+              {profileTermsLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <TermsAcceptanceList
+                  terms={profileTerms}
+                  picked={profilePicked}
+                  textsLoading={profileTextsLoading}
+                  checked={termsChecked}
+                  onToggle={handleTermsToggle}
+                  error={termsError}
+                  disabled={updating}
+                />
+              )}
+            </Box>
+          )}
 
           {error && (
             <Alert

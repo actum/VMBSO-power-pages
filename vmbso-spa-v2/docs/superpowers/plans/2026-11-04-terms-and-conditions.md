@@ -270,11 +270,11 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 **Files:** Modify `src/pages/UpdateProfile.tsx`.
 
-- [ ] **Step 1:** When `!isProfileComplete` and country + role are known, compute `FeatureContext`:
+- [x] **Step 1 (done 2026-11-06; hook `src/hooks/useRequiredTermsFor.ts`. GAP FOUND: the VAT flow "VPortal - Get VAT" returns only accountid, name and actum_primarycountryid, NOT the role, so for a VAT-found account only General applies on this page until `<attribute name="actum_roleid" />` is added to its List Accounts FetchXML. The gate right after profile completion still asks for any missing Distributor/InvoiceUpload terms, using the real account role):** When `!isProfileComplete` and country + role are known, compute `FeatureContext`:
   - VAT `found`: role/country from `foundAccount._actum_roleid_value` / `_actum_primarycountryid_value`, flags looked up in the `roles` / `countries` arrays (now loaded with `actum_uploadinvoicesallowed`).
   - VAT `notFound`: from `values.actum_role` / `values.actum_primarycountry`.
   Fetch candidates for that country → `resolveRequiredVersions` → render `TermsAcceptanceList` (no badges) above the Submit button. Recompute when role/country change and reset checkboxes.
-- [ ] **Step 2:** In `handleSubmit`, after existing validation: if any required term unchecked → `setError(t('terms:mustAccept'))` and stop. Else `await acceptTerms(...)` (with `alreadyAccepted` from `getMyAcceptances()`), **then** call the existing flow. After success: `refreshUser()` then `refreshTerms()` before navigating.
+- [x] **Step 2 (done; the gate effect in AuthContext reloads terms when the user refreshes, so no explicit refreshTerms call is needed):** In `handleSubmit`, after existing validation: if any required term unchecked → `setError(t('terms:mustAccept'))` and stop. Else `await acceptTerms(...)` (with `alreadyAccepted` from `getMyAcceptances()`), **then** call the existing flow. After success: `refreshUser()` then `refreshTerms()` before navigating.
 - [ ] **Step 3: Verify** — manual tests T1–T5 below.
 - [ ] **Step 4: Commit** `feat(terms): accept terms on profile completion`
 
