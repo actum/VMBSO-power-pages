@@ -621,5 +621,36 @@
     "errorMessages": {
       "loadFailed": "Failed to load vouchers"
     }
+  },
+  "terms": {
+    "gateTitle": "Please review our terms",
+    "gateIntro": "To continue using the portal, please accept the following terms.",
+    "badgeNew": "NEW",
+    "badgeUpdated": "UPDATED",
+    "explainNew": "These terms apply to you and need your acceptance.",
+    "explainUpdated": "We've updated these terms since you last accepted them.",
+    "read": "Read terms",
+    "acceptCheckbox": "I have read and accept these terms",
+    "acceptAndContinue": "Accept and continue",
+    "mustAccept": "Please read and accept all terms to continue.",
+    "stillLoading": "The terms are still loading. Please try again in a moment.",
+    "saveError": "Your acceptance could not be saved. Please try again.",
+    "loadError": "These terms could not be loaded. Please try again later.",
+    "onlyAvailableIn": "These terms are only available in {{language}}.",
+    "close": "Close",
+    "sectionTitle": "Terms & Conditions",
+    "sectionIntro": "Please read and accept the following terms to complete your profile.",
+    "pageTitle": "Terms & Conditions",
+    "pageIntro": "The terms that apply to your account, and when you accepted them.",
+    "acceptedOn": "Accepted on {{date}}",
+    "notAccepted": "Not accepted yet",
+    "noTerms": "There are no terms to show.",
+    "footerLink": "Terms & Conditions",
+    "profileLink": "View the terms you accepted",
+    "languageNames": {
+      "en-GB": "English",
+      "fr-FR": "French",
+      "nl-NL": "Dutch"
+    }
   }
 }

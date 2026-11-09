@@ -13,7 +13,26 @@ interface ProtectedRouteProps {
    * - false: Allows access even with incomplete profile (e.g., /update-profile page itself)
    */
   requireCompleteProfile?: boolean;
+  /**
+   * Whether the route is blocked until the user accepted every applicable T&C version (VMPP-323).
+   * - true (default): Redirects to /accept-terms when something is missing
+   * - false: /accept-terms itself and /update-profile
+   */
+  requireAcceptedTerms?: boolean;
 }
+
+const FullPageSpinner: React.FC = () => (
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+    }}
+  >
+    <CircularProgress />
+  </Box>
+);
 
 /**
  * Central authentication and profile completion guard.
@@ -22,11 +41,12 @@ interface ProtectedRouteProps {
  * 2. Authenticated but incomplete profile (if required) → /update-profile
  * 3. Otherwise → allow access
  */
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requireCompleteProfile = true 
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requireCompleteProfile = true,
+  requireAcceptedTerms = true,
 }) => {
-  const { currentUser, isAuthenticated, loading, isProfileComplete, isRejected } = useAuth();
+  const { currentUser, isAuthenticated, loading, isProfileComplete, isRejected, termsLoading, missingTerms } = useAuth();
   const location = useLocation();
 
   // In local dev mode, bypass all auth and profile checks
@@ -59,6 +79,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Rule 2: If profile completion is required and profile is incomplete, redirect to complete it
   if (requireCompleteProfile && !isProfileComplete) {
     return <Navigate to="/update-profile" replace />;
+  }
+
+  // Rule 2b: Terms & Conditions gate (VMPP-323) — every applicable version must be accepted
+  if (requireAcceptedTerms) {
+    if (termsLoading) {
+      return <FullPageSpinner />;
+    }
+    if (missingTerms.length > 0) {
+      return <Navigate to="/accept-terms" replace state={{ from: location.pathname + location.search }} />;
+    }
   }
 
   // Rule 3: /invoices is only available to approved users whose Account has both:

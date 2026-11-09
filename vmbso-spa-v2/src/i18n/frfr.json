@@ -614,5 +614,36 @@
     "errorMessages": {
       "loadFailed": "Échec du chargement des bons d'achat"
     }
+  },
+  "terms": {
+    "gateTitle": "Veuillez consulter nos conditions",
+    "gateIntro": "Pour continuer à utiliser le portail, veuillez accepter les conditions suivantes.",
+    "badgeNew": "NOUVEAU",
+    "badgeUpdated": "MIS À JOUR",
+    "explainNew": "Ces conditions s'appliquent à vous et nécessitent votre acceptation.",
+    "explainUpdated": "Nous avons mis à jour ces conditions depuis votre dernière acceptation.",
+    "read": "Lire les conditions",
+    "acceptCheckbox": "J'ai lu et j'accepte ces conditions",
+    "acceptAndContinue": "Accepter et continuer",
+    "mustAccept": "Veuillez lire et accepter toutes les conditions pour continuer.",
+    "stillLoading": "Les conditions sont en cours de chargement. Veuillez réessayer dans un instant.",
+    "saveError": "Votre acceptation n'a pas pu être enregistrée. Veuillez réessayer.",
+    "loadError": "Ces conditions n'ont pas pu être chargées. Veuillez réessayer plus tard.",
+    "onlyAvailableIn": "Ces conditions sont uniquement disponibles en {{language}}.",
+    "close": "Fermer",
+    "sectionTitle": "Conditions générales",
+    "sectionIntro": "Veuillez lire et accepter les conditions suivantes pour compléter votre profil.",
+    "pageTitle": "Conditions générales",
+    "pageIntro": "Les conditions qui s'appliquent à votre compte, et la date à laquelle vous les avez acceptées.",
+    "acceptedOn": "Acceptées le {{date}}",
+    "notAccepted": "Pas encore acceptées",
+    "noTerms": "Aucune condition à afficher.",
+    "footerLink": "Conditions générales",
+    "profileLink": "Voir les conditions acceptées",
+    "languageNames": {
+      "en-GB": "anglais",
+      "fr-FR": "français",
+      "nl-NL": "néerlandais"
+    }
   }
 }

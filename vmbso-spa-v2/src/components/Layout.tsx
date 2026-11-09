@@ -18,7 +18,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  // Link,
+  Link,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
@@ -34,16 +34,18 @@ import { canAccessVouchers } from '../utils/accessControl';
 
 interface LayoutProps {
   children: React.ReactNode;
+  /** Hide the navigation links and the mobile menu (e.g. the Terms & Conditions gate). */
+  hideNavigation?: boolean;
 }
 
 enum ApprovalStatus {
   Pending = 182980000,
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, hideNavigation = false }) => {
   const navigate = useNavigate();
   const { logout, currentUser, isProfileComplete } = useAuth();
-  const { t } = useTranslation(['header', 'footer', 'layout']);
+  const { t } = useTranslation(['header', 'footer', 'layout', 'terms']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const theme = useTheme();
@@ -80,7 +82,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     handleMobileMenuClose();
   };
 
-  const navigationItems = [
+  const navigationItems = hideNavigation ? [] : [
     { label: t('header:navigation.home'), path: '/' },
     { label: t('header:navigation.documents'), path: '/documents' },
     { label: t('header:navigation.news'), path: '/news' },
@@ -144,7 +146,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Pipe separator */}
             <Box
               sx={{
-                display: { xs: 'none', md: 'block' },
+                display: { xs: 'none', md: hideNavigation ? 'none' : 'block' },
                 width: '1px',
                 height: '2rem',
                 bgcolor: 'divider',
@@ -188,7 +190,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               edge="end"
               onClick={handleMobileMenuToggle}
               sx={{ 
-                display: { xs: 'flex', md: 'none' },
+                display: { xs: hideNavigation ? 'none' : 'flex', md: 'none' },
                 color: 'text.primary',
                 ml: 1,
               }}
@@ -306,6 +308,18 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Typography variant="body2" color="white">
             {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
+          {/* Terms & Conditions overview (VMPP-323) — only once the user can use the portal */}
+          {currentUser && isProfileComplete && !hideNavigation && (
+            <Link
+              component="button"
+              type="button"
+              variant="body2"
+              onClick={() => navigate('/terms')}
+              sx={{ color: 'white', textDecorationColor: 'rgba(255,255,255,0.6)' }}
+            >
+              {t('terms:footerLink', 'Terms & Conditions')}
+            </Link>
+          )}
         </Container>
       </Box>
     </Box>

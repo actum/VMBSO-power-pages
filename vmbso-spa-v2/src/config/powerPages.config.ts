@@ -84,6 +84,8 @@ export const config = {
     invoices: '/_api/actum_invoices',
     /** Landing page CMS rows (per language). */
     landingPageContents: '/_api/actum_landingpagecontents',
+    /** Terms & Conditions acceptances (create + read own, VMPP-323). */
+    termsAcceptances: '/_api/actum_termsacceptances',
   },
 
   /** Power Automate cloud flow endpoints. */

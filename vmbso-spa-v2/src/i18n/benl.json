@@ -617,5 +617,36 @@
     "errorMessages": {
       "loadFailed": "Laden van vouchers mislukt"
     }
+  },
+  "terms": {
+    "gateTitle": "Bekijk onze voorwaarden",
+    "gateIntro": "Om het portaal te blijven gebruiken, moet u de volgende voorwaarden aanvaarden.",
+    "badgeNew": "NIEUW",
+    "badgeUpdated": "BIJGEWERKT",
+    "explainNew": "Deze voorwaarden zijn op u van toepassing en vereisen uw aanvaarding.",
+    "explainUpdated": "We hebben deze voorwaarden bijgewerkt sinds u ze voor het laatst aanvaardde.",
+    "read": "Voorwaarden lezen",
+    "acceptCheckbox": "Ik heb deze voorwaarden gelezen en ik aanvaard ze",
+    "acceptAndContinue": "Aanvaarden en doorgaan",
+    "mustAccept": "Lees en aanvaard alle voorwaarden om verder te gaan.",
+    "stillLoading": "De voorwaarden worden nog geladen. Probeer het zo meteen opnieuw.",
+    "saveError": "Uw aanvaarding kon niet worden opgeslagen. Probeer het opnieuw.",
+    "loadError": "Deze voorwaarden konden niet worden geladen. Probeer het later opnieuw.",
+    "onlyAvailableIn": "Deze voorwaarden zijn enkel beschikbaar in het {{language}}.",
+    "close": "Sluiten",
+    "sectionTitle": "Algemene voorwaarden",
+    "sectionIntro": "Lees en aanvaard de volgende voorwaarden om uw profiel te vervolledigen.",
+    "pageTitle": "Algemene voorwaarden",
+    "pageIntro": "De voorwaarden die op uw account van toepassing zijn, en wanneer u ze aanvaardde.",
+    "acceptedOn": "Aanvaard op {{date}}",
+    "notAccepted": "Nog niet aanvaard",
+    "noTerms": "Er zijn geen voorwaarden om te tonen.",
+    "footerLink": "Algemene voorwaarden",
+    "profileLink": "Bekijk de aanvaarde voorwaarden",
+    "languageNames": {
+      "en-GB": "Engels",
+      "fr-FR": "Frans",
+      "nl-NL": "Nederlands"
+    }
   }
 }

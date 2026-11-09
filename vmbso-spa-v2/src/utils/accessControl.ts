@@ -4,6 +4,20 @@ import { config } from '../config/powerPages.config';
 // Approval status codes from Dataverse
 const APPROVAL_STATUS_APPROVED = 182980001;
 
+type RoleFlags = { actum_name?: string; actum_uploadinvoicesallowed?: boolean };
+type CountryFlags = { actum_uploadinvoicesallowed?: boolean };
+
+/**
+ * Feature rule only (no approval or account checks): invoice upload / rewards is available when
+ * both the role and the country allow it. Also used for Terms & Conditions, which are accepted
+ * before approval.
+ */
+export const hasInvoiceUploadFeature = (role?: RoleFlags, country?: CountryFlags): boolean =>
+  role?.actum_uploadinvoicesallowed === true && country?.actum_uploadinvoicesallowed === true;
+
+/** Feature rule only: the role is Distributor (case-insensitive). */
+export const isDistributorRole = (role?: RoleFlags): boolean => role?.actum_name?.toLowerCase() === 'distributor';
+
 /**
  * Check if the current user can access the Invoices page.
  * 
@@ -44,14 +58,8 @@ export const canAccessInvoices = (user: Contact | null): boolean => {
     return false;
   }
 
-  // Check Role allows invoice uploads
-  const roleAllowsInvoices = user.parentcustomerid.actum_Role?.actum_uploadinvoicesallowed === true;
-  
-  // Check Country allows invoice uploads
-  const countryAllowsInvoices = user.parentcustomerid.actum_Country?.actum_uploadinvoicesallowed === true;
-
-  // All conditions must be true
-  return roleAllowsInvoices && countryAllowsInvoices;
+  // Role and Country must both allow invoice uploads
+  return hasInvoiceUploadFeature(user.parentcustomerid.actum_Role, user.parentcustomerid.actum_Country);
 };
 
 /**
@@ -118,21 +126,13 @@ export const canAccessVouchers = (user: Contact | null): boolean => {
     return false;
   }
 
-  // Check if user is a distributor
-  const roleName = user.parentcustomerid.actum_Role.actum_name?.toLowerCase();
-  if (roleName === 'distributor') {
-    return true; // Distributors always have access to vouchers
+  // Distributors always have access to vouchers
+  if (isDistributorRole(user.parentcustomerid.actum_Role)) {
+    return true;
   }
 
-  // For non-distributors (installers, etc.), check if they have invoice permissions
-  // Check Role allows invoice uploads
-  const roleAllowsInvoices = user.parentcustomerid.actum_Role.actum_uploadinvoicesallowed === true;
-  
-  // Check Country allows invoice uploads
-  const countryAllowsInvoices = user.parentcustomerid.actum_Country?.actum_uploadinvoicesallowed === true;
-
   // Installers need both role and country permissions
-  return roleAllowsInvoices && countryAllowsInvoices;
+  return hasInvoiceUploadFeature(user.parentcustomerid.actum_Role, user.parentcustomerid.actum_Country);
 };
 
 /**
@@ -159,12 +159,6 @@ export const isDistributor = (user: Contact | null): boolean => {
     return false;
   }
 
-  // Must have Account with Role
-  if (!user.parentcustomerid?.actum_Role) {
-    return false;
-  }
-
-  // Check if role name is "Distributor" (case-insensitive)
-  const roleName = user.parentcustomerid.actum_Role.actum_name?.toLowerCase();
-  return roleName === 'distributor';
+  // Role name must be "Distributor" (case-insensitive)
+  return isDistributorRole(user.parentcustomerid?.actum_Role);
 };
