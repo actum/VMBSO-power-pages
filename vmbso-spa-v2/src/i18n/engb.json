@@ -248,6 +248,17 @@
   },
 
   "updateProfilePage": {
+    "anonymisation": {
+      "link": "Request anonymisation of my data",
+      "title": "Request anonymisation",
+      "confirm": "This action is irreversible. Your personal data will be anonymised, your portal account will be deactivated and your sign-in account will be deleted. Shared business records such as invoices and vouchers may remain stored for legal, accounting and operational purposes, but they will no longer be attributed to you personally. Loyalty points and vouchers you have not used stay with your company and can only be used by another portal user of your company. Do you want to continue?",
+      "no": "No",
+      "yes": "Yes",
+      "submitting": "Submitting…",
+      "success": "Your anonymisation request has been submitted. You will now be signed out. Once the request is processed, you will no longer be able to sign in.",
+      "signOut": "Sign out",
+      "error": "Your anonymisation request could not be submitted. Please try again or contact support."
+    },
     "pageTitle": "Complete Your Profile | VMBSO Customer Portal",
     
     "title": {
