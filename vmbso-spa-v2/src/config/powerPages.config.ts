@@ -86,6 +86,8 @@ export const config = {
     landingPageContents: '/_api/actum_landingpagecontents',
     /** Terms & Conditions acceptances (create + read own, VMPP-323). */
     termsAcceptances: '/_api/actum_termsacceptances',
+    /** Anonymisation requests (create only, no read, VMPP-395). */
+    anonymisationRequests: '/_api/actum_anonymisationrequests',
   },
 
   /** Power Automate cloud flow endpoints. */

@@ -4,6 +4,7 @@
  */
 
 import { apiClient, ApiError, getCsrfToken } from './apiClient';
+import { submitAnonymisationRequest } from './anonymisationRequest';
 import type { Contact } from '../types/contact';
 import type { Account } from '../types/account';
 import type { Brand } from '../types/brand';
@@ -597,6 +598,11 @@ export const dataverseService = {
         throw new Error(`Failed to record terms acceptance: ${response.status}${details ? ` - ${details}` : ''}`);
       }
     },
+  },
+
+  /** Right to be forgotten (VMPP-395): create-only, the flow does the rest. */
+  anonymisation: {
+    createRequest: submitAnonymisationRequest,
   },
 
   /**
