@@ -1,0 +1,4 @@
+id: 16c098a0-7e9d-45ff-9a9d-abd78e349c19
+name: Webapi/actum_anonymisationrequest/fields
+source: 0
+value: actum_name,actum_requeststatus,actum_requestedon,actum_contact,actum_Contact
