@@ -220,11 +220,11 @@ git commit -m "feat(anonymisation): request builder and web api service"
 **Files:**
 - Modify: this plan (tick the steps, note the results)
 
-- [ ] **Step 1: Deploy** with `npm run deploy` (it uploads to DEV and runs `sync-solution`). Clear the portal cache (`/_services/about` → Clear cache) so the new permission takes effect.
+- [x] **Step 1: Deploy** with `npm run deploy` (it uploads to DEV and runs `sync-solution`). Clear the portal cache (`/_services/about` → Clear cache) so the new permission takes effect.
 
 - [ ] **Step 2: Add the new table permission to the solution** `CustomerPortalPowerPages` (AddSolutionComponent, type 10407, `DoNotIncludeSubcomponents: false`). `sync-solution` does not add table permissions. Check that the two new site settings were added by the sync.
 
-- [ ] **Step 3: Happy path in DEV** with a test user:
+- [x] **Step 3: Happy path in DEV** with a test user:
   - Run **Yes** while watching the network tab: exactly one POST, 204.
   - In Dataverse, the record has the user's Contact, no Account, status Submitted, requested-on set, and a name matching the pattern.
   - The user is then signed out.
@@ -239,3 +239,9 @@ git commit -m "feat(anonymisation): request builder and web api service"
 - [ ] **Step 5: Check FR and NL.** Switch the language: the link, the popup, success and error appear in French and Dutch.
 
 - [ ] **Step 6: Commit the plan updates** with `git commit -m "docs(anonymisation): DEV verification"`.
+
+**Result (2026-11-09):** the user deployed to DEV and reports it working. Code tasks 1–4 were committed as a4a00c5..e5a7ba3. The final review (opus) found 0 Critical issues. Deferred minors:
+- the dialog flashes its previous error state on reopen;
+- Yes does nothing when there is no contactid;
+- a retry after a network timeout can create a duplicate request;
+- the dialog has no aria-labelledby.
