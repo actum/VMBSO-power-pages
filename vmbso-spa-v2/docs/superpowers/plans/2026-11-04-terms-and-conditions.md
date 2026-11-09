@@ -270,7 +270,7 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 **Files:** Modify `src/pages/UpdateProfile.tsx`.
 
-- [x] **Step 1 (done 2026-11-06; hook `src/hooks/useRequiredTermsFor.ts`. GAP FOUND: the VAT flow "VPortal - Get VAT" returns only accountid, name and actum_primarycountryid, NOT the role, so for a VAT-found account only General applies on this page until `<attribute name="actum_roleid" />` is added to its List Accounts FetchXML. The gate right after profile completion still asks for any missing Distributor/InvoiceUpload terms, using the real account role):** When `!isProfileComplete` and country + role are known, compute `FeatureContext`:
+- [x] **Step 1 (done 2026-11-06; hook `src/hooks/useRequiredTermsFor.ts`. the VAT flow "VPortal - Get VAT" did not return the account role; FIXED in DEV by Daniel on 2026-11-06 (`<attribute name="actum_roleid" />` added to its List Accounts FetchXML). That flow must reach TEST with its own solution. Fallback either way: the gate after profile completion uses the real account role):** When `!isProfileComplete` and country + role are known, compute `FeatureContext`:
   - VAT `found`: role/country from `foundAccount._actum_roleid_value` / `_actum_primarycountryid_value`, flags looked up in the `roles` / `countries` arrays (now loaded with `actum_uploadinvoicesallowed`).
   - VAT `notFound`: from `values.actum_role` / `values.actum_primarycountry`.
   Fetch candidates for that country → `resolveRequiredVersions` → render `TermsAcceptanceList` (no badges) above the Submit button. Recompute when role/country change and reset checkboxes.
