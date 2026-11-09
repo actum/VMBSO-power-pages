@@ -56,7 +56,11 @@ export const TermsDialog: React.FC<TermsDialogProps> = ({ open, onClose, title, 
           <>
             {!picked.isUiLanguage && picked.languageName && (
               <Alert severity="info" sx={{ mb: 2, fontSize: '15px' }}>
-                {t('onlyAvailableIn', 'These terms are only available in {{language}}.', { language: picked.languageName })}
+                {t('onlyAvailableIn', 'These terms are only available in {{language}}.', {
+                  language: picked.languageCode
+                    ? t(`languageNames.${picked.languageCode}`, picked.languageName)
+                    : picked.languageName,
+                })}
               </Alert>
             )}
             <Box

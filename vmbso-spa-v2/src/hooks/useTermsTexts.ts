@@ -13,6 +13,8 @@ export interface PickedTermsText {
   isUiLanguage: boolean;
   /** Name of the text's language (e.g. "French"), for that note. */
   languageName?: string;
+  /** Dataverse code of the text's language (e.g. "fr-FR"), to translate its name. */
+  languageCode?: string;
 }
 
 const DEV_LANGUAGES: Language[] = [
@@ -95,8 +97,8 @@ export const usePickedTermsTexts = (
     for (const id of versionIds) {
       const pick = pickText(texts.filter((t) => t._actum_termsversionid_value === id), uiLanguageId, englishLanguageId);
       if (pick) {
-        const languageName = languages.find((l) => l.actum_languageid === pick.text._actum_languageid_value)?.actum_name;
-        result[id] = { ...pick, languageName };
+        const language = languages.find((l) => l.actum_languageid === pick.text._actum_languageid_value);
+        result[id] = { ...pick, languageName: language?.actum_name, languageCode: language?.actum_code };
       }
     }
     return result;

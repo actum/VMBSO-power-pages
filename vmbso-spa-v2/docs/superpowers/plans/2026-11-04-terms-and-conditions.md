@@ -301,9 +301,9 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 **Files:** Modify `src/i18n/engb.json`, `frfr.json`, `benl.json`; Dataverse `actum_translation` records.
 
-- [ ] **Step 1:** Add namespace `terms` with keys: `pageTitle`, `gateTitle`, `gateIntro`, `badgeNew`, `badgeUpdated`, `explainNew`, `explainUpdated`, `read`, `acceptCheckbox`, `acceptAndContinue`, `mustAccept`, `onlyAvailableIn`, `acceptedOn`, `footerLink`, `sectionTitle`, `close`, `loadError`. Gate copy (EN): title "Please review our terms", intro "To continue using the portal, please accept the following terms.", explainUpdated "We've updated these terms since you last accepted them.", explainNew "These terms apply to a feature now available to you."
-- [ ] **Step 2:** Create/update the Dataverse translation records for the 3 languages (same keys).
-- [ ] **Step 3: Verify** — switch language picker on `/accept-terms` → all strings translated.
+- [x] **Step 1 (done 2026-11-09; 25 keys incl. `stillLoading`, `saveError`, `sectionIntro`, `notAccepted`, `noTerms`, `profileLink` and `languageNames` (keyed by Dataverse code, for the "only available in …" note); inserted as text so the existing files keep their formatting):** Add namespace `terms` with keys: `pageTitle`, `gateTitle`, `gateIntro`, `badgeNew`, `badgeUpdated`, `explainNew`, `explainUpdated`, `read`, `acceptCheckbox`, `acceptAndContinue`, `mustAccept`, `onlyAvailableIn`, `acceptedOn`, `footerLink`, `sectionTitle`, `close`, `loadError`. Gate copy (EN): title "Please review our terms", intro "To continue using the portal, please accept the following terms.", explainUpdated "We've updated these terms since you last accepted them.", explainNew "These terms apply to a feature now available to you."
+- [x] **Step 2 (done 2026-11-09 in DEV, backups in the session scratchpad. The records are DATA, not solution components: add the `terms` section to the TEST/PROD records too when promoting):** Create/update the Dataverse translation records for the 3 languages (same keys).
+- [x] **Step 3: Verify** (local dev: gate in FR, dialog in NL with the English-fallback note) — switch language picker on `/accept-terms` → all strings translated.
 - [ ] **Step 4: Commit** `feat(terms): translations`
 
 ## Phase 4 — Deploy & content
