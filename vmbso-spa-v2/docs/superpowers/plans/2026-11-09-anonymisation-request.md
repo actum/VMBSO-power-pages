@@ -222,7 +222,7 @@ git commit -m "feat(anonymisation): request builder and web api service"
 
 - [x] **Step 1: Deploy** with `npm run deploy` (it uploads to DEV and runs `sync-solution`). Clear the portal cache (`/_services/about` → Clear cache) so the new permission takes effect.
 
-- [ ] **Step 2: Add the new table permission to the solution** `CustomerPortalPowerPages` (AddSolutionComponent, type 10407, `DoNotIncludeSubcomponents: false`). `sync-solution` does not add table permissions. Check that the two new site settings were added by the sync.
+- [x] **Step 2: Add the new table permission to the solution** `CustomerPortalPowerPages` (AddSolutionComponent, type 10407, `DoNotIncludeSubcomponents: false`). `sync-solution` does not add table permissions. Check that the two new site settings were added by the sync.
 
 - [x] **Step 3: Happy path in DEV** with a test user:
   - Run **Yes** while watching the network tab: exactly one POST, 204.
