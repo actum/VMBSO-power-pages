@@ -527,7 +527,7 @@ export const dataverseService = {
       if (!versionIds.length) return [];
       try {
         const query = buildODataQuery({
-          select: ['actum_termstextid', '_actum_termsversionid_value', '_actum_languageid_value', 'actum_body', 'createdon'],
+          select: ['actum_termstextid', 'actum_name', '_actum_termsversionid_value', '_actum_languageid_value', 'actum_body', 'createdon'],
           filter: versionIds.map((id) => `_actum_termsversionid_value eq ${id}`).join(' or '),
         });
         const response = await apiClient.odata<{ value: TermsText[] }>(`/actum_termstexts${query}`);

@@ -23,8 +23,8 @@ const DEV_LANGUAGES: Language[] = [
 ];
 const devTexts = (versionIds: string[]): TermsText[] =>
   versionIds.flatMap((id) => [
-    { actum_termstextid: `${id}-en`, _actum_termsversionid_value: id, _actum_languageid_value: 'dev-en', actum_body: '<h2>Terms (dev mock)</h2><p>English placeholder text.</p>', createdon: '2026-01-01T00:00:00Z' },
-    { actum_termstextid: `${id}-fr`, _actum_termsversionid_value: id, _actum_languageid_value: 'dev-fr', actum_body: '<h2>Conditions (dev mock)</h2><p>Texte de test en français.</p>', createdon: '2026-01-02T00:00:00Z' },
+    { actum_termstextid: `${id}-en`, actum_name: 'General Terms & Conditions', _actum_termsversionid_value: id, _actum_languageid_value: 'dev-en', actum_body: '<h2>Terms (dev mock)</h2><p>English placeholder text.</p>', createdon: '2026-01-01T00:00:00Z' },
+    { actum_termstextid: `${id}-fr`, actum_name: 'Conditions générales', _actum_termsversionid_value: id, _actum_languageid_value: 'dev-fr', actum_body: '<h2>Conditions (dev mock)</h2><p>Texte de test en français.</p>', createdon: '2026-01-02T00:00:00Z' },
   ]);
 
 export interface TermsTextsState {

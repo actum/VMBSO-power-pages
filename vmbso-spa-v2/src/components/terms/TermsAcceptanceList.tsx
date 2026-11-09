@@ -60,7 +60,7 @@ export const TermsAcceptanceList: React.FC<TermsAcceptanceListProps> = ({
                       sx={{ fontSize: '10px', fontWeight: 700, height: 22, borderRadius: '4px', mr: 1.25, verticalAlign: 'text-bottom' }}
                     />
                   )}
-                  {version.actum_name}
+                  {picked[id]?.text.actum_name || version.actum_name}
                 </Typography>
                 {showKindBadge && kind && (
                   <Typography color="text.secondary" sx={{ fontSize: '16px', mt: 1 }}>
@@ -102,7 +102,7 @@ export const TermsAcceptanceList: React.FC<TermsAcceptanceListProps> = ({
       <TermsDialog
         open={!!openTerm}
         onClose={() => setOpenId(null)}
-        title={openTerm?.version.actum_name ?? ''}
+        title={(openId && picked[openId]?.text.actum_name) || openTerm?.version.actum_name || ''}
         picked={openId ? picked[openId] : undefined}
         loading={textsLoading}
       />

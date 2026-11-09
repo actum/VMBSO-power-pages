@@ -292,9 +292,9 @@ See Design → "Protecting published terms". Business rules can't read the paren
 
 **Files:** Create `src/pages/Terms.tsx`; Modify `src/App.tsx`, `src/components/Layout.tsx` (footer link), `src/pages/UpdateProfile.tsx` (link when `isProfileComplete`).
 
-- [ ] **Step 1:** `/terms` (protected): list `requiredTerms` with name, version, "Accepted on {date}" (`dateUtils` formatting), "Read terms" → `TermsDialog`.
-- [ ] **Step 2:** Footer: link "Terms & Conditions" → `/terms`, shown only when authenticated with complete profile.
-- [ ] **Step 3: Verify** — manual test T11.
+- [x] **Step 1 (done 2026-11-09; titles come from the shown text's own `actum_name` (decided 2026-11-09, option A: each language text carries a translated title, falling back to the version name; the DEV seed texts were renamed accordingly)):** `/terms` (protected): list `requiredTerms` with name, version, "Accepted on {date}" (`dateUtils` formatting), "Read terms" → `TermsDialog`.
+- [x] **Step 2 (done; also hidden on the gate page):** Footer: link "Terms & Conditions" → `/terms`, shown only when authenticated with complete profile.
+- [x] **Step 3: Verify** (local dev in FR: list, accepted date, footer link) — manual test T11.
 - [ ] **Step 4: Commit** `feat(terms): terms overview page and links`
 
 ### Task 13: Translations

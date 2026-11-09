@@ -23,6 +23,8 @@ export interface TermsVersion {
 
 export interface TermsText {
   actum_termstextid: string;
+  /** Title of the document in this language (shown to users; falls back to the version name). */
+  actum_name?: string;
   _actum_termsversionid_value: string;
   _actum_languageid_value: string;
   actum_body: string;

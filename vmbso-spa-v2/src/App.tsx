@@ -20,6 +20,7 @@ import { Invoices } from './pages/Invoices';
 import { Rewards } from './pages/Rewards';
 import { Vouchers } from './pages/Vouchers';
 import { AcceptTerms } from './pages/AcceptTerms';
+import { Terms } from './pages/Terms';
 
 /**
  * Catches Entra External ID cancel/error redirects (e.g. /signin-entraexternalid_2?error=...)
@@ -124,6 +125,16 @@ function App() {
                 element={
                   <ProtectedRoute requireCompleteProfile={false} requireAcceptedTerms={false}>
                     <UpdateProfile />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Terms & Conditions overview (VMPP-323) */}
+              <Route
+                path="/terms"
+                element={
+                  <ProtectedRoute>
+                    <Terms />
                   </ProtectedRoute>
                 }
               />

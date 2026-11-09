@@ -419,6 +419,11 @@ export const UpdateProfile: React.FC = () => {
               {t("updateProfilePage:messages.profileLockedInfo")}
             </Alert>
           )}
+          {isProfileComplete && (
+            <Button variant="text" onClick={() => navigate("/terms")} sx={{ mt: 1.5, px: 0, fontSize: "16px", fontWeight: 700 }}>
+              {t("terms:profileLink", "View the terms you accepted")}
+            </Button>
+          )}
           <Grid container spacing={3} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={6}>
               <InputLabelField

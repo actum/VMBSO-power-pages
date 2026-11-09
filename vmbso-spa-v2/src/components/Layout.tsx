@@ -18,7 +18,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  // Link,
+  Link,
 } from '@mui/material';
 import {
   AccountCircle as AccountCircleIcon,
@@ -45,7 +45,7 @@ enum ApprovalStatus {
 export const Layout: React.FC<LayoutProps> = ({ children, hideNavigation = false }) => {
   const navigate = useNavigate();
   const { logout, currentUser, isProfileComplete } = useAuth();
-  const { t } = useTranslation(['header', 'footer', 'layout']);
+  const { t } = useTranslation(['header', 'footer', 'layout', 'terms']);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const theme = useTheme();
@@ -308,6 +308,18 @@ export const Layout: React.FC<LayoutProps> = ({ children, hideNavigation = false
           <Typography variant="body2" color="white">
             {t('footer:copyright', { year: new Date().getFullYear() })}
           </Typography>
+          {/* Terms & Conditions overview (VMPP-323) — only once the user can use the portal */}
+          {currentUser && isProfileComplete && !hideNavigation && (
+            <Link
+              component="button"
+              type="button"
+              variant="body2"
+              onClick={() => navigate('/terms')}
+              sx={{ color: 'white', textDecorationColor: 'rgba(255,255,255,0.6)' }}
+            >
+              {t('terms:footerLink', 'Terms & Conditions')}
+            </Link>
+          )}
         </Container>
       </Box>
     </Box>
