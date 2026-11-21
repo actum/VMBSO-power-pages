@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Checkbox,
   ListItemText,
+  Link,
 } from "@mui/material";
 import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
 import { Layout } from "../components/Layout";
@@ -32,6 +33,7 @@ import { toast } from "react-toastify";
 import InputLabelField from "../components/common/ui/InputLabelField";
 import { isValidE164, autoFormatPhone } from "../utils/phoneUtils";
 import { TermsAcceptanceList } from "../components/terms/TermsAcceptanceList";
+import { AnonymisationRequestDialog } from "../components/profile/AnonymisationRequestDialog";
 import { acceptTerms } from "../components/terms/acceptTerms";
 import { useRequiredTermsFor } from "../hooks/useRequiredTermsFor";
 import { usePickedTermsTexts } from "../hooks/useTermsTexts";
@@ -41,6 +43,7 @@ type VatSearchState = "idle" | "searching" | "found" | "notFound";
 
 export const UpdateProfile: React.FC = () => {
   const { currentUser, refreshUser, isProfileComplete } = useAuth();
+  const [anonymiseOpen, setAnonymiseOpen] = useState(false);
   const navigate = useNavigate();
   const [values, setValues] = useState<Partial<Contact>>(currentUser || {});
   const [updating, setUpdating] = useState(false);
@@ -735,7 +738,26 @@ export const UpdateProfile: React.FC = () => {
             </Alert>
           )}
 
-          <Box display="flex" justifyContent="flex-end" gap={2} mt="5rem">
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column-reverse", sm: "row" }}
+            justifyContent={isProfileComplete ? "space-between" : "flex-end"}
+            alignItems="center"
+            gap={2}
+            mt="5rem"
+          >
+            {isProfileComplete && (
+              <Link
+                component="button"
+                type="button"
+                color="text.secondary"
+                underline="always"
+                onClick={() => setAnonymiseOpen(true)}
+                sx={{ fontSize: "14px" }}
+              >
+                {t("updateProfilePage:anonymisation.link")}
+              </Link>
+            )}
             <Button
               fullWidth={isMobile}
               size={isMobile ? "large" : "medium"}
@@ -747,6 +769,9 @@ export const UpdateProfile: React.FC = () => {
             </Button>
           </Box>
         </Paper>
+        {isProfileComplete && (
+          <AnonymisationRequestDialog open={anonymiseOpen} onClose={() => setAnonymiseOpen(false)} />
+        )}
       </Box>
     </Layout>
   );

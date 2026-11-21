@@ -246,6 +246,17 @@
   },
 
   "updateProfilePage": {
+    "anonymisation": {
+      "link": "Anonimisering van mijn gegevens aanvragen",
+      "title": "Anonimisering aanvragen",
+      "confirm": "Deze actie is onomkeerbaar. Uw persoonsgegevens worden geanonimiseerd, uw portaalaccount wordt gedeactiveerd en uw aanmeldaccount wordt verwijderd. Gedeelde zakelijke documenten zoals facturen en vouchers kunnen bewaard blijven voor wettelijke, boekhoudkundige en operationele doeleinden, maar worden niet langer aan u persoonlijk toegeschreven. Loyaliteitspunten en vouchers die u niet hebt gebruikt, blijven bij uw bedrijf en kunnen alleen worden gebruikt door een andere portaalgebruiker van uw bedrijf. Wilt u doorgaan?",
+      "no": "Nee",
+      "yes": "Ja",
+      "submitting": "Bezig met verzenden…",
+      "success": "Uw aanvraag tot anonimisering is verzonden. U wordt nu uitgelogd. Zodra de aanvraag is verwerkt, kunt u niet meer inloggen.",
+      "signOut": "Uitloggen",
+      "error": "Uw aanvraag tot anonimisering kon niet worden verzonden. Probeer het opnieuw of neem contact op met de klantenservice."
+    },
     "pageTitle": "Vul uw profiel aan | VMBSO Klantenportaal",
     
     "title": {

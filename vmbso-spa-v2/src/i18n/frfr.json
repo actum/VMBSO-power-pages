@@ -246,6 +246,17 @@
   },
 
   "updateProfilePage": {
+    "anonymisation": {
+      "link": "Demander l'anonymisation de mes données",
+      "title": "Demande d'anonymisation",
+      "confirm": "Cette action est irréversible. Vos données personnelles seront anonymisées, votre compte du portail sera désactivé et votre compte de connexion sera supprimé. Les documents commerciaux partagés, tels que les factures et les bons d'achat, peuvent rester conservés à des fins légales, comptables et opérationnelles, mais ils ne vous seront plus attribués personnellement. Les points de fidélité et les bons d'achat que vous n'avez pas utilisés restent acquis à votre entreprise et ne peuvent être utilisés que par un autre utilisateur du portail de votre entreprise. Voulez-vous continuer ?",
+      "no": "Non",
+      "yes": "Oui",
+      "submitting": "Envoi en cours…",
+      "success": "Votre demande d'anonymisation a été envoyée. Nous allons maintenant vous déconnecter. Une fois la demande traitée, vous ne pourrez plus vous connecter.",
+      "signOut": "Se déconnecter",
+      "error": "Votre demande d'anonymisation n'a pas pu être envoyée. Veuillez réessayer ou contacter le support."
+    },
     "pageTitle": "Complétez votre profil | Portail client VMBSO",
     
     "title": {
